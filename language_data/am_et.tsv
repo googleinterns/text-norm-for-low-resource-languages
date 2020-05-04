@@ -1,0 +1,284 @@
+am_et	INITIAL_PUNCTUATION	" ' ”
+am_et	FINAL_PUNCTUATION	! " ' , . : ; ? ፠ ፡ ። ፣ ፤ ፥ ፦ ፧ ፨
+ሀ	h @
+ሁ	h u
+ሂ	h i
+ሃ	h a
+ሄ	h e
+ህ	h 1
+ሆ	h o
+ለ	l @
+ሉ	l u
+ሊ	l i
+ላ	l a
+ሌ	l e
+ል	l 1
+ሎ	l o
+ሏ	l w a
+ሐ	h @
+ሑ	h u
+ሒ	h i
+ሓ	h a
+ሔ	h e
+ሕ	h i
+ሖ	h o
+ሗ	h w a
+መ	m @
+ሙ	m u
+ሚ	m i
+ማ	m a
+ሜ	m e
+ም	m i
+ሞ	m o
+ሟ	m w a
+ሠ	s @
+ሡ	s u
+ሢ	s i
+ሣ	s a
+ሤ	s e
+ሥ	s i
+ሦ	s o
+ሧ	s w a
+ረ	r @
+ሩ	r u
+ሪ	r i
+ራ	r a
+ሬ	r e
+ር	r 1
+ሮ	r o
+ሯ	r w a
+ሰ	s @
+ሱ	s u
+ሲ	s i
+ሳ	s a
+ሴ	s e
+ስ	s 1
+ሶ	s o
+ሷ	s w a
+ሸ	S @
+ሹ	S u
+ሺ	S i
+ሻ	S a
+ሼ	S e
+ሽ	S 1
+ሾ	S o
+ሿ	S w a
+ቀ	k_> @
+ቁ	k_> u
+ቂ	k_> i
+ቃ	k_> a
+ቄ	k_> e
+ቅ	k_> 1
+ቆ	k_> o
+ቈ	k_> w @
+ቊ	k_> w i
+ቋ	k_> w a
+ቌ	k_> w e
+ቍ	k_> w 1
+በ	b @
+ቡ	b u
+ቢ	b i
+ባ	b a
+ቤ	b e
+ብ	b 1
+ቦ	b o
+ቧ	b w a
+ቨ	v @
+ቩ	v u
+ቪ	v i
+ቫ	v a
+ቬ	v e
+ቭ	v 1
+ቮ	v o
+ቯ	v w a
+ተ	t @
+ቱ	t u
+ቲ	t i
+ታ	t a
+ቴ	t e
+ት	t 1
+ቶ	t o
+ቷ	t w a
+ቸ	tS @
+ቹ	tS u
+ቺ	tS i
+ቻ	tS a
+ቼ	tS e
+ች	tS 1
+ቾ	tS o
+ቿ	tS w a
+ኀ	h @
+ኁ	h u
+ኂ	h i
+ኃ	h a
+ኄ	h e
+ኅ	h 1
+ኆ	h o
+ኈ	h w @
+ኊ	h w i
+ኋ	h w a
+ኌ	h w e
+ኍ	h w 1
+ነ	n @
+ኑ	n u
+ኒ	n i
+ና	n a
+ኔ	n e
+ን	n 1
+ኖ	n o
+ኗ	n w a
+ኘ	J @
+ኙ	J u
+ኚ	J i
+ኛ	J a
+ኜ	J e
+ኝ	J 1
+ኞ	J o
+ኟ	J w a
+አ	? @
+ኡ	? u
+ኢ	? i
+ኣ	? a
+ኤ	? e
+እ	? 1
+ኦ	? o
+ኧ	? w a
+ከ	k @
+ኩ	k u
+ኪ	k i
+ካ	k a
+ኬ	k e
+ክ	k 1
+ኮ	k o
+ኰ	k w @
+ኲ	k w i
+ኳ	k w a
+ኴ	k w e
+ኵ	k w 1
+ኸ	x @
+ኹ	x u
+ኺ	x i
+ኻ	x a
+ኼ	x e
+ኽ	x 1
+ኾ	x o
+ወ	w @
+ዉ	w u
+ዊ	w i
+ዋ	w a
+ዌ	w e
+ው	w 1
+ዎ	w o
+ዐ	? @
+ዑ	? u
+ዒ	? i
+ዓ	? a
+ዔ	? e
+ዕ	? 1
+ዖ	? o
+ዘ	z @
+ዙ	z u
+ዚ	z i
+ዛ	z a
+ዜ	z e
+ዝ	z 1
+ዞ	z o
+ዟ	z w a
+ዠ	Z @
+ዡ	Z u
+ዢ	Z i
+ዣ	Z a
+ዤ	Z e
+ዥ	Z 1
+ዦ	Z o
+ዧ	Z w a
+የ	j @
+ዩ	j u
+ዪ	j i
+ያ	j a
+ዬ	j e
+ይ	j 1
+ዮ	j o
+ደ	d @
+ዱ	d u
+ዲ	d i
+ዳ	d a
+ዴ	d e
+ድ	d 1
+ዶ	d o
+ዷ	d w a
+ጀ	dZ @
+ጁ	dZ u
+ጂ	dZ i
+ጃ	dZ a
+ጄ	dZ e
+ጅ	dZ 1
+ጆ	dZ o
+ጇ	dZ w a
+ገ	g @
+ጉ	g u
+ጊ	g i
+ጋ	g a
+ጌ	g e
+ግ	g 1
+ጎ	g o
+ጐ	g w @
+ጒ	g w i
+ጓ	g w a
+ጔ	g w e
+ጕ	g w 1
+ጠ	t_> @
+ጡ	t_> u
+ጢ	t_> i
+ጣ	t_> a
+ጤ	t_> e
+ጥ	t_> 1
+ጦ	t_> o
+ጧ	t_> w a
+ጨ	tS_> @
+ጩ	tS_> u
+ጪ	tS_> i
+ጫ	tS_> a
+ጬ	tS_> e
+ጭ	tS_> 1
+ጮ	tS_> o
+ጯ	tS_> w a
+ጰ	p_> @
+ጱ	p_> u
+ጲ	p_> i
+ጳ	p_> a
+ጴ	p_> e
+ጵ	p_> 1
+ጶ	p_> o
+ጷ	p_> w a
+ጸ	ts_> @
+ጹ	ts_> u
+ጺ	ts_> i
+ጻ	ts_> a
+ጼ	ts_> e
+ጽ	ts_> 1
+ጾ	ts_> o
+ጿ	ts_> w a
+ፀ	ts_> @
+ፁ	ts_> u
+ፂ	ts_> i
+ፃ	ts_> a
+ፄ	ts_> e
+ፅ	ts_> 1
+ፆ	ts_> o
+ፈ	f @
+ፉ	f u
+ፊ	f i
+ፋ	f a
+ፌ	f e
+ፍ	f 1
+ፎ	f o
+ፏ	f w a
+ፐ	p @
+ፑ	p u
+ፒ	p i
+ፓ	p a
+ፔ	p e
+ፕ	p 1
+ፖ	p o
+ፗ	p w a
