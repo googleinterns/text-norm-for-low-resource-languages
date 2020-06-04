@@ -1,33 +1,12 @@
-# New Project Template
+# Text Normalization for Low Resource Languages
 
-This repository contains a template that can be used to seed a repository for a
-new Google open source project.
+This repository contains code and data related to the Google open source internship project Text Normalization for Low Resource Languages.
 
-See [go/releasing](http://go/releasing) (available externally at
-https://opensource.google/docs/releasing/) for more information about
-releasing a new Google open source project.
+## Project Description
 
-This template uses the Apache license, as is Google's default.  See the
-documentation for instructions on using alternate license.
+With approximately 7,000 languages in the world, especially with lower resource languages, the trade-offs in terms of rejecting training data vs. cleaning it up (or using less clean training data) are different.  We would like to find out what kind of data typically gets lost during normalization, and if there are any repeating patterns within language families or scripts that can better inform normalization decisions.  The intern will be free to formulate their own approach to these questions and to formulate and pursue other linguistic questions to text normalization and corpus linguistics.  The intern will download some public data sets and will experiment with different linguistic choices for normalization, some of which can come from previous Google papers in this space, and others will be up to the intern’s creativity.  The intern will then train some LMs and other NLP models using open-source libraries with various normalization configs, and will measure the quality of these models, and write up an analysis of what normalization method is best.
 
-## How to use this template
-
-1. Check it out from GitHub.
-    * There is no reason to fork it.
-1. Create a new local repository and copy the files from this repo into it.
-1. Modify README.md and docs/contributing.md to represent your project, not the
-   template project.
-1. Develop your new project!
-
-``` shell
-git clone https://github.com/google/new-project
-mkdir my-new-thing
-cd my-new-thing
-git init
-cp -r ../new-project/* .
-git add *
-git commit -a -m 'Boilerplate for new Google open source project'
-```
+#TODO(azupon): Update README.md as the project progresses with information about code, and usage.
 
 ## Source Code Headers
 
