@@ -1,11 +1,7 @@
 py_binary(
-    name = "foo",
-    srcs = ["foo.py"],
-    data = [":transform"],  # a cc_binary which we invoke at run time
-    deps = [
-        "//pyglib",
-        ":foolib",  # a py_library
-    ],
+    name = "normalize_breton",
+    srcs = ["normalize_breton.py"],
+    deps = [":normalize_breton_lib",],
 )
 
 py_library()
