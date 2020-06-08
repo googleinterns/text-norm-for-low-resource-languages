@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-import normalize_breton_lib.py as normalize_breton_lib
-import flags
+import normalize_breton_lib
+from absl import app
+from absl import flags
 
 FLAGS = flags.FLAGS
 
@@ -11,7 +12,7 @@ def main(argv):
   if len(argv) > 1:
     raise app.UsageError('Too many command-line arguments.')
   #TODO(azupon): Add the lib functions
-  normalize_breton_lib.NormalizeBreton(FLAGS.string_to_normalize)
+  print(normalize_breton_lib.NormalizeBreton(FLAGS.string_to_normalize))
 
 if __name__ == '__main__':
   app.run(main)
