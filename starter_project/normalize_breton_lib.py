@@ -1,19 +1,19 @@
-#python 3
-'''Add docstring.''' 
+#!/usr/bin/env python
+'''Add docstring.'''
 
-import pynini
+from pynini import *
 
-BR_GRAPHEMES = pynini.union("a", "b", "c")
+BR_GRAPHEMES = union("a", "b", "c")
 HYPHEN = "-"
-sigma_star = pynini.union(BR_GRAPHEMES, HYPHEN).closure()
+sigma_star = union(BR_GRAPHEMES, HYPHEN).closure()
 
-DELETE_HYPHEN = pynini.transducer(HYPHEN, "")
+DELETE_HYPHEN = transducer(HYPHEN, "")
 
-REMOVE_EXTRA_HYPHEN_IN_WORD = pynini.cdrewrite(
+REMOVE_EXTRA_HYPHEN_IN_WORD = cdrewrite(
   DELETE_HYPHEN,
-  BR_GRAPHEMES + pynini.acceptor(HYPHEN).ques,
-  pynini.acceptor(HYPHEN).ques + BR_GRAPHEMES,
-  sigma_star) 
+  BR_GRAPHEMES + pynini.acceptor(HYPHEN),
+  BR_GRAPHEMES,
+  sigma_star)
 
-def NormalizeBreton() -> pynini.Fst:
-  return REMOVE_EXTRA_HYPHEN_IN_WORD
+def NormalizeBreton(breton_string):
+  return breton_string @ REMOVE_EXTRA_HYPHEN_IN_WORD
