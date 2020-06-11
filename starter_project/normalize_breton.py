@@ -13,6 +13,6 @@ def main(argv):
     raise app.UsageError('Too many command-line arguments.')
   #TODO(azupon): Add the lib functions
   print(normalize_breton_lib.NormalizeBreton(FLAGS.string_to_normalize))
-
+  #print(normalize_breton_lib.BretonSoftMutation(FLAGS.string_to_normalize))
 if __name__ == '__main__':
   app.run(main)
