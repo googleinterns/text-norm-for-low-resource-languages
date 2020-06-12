@@ -14,22 +14,33 @@ class TestStringMethods(unittest.TestCase):
 
     def test_normalize_breton_soft_mutation(self):
         'Test the output of NormalizeBretonSoftMutation.'
-        test_cases = [(("div plac'h", "div blac'h"), ("da tra", "da dra"), ("da kemper", "da gemper"), ("da gwin", "da win"), ("pe mamm", "pe vamm"))]
-        # see what's going on with capital letters, Kemper and Gemper should be
-        # capitalized
+        test_cases = [(("div plac'h", "div blac'h"), ("da tra", "da dra"), ("da Kemper", "da Gemper"), ("da gwin", "da win"), ("pe mamm", "pe vamm"))]
+        # "banana kozh" should not mutate, but it does
+        # make sure triggers have preceding space, so suffixes don't trigger
         for test in test_cases:
           for test_case, expected in test:
             test_fst = normalize_breton_lib.NormalizeBretonSoftMutation(test_case)
             self.assertEqual(test_fst, expected)
 
+
+    def test_normalize_breton_soft_mutation_no_mutation(self):
+        'Test the output of NormalizeBretonSoftMutation on words that should not mutate'
+        test_cases = [(("bara kozh", "bara kozh"), ("bara ha kig", "bara ha kig"))]
+        for test in test_cases:
+          for test_case, expected in test:
+            test_fst = normalize_breton_lib.NormalizeBretonSoftMutation(test_case)
+            self.assertEqual(test_fst, expected)
+
+
     def test_normalize_breton_hard_mutation(self):
         'Test the output of NormalizeBretonHardMutation.'
-        test_cases = [(("da'z bag", "da'z pag"), ('ez douarn', 'ez touarn'), ('ho geriadur', 'ho keriadur'), ("ho gwenn-ha-du", "ho kwenn-ha-du"))]
+        test_cases = [(("da'z bag", "da'z pag"), ('ez douarn', 'ez touarn'), ('ho geriadur', 'ho keriadur'), ("ho Gwenn-ha-Du", "ho Kwenn-ha-Du"))]
         # Gwenn, Du, and Kwenn should be capitalized
         for test in test_cases:
           for test_case, expected in test:
             test_fst = normalize_breton_lib.NormalizeBretonHardMutation(test_case)
             self.assertEqual(test_fst, expected)
+
 
     def test_normalize_breton_spirant_mutation(self):
         'Test the output of NormalizeBretonSpirantMutation.'

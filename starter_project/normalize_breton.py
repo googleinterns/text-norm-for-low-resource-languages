@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import normalize_breton_lib
+import normalize_breton_lib as norm
 from absl import app
 from absl import flags
 
@@ -12,7 +12,11 @@ def main(argv):
   if len(argv) > 1:
     raise app.UsageError('Too many command-line arguments.')
   #TODO(azupon): Add the lib functions
-  print(normalize_breton_lib.NormalizeBreton(FLAGS.string_to_normalize))
-  #print(normalize_breton_lib.BretonSoftMutation(FLAGS.string_to_normalize))
+  input_text = FLAGS.string_to_normalize
+  print("INPUT TEXT:\t\t"+input_text)
+  normalized_text = norm.NormalizeBretonSoftMutation(norm.NormalizeBretonHardMutation(norm.NormalizeBretonSpirantMutation(input_text)))
+  print("NORMALIZED TEXT:\t"+normalized_text)
+ # print(norm.NormalizeBreton(FLAGS.string_to_normalize))
+ # print(norm.NormalizeBretonSoftMutation(FLAGS.string_to_normalize))
 if __name__ == '__main__':
   app.run(main)
