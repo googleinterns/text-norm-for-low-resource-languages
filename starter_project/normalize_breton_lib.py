@@ -5,11 +5,14 @@ from pynini import *
 import re
 
 BR_GRAPHEMES = union(
-    "a", "b", "ch", "c'h", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "y", "z", "c",
+    "a", "b", "ch", "c'h", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "y", "z", "c", "q", "x",
 #    "A", "B", "CH", "C'H", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "R", "S", "T", "U", "V", "W", "Y", "Z", "C",
     "â", "à", "â", "à", "æ", "ç", "é", "è", "ê", "ë", "ï", "î", "ô", "œ", "ù", "û", "ü", "ÿ", "ê", "ô", "ù", "ü", "ñ",
 #    "Â", "Ê", "Ô", "Ù", "Ü", "Ñ",
-    "'", "-", " ")
+    "'", "-", "’", " ",
+    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+
+NUMBERS = union("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
 
 SOFT_TRIGGERS = union("da", "dre", "a", "war", "dindan", "eme", "en ur", "pe", "ne", "na", "ez", "ra", "en em", "daou", "div", "pa", "holl", "re", "hini"
                       #"e", "tra",
@@ -26,7 +29,7 @@ SPIRANT_TRIGGERS = union("he", "ma", "va", "tri", "teir", "pevar", "peder", "nav
 #MIXED_TRIGGERS = union("o", "e", "ma")
 
 SPACE = " "
-sigma_star = union(BR_GRAPHEMES, SOFT_TRIGGERS, HARD_TRIGGERS, SPIRANT_TRIGGERS, SPACE).closure()
+sigma_star = union(BR_GRAPHEMES, SOFT_TRIGGERS, HARD_TRIGGERS, SPIRANT_TRIGGERS, NUMBERS, SPACE).closure()
 
 SOFT_MUTATION = string_map((
     ("p", "b"),
@@ -64,13 +67,13 @@ DO_SOFT_MUTATION = cdrewrite(
 
 DO_HARD_MUTATION = cdrewrite(
     HARD_MUTATION,
-    HARD_TRIGGERS + acceptor(SPACE),
+    union(SPACE, "[BOS]") + HARD_TRIGGERS + acceptor(SPACE),
     BR_GRAPHEMES,
     sigma_star)
 
 DO_SPIRANT_MUTATION = cdrewrite(
     SPIRANT_MUTATION,
-    SPIRANT_TRIGGERS + acceptor(SPACE),
+    union(SPACE, "[BOS]") + SPIRANT_TRIGGERS + acceptor(SPACE),
     BR_GRAPHEMES,
     sigma_star)
 
