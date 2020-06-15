@@ -5,7 +5,7 @@ class TestStringMethods(unittest.TestCase):
 
     def test_normalize_breton(self):
         'Test the output of NormalizeBreton.'
-        test_cases = [(('a--bd', 'a-bd'), ('ddb--a', 'ddb-a'), ('ba--aa', 'ba-aa'))]
+        test_cases = [(("ma gwin Da gwin tri pesk bara kozh ha KIG", "ma gwin da win tri fesk bara kozh ha kig"), ("da Kemper", "da gemper"))]
         for test in test_cases:
           for test_case, expected in test:
             test_fst = normalize_breton_lib.NormalizeBreton(test_case)
@@ -14,9 +14,7 @@ class TestStringMethods(unittest.TestCase):
 
     def test_normalize_breton_soft_mutation(self):
         'Test the output of NormalizeBretonSoftMutation.'
-        test_cases = [(("div plac'h", "div blac'h"), ("da tra", "da dra"), ("da Kemper", "da Gemper"), ("da gwin", "da win"), ("pe mamm", "pe vamm"))]
-        # "banana kozh" should not mutate, but it does
-        # make sure triggers have preceding space, so suffixes don't trigger
+        test_cases = [(("Div plac'h", "div blac'h"), ("DA TRA", "da dra"), ("da Kemper", "da gemper"), ("da gwin", "da win"), ("pe mamm", "pe vamm"))]
         for test in test_cases:
           for test_case, expected in test:
             test_fst = normalize_breton_lib.NormalizeBretonSoftMutation(test_case)
@@ -25,7 +23,7 @@ class TestStringMethods(unittest.TestCase):
 
     def test_normalize_breton_soft_mutation_no_mutation(self):
         'Test the output of NormalizeBretonSoftMutation on words that should not mutate'
-        test_cases = [(("bara kozh", "bara kozh"), ("bara ha kig", "bara ha kig"))]
+        test_cases = [(("bara kozh", "bara kozh"), ("Bara ha kig", "bara ha kig"))]
         for test in test_cases:
           for test_case, expected in test:
             test_fst = normalize_breton_lib.NormalizeBretonSoftMutation(test_case)
@@ -34,8 +32,7 @@ class TestStringMethods(unittest.TestCase):
 
     def test_normalize_breton_hard_mutation(self):
         'Test the output of NormalizeBretonHardMutation.'
-        test_cases = [(("da'z bag", "da'z pag"), ('ez douarn', 'ez touarn'), ('ho geriadur', 'ho keriadur'), ("ho Gwenn-ha-Du", "ho Kwenn-ha-Du"))]
-        # Gwenn, Du, and Kwenn should be capitalized
+        test_cases = [(("da'z bag", "da'z pag"), ('ez douarn', 'ez touarn'), ('ho geriadur', 'ho keriadur'), ("ho Gwenn-ha-Du", "ho kwenn-ha-du"))]
         for test in test_cases:
           for test_case, expected in test:
             test_fst = normalize_breton_lib.NormalizeBretonHardMutation(test_case)
@@ -44,7 +41,7 @@ class TestStringMethods(unittest.TestCase):
 
     def test_normalize_breton_spirant_mutation(self):
         'Test the output of NormalizeBretonSpirantMutation.'
-        test_cases = [(('tri pesk', 'tri fesk'), ('hon tad', 'hon zad'), ('nav ki', "nav c'hi"))]
+        test_cases = [(('tri pesk', 'tri fesk'), ('Hon tad', 'hon zad'), ('nav ki', "nav c'hi"))]
         for test in test_cases:
           for test_case, expected in test:
             test_fst = normalize_breton_lib.NormalizeBretonSpirantMutation(test_case)
