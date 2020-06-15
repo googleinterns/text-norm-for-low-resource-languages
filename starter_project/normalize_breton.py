@@ -14,7 +14,7 @@ def main(argv):
   #TODO(azupon): Add the lib functions
   input_text = FLAGS.string_to_normalize
   print("INPUT TEXT:\t\t"+input_text)
-  normalized_text = norm.NormalizeBretonSoftMutation(norm.NormalizeBretonHardMutation(norm.NormalizeBretonSpirantMutation(input_text)))
+  normalized_text = norm.NormalizeBreton(input_text)
   print("NORMALIZED TEXT:\t"+normalized_text)
  # print(norm.NormalizeBreton(FLAGS.string_to_normalize))
  # print(norm.NormalizeBretonSoftMutation(FLAGS.string_to_normalize))
