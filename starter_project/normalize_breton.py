@@ -10,7 +10,7 @@ FLAGS = flags.FLAGS
 flags.DEFINE_string('string_to_normalize', None, 'the Breton string to normalize')
 
 INFILE: str = "./bre_wikipedia_2016_100K/bre_wikipedia_2016_100K-sentences.txt"
-OUTFILE: str = "./bre_normalized_sentences"
+OUTFILE: str = "bre_normalized_sentences.tsv"
 
 with open(INFILE) as f:
   breton_sentences = f.readlines()

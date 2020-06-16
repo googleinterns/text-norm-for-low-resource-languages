@@ -1,15 +1,25 @@
 import unittest
 import normalize_breton_lib
+import sys
+
 
 class TestStringMethods(unittest.TestCase):
 
+
+
     def test_normalize_breton(self):
         'Test the output of NormalizeBreton.'
-        test_cases = [(("ma gwin Da gwin tri pesk bara kozh ha KIG", "ma gwin da win tri fesk bara kozh ha kig"), ("da Kemper", "da gemper"))]
-        for test in test_cases:
-          for test_case, expected in test:
-            test_fst = normalize_breton_lib.NormalizeBreton(test_case)
-            self.assertEqual(test_fst, expected)
+        with open("bre_normalized_sentences.tsv", "r") as filename:
+          test_cases = filename.readlines()[1:]
+#        test_cases = [(("ma gwin Da gwin tri pesk bara kozh ha KIG", "ma gwin da win tri fesk bara kozh ha kig"), ("da Kemper", "da gemper"))]
+        for sentence in test_cases:
+          test_case = sentence.strip().split("\t")[1]
+          expected = sentence.strip().split("\t")[2]
+          test_fst = normalize_breton_lib.NormalizeBreton(test_case)
+          self.assertEqual(test_fst, expected)
+#          for test_case, expected in test:
+#            test_fst = normalize_breton_lib.NormalizeBreton(test_case)
+#            self.assertEqual(test_fst, expected)
 
 
     def test_normalize_breton_soft_mutation(self):
