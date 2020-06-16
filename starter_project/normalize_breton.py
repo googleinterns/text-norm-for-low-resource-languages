@@ -4,7 +4,6 @@ import normalize_breton_lib as norm
 from absl import app
 from absl import flags
 import re
-from tqdm import tqdm
 
 FLAGS = flags.FLAGS
 
@@ -28,7 +27,7 @@ def main(argv):
   if len(argv) > 1:
     raise app.UsageError('Too many command-line arguments.')
 
-  for line in tqdm(breton_sentences):
+  for line in breton_sentences:
     total_sentences += 1
     sentence_id: str = line.split("\t")[0]
     sentence_text: str = line.split("\t")[1]
