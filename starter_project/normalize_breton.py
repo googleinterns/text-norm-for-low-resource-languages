@@ -1,9 +1,16 @@
 #!/usr/bin/env python
+"""Normalizes text by applying different consonant mutations.
+
+Either normalizes the text from a flag, or loads an external file of
+sentences from Breton Wikipedia to normalize. If it uses the external
+file, it will write the sentences that were changed to a new file.
+"""
 
 import normalize_breton_lib as norm
 from absl import app
 from absl import flags
 import re
+import MutationHandler
 
 FLAGS = flags.FLAGS
 
@@ -13,38 +20,40 @@ INFILE: str = "./bre_wikipedia_2016_100K/bre_wikipedia_2016_100K-sentences.txt"
 OUTFILE: str = "bre_normalized_sentences.tsv"
 
 with open(INFILE) as f:
-  breton_sentences = f.readlines()
+    breton_sentences = f.readlines()
 
 def main(argv):
-  """Normalize the Breton text by applying mutations and save a .tsv file of the changed sentences."""
+    """Normalize text by applying initial consonant mutations."""
 
-  total_sentences: int = 0
-  changed_sentences: int = 0
+    if len(argv) > 1:
+        raise app.UsageError("Too many command-line arguments.")
 
-  output_file: file = open(OUTFILE, "w")
-  output_file.write("SENTENCE_ID\tSENTENCE_TEXT\tNORMALIZED_TEXT\n")
+    if FLAGS.string_to_normalize is not None:
+        input_text: str = FLAGS.string_to_normalize
+        print(norm.NormalizeBreton(FLAGS.string_to_normalize))
 
-  if len(argv) > 1:
-    raise app.UsageError('Too many command-line arguments.')
+    else:
+        total_sentences: int = 0
+        changed_sentences: int = 0
 
-  for line in breton_sentences:
-    total_sentences += 1
-    sentence_id: str = line.split("\t")[0]
-    sentence_text: str = line.split("\t")[1]
-#    input_text: str = FLAGS.string_to_normalize
-#    print(norm.NormalizeBreton(FLAGS.string_to_normalize))
-#    print(norm.NormalizeBretonSoftMutation(FLAGS.string_to_normalize))
-    normalized_text: str = norm.NormalizeBreton(sentence_text)
+        output_file: file = open(OUTFILE, "w")
+        output_file.write("SENTENCE_ID\tSENTENCE_TEXT\tNORMALIZED_TEXT\n")
 
-    if normalized_text != sentence_text.strip().lower():
-      changed_sentences += 1
-      newline = sentence_id+"\t"+sentence_text.strip().lower()+"\t"+normalized_text+"\n"
-      output_file.write(newline)
-#      print(sentence_id)
-#      print(sentence_text.strip().lower())
-#      print(normalized_text)
+        for line in breton_sentences:
+            total_sentences += 1
+            sentence_id: str = line.split("\t")[0]
+            sentence_text: str = line.split("\t")[1]
+            normalized_text: str = norm.NormalizeBreton(sentence_text)
 
-  print("Changed {} out of {} sentences!".format(changed_sentences, total_sentences))
+            if normalized_text != sentence_text.strip().lower():
+                changed_sentences += 1
+                newline = sentence_id+"\t"+sentence_text.strip().lower()+"\t"+normalized_text+"\n"
+                output_file.write(newline)
+          #      print(sentence_id)
+          #      print(sentence_text.strip().lower())
+          #      print(normalized_text)
+
+        print("Changed {} out of {} sentences!".format(changed_sentences, total_sentences))
 
 if __name__ == '__main__':
   app.run(main)

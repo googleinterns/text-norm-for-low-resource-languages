@@ -1,133 +1,134 @@
 #!/usr/bin/env python
-'''Add docstring.'''
+"""Library of FST rewrite rules to handle Celtic initial consonant mutations."""
 
 from pynini import *
-#import re
+from MutationHandler import *
 
-BR_GRAPHEMES = union(
-    "a", "b", "ch", "c'h", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "y", "z",
-#    "â", "à", "â", "à", "æ", "ç", "é", "è", "ê", "ë", "ï", "î", "ô", "œ", "ù", "û", "ü", "ÿ", "ê", "ô", "ù", "ü", "ñ",
-    "â", "ê", "î", "ô", "û", "ù", "ü", "ñ",
-#    "'", "-", "’", " ",
-#    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
-    )
+language = "breton"
+mutation_handler = CelticMutationHandler(language)
 
-SOFT_TRIGGERS = union("da", "dre", "a", "war", "dindan", "eme", "en ur", "ne", "na", "ez", "ra", "en em", "daou", "div", "pa", "pe", "an holl", "re",
-                      #"hini"
-                      #"e", "tra",
-                      )
+GRAPHEMES = mutation_handler.GRAPHEMES
 
-HARD_TRIGGERS = union("ho", "az", "ez", "da'z")
+SOFT_TRIGGERS = mutation_handler.soft_triggers
+HARD_TRIGGERS = mutation_handler.hard_triggers
+SPIRANT_TRIGGERS = mutation_handler.spirant_triggers
+MIXED_TRIGGERS = mutation_handler.mixed_triggers
+NASAL_TRIGGERS = mutation_handler.nasal_triggers
+LENITION_TRIGGERS = mutation_handler.lenition_triggers
+ECLIPSIS_TRIGGERS = mutation_handler.eclipsis_triggers
 
-SPIRANT_TRIGGERS = union("he", "va", "tri", "teir", "pevar", "peder", "nav", "hon"
-                         #"ma", "o"
-                         )
-
-# Skipping mixed triggers for now, since they are all homographs of triggers
-# that trigger other mutations (e.g. "o", "e", and "ma")
-#MIXED_TRIGGERS = union("o", "e", "ma")
+SOFT_MUTATION = mutation_handler.soft_map
+HARD_MUTATION = mutation_handler.hard_map
+SPIRANT_MUTATION = mutation_handler.spirant_map
+MIXED_MUTATION = mutation_handler.mixed_map
+NASAL_MUTATION = mutation_handler.nasal_map
+LENITION_MUTATION = mutation_handler.lenition_map
+ECLIPSIS_MUTATION = mutation_handler.eclipsis_map
 
 SPACE = " "
-UNICODE = union(*("[{}]".format(i) for i in range(1, 256))).optimize()
-sigma_star = union(BR_GRAPHEMES, SOFT_TRIGGERS, HARD_TRIGGERS, SPIRANT_TRIGGERS, SPACE, UNICODE).closure()
+sigma_star = mutation_handler.sigma_star
 
-SOFT_MUTATION = string_map((
-    ("p", "b"),
-    ("t", "d"),
-    ("k", "g"),
-    ("gw", "w"),
-    ("m", "v")
-    ))
-
-HARD_MUTATION = union(
-    transducer("b", "p"),
-    transducer("d", "t"),
-    transducer("g", "k"),
-    transducer("gw", "kw", -1), # remove because g -> k already exists?
-    transducer("m", "v")
-    )
-
-SPIRANT_MUTATION = string_map((
-    ("p", "f"),
-    ("t", "z"),
-    ("k", "c'h")
-    ))
-
-PREPROCESS = union(
-    transducer("a ra", "aaaaara") # TODO: do this better
-    )
-
-POSTPROCESS = union(
-    transducer("aaaaara", "a ra"),
-    transducer("dre va", "dre ma")
-    )
-
-# Skipping mixed mutation for now, since all mixed triggers are homographs of
-# triggers that trigger another mutation
-#MIXED_MUTATION = union(
-#    transducer("b", "v"),
-#    transducer("d", "t"),
-#    transducer("g", "c'h"),
-#    transducer("gw", "w", -1),
-#    transducer("m", "v")
-#    )
+PREPROCESS = mutation_handler.preprocessing
+POSTPROCESS = mutation_handler.postprocessing
 
 DO_SOFT_MUTATION = cdrewrite(
     SOFT_MUTATION,
     union(SPACE, "[BOS]") + SOFT_TRIGGERS + acceptor(SPACE),
-    BR_GRAPHEMES,
+    GRAPHEMES,
     sigma_star)
-
 DO_HARD_MUTATION = cdrewrite(
     HARD_MUTATION,
     union(SPACE, "[BOS]") + HARD_TRIGGERS + acceptor(SPACE),
-    BR_GRAPHEMES,
+    GRAPHEMES,
     sigma_star)
-
 DO_SPIRANT_MUTATION = cdrewrite(
     SPIRANT_MUTATION,
     union(SPACE, "[BOS]") + SPIRANT_TRIGGERS + acceptor(SPACE),
-    BR_GRAPHEMES,
+    GRAPHEMES,
     sigma_star)
+DO_MIXED_MUTATION = cdrewrite(
+    MIXED_MUTATION,
+    union(SPACE, "[BOS]") + MIXED_TRIGGERS + acceptor(SPACE),
+    GRAPHEMES,
+    sigma_star)
+DO_NASAL_MUTATION = cdrewrite(
+    NASAL_MUTATION,
+    union(SPACE, "[BOS]") + NASAL_TRIGGERS + acceptor(SPACE),
+    GRAPHEMES,
+    sigma_star)
+DO_LENITION = cdrewrite(
+    LENITION_MUTATION,
+    union(SPACE, "[BOS]") + LENITION_TRIGGERS + acceptor(SPACE),
+    GRAPHEMES,
+    sigma_star)
+DO_ECLIPSIS = cdrewrite(
+    ECLIPSIS_MUTATION,
+    union(SPACE, "[BOS]") + ECLIPSIS_TRIGGERS + acceptor(SPACE),
+    GRAPHEMES,
+    sigma_star)
+
+mutation_dict = {
+                 "soft":
+                      DO_SOFT_MUTATION,
+                  "hard":
+                      DO_HARD_MUTATION,
+                  "spirant":
+                      DO_SPIRANT_MUTATION,
+                  "mixed":
+                      DO_MIXED_MUTATION,
+                  "nasal":
+                      DO_NASAL_MUTATION,
+                  "lenition":
+                      DO_LENITION,
+                  "eclipsis":
+                      DO_ECLIPSIS,
+                    }
 
 DO_PREPROCESSING = cdrewrite(
     PREPROCESS,
     union(SPACE, "[BOS]"),
-    union(BR_GRAPHEMES, SPACE),
+    union(GRAPHEMES, SPACE),
     sigma_star)
 
 DO_POSTPROCESSING = cdrewrite(
     POSTPROCESS,
     union(SPACE, "[BOS]"),
-    union(BR_GRAPHEMES, SPACE),
+    union(GRAPHEMES, SPACE),
     sigma_star)
 
 
-def NormalizeBretonSoftMutation(breton_string: str) -> str:
-  """Apply the Breton soft mutation."""
-  preprocess_string = compose(breton_string.strip().lower(), DO_PREPROCESSING).string()
-  apply_mutation = compose(preprocess_string, DO_SOFT_MUTATION).string()
-  postprocess_string = compose(apply_mutation, DO_POSTPROCESSING).string()
-  return postprocess_string
+def preprocess(string: str) -> str:
+    """Preprocess the string before normalization."""
+    return compose(string.strip().lower(), DO_PREPROCESSING).string()
 
 
-def NormalizeBretonHardMutation(breton_string: str) -> str:
-  """Apply the Breton hard mutation."""
-  preprocess_string = compose(breton_string.strip().lower(), DO_PREPROCESSING).string()
-  apply_mutation = compose(preprocess_string, DO_HARD_MUTATION).string()
-  postprocess_string = compose(apply_mutation, DO_POSTPROCESSING).string()
-  return postprocess_string
+def postprocess(string: str) -> str:
+    """Postprocess the string after normalization."""
+    return compose(string, DO_POSTPROCESSING).string()
 
 
-def NormalizeBretonSpirantMutation(breton_string: str) -> str:
-  """Apply the Breton spirant mutation."""
-  preprocess_string = compose(breton_string.strip().lower(), DO_PREPROCESSING).string()
-  apply_mutation = compose(preprocess_string, DO_SPIRANT_MUTATION).string()
-  postprocess_string = compose(apply_mutation, DO_POSTPROCESSING).string()
-  return postprocess_string
+def apply_mutation(string: str, mutation: str) -> str:
+    """Applies a single mutation to a string."""
+    apply_mutation = compose(string, mutation_dict.get(mutation)).string()
+    return apply_mutation
 
 
 def NormalizeBreton(breton_string: str) -> str:
-  """Apply the Breton soft, hard, and spirant mutations. Ignores mixed mutation for now."""
-  return NormalizeBretonSoftMutation(NormalizeBretonHardMutation(NormalizeBretonSpirantMutation(breton_string.strip().lower())))
+    """Applies Breton mutations."""
+    preprocessed_string = preprocess(breton_string)
+    apply_soft_mutation = apply_mutation(preprocessed_string, "soft")
+    apply_hard_mutation = apply_mutation(apply_soft_mutation, "hard")
+    apply_spirant_mutation = apply_mutation(apply_hard_mutation, "spirant")
+    postprocessed_string = postprocess(apply_spirant_mutation)
+    return postprocessed_string
+
+
+def NormalizeWelsh(welsh_string: str) -> str:
+    """Applies Welsh mutations."""
+    preprocessed_string = preprocess(welsh_string)
+    apply_soft_mutation = apply_mutation(preprocessed_string, "soft")
+    apply_nasal_mutation = apply_mutation(apply_soft_mutation, "nasal")
+    apply_spirant_mutation = apply_mutation(apply_nasal_mutation, "spirant")
+    postprocessed_string = postprocess(apply_spirant_mutation)
+    return postprocessed_string
 
