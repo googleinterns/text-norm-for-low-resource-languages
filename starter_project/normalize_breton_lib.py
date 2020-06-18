@@ -2,7 +2,7 @@
 """Library of FST rewrite rules to handle Celtic initial consonant mutations."""
 
 from pynini import *
-from MutationHandler import CelticMutationHandler
+from mutation_handler import CelticMutationHandler
 
 LANGUAGE = "breton"
 MUTATION_HANDLER = CelticMutationHandler(LANGUAGE)

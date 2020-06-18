@@ -8,19 +8,20 @@ A class for Celtic initial consonant mutations. Features include triggers, targe
 #from __future__ import google_type_annotations
 #from __future__ import print_function
 
+from dataclasses import dataclass
 from absl import app
 from absl import flags
 from pynini import *
 
 FLAGS = flags.FLAGS
 
-
+@dataclass
 class CelticMutationHandler:
     """A class containing language-specific info for Celtic consonant mutation.
 
     Attributes:
-        LANGUAGE: A string indicating the language.
-        GRAPHEMES: A union of strings of the graphemes of the language.
+        language: A string indicating the language.
+        graphemes: A union of strings of the graphemes of the language.
         soft_triggers: A union of strings of soft mutation triggers.
         soft_map: A string_map or union of transducers for the soft mutation.
         hard_triggers: A union of strings of hard mutation triggers.
@@ -33,7 +34,7 @@ class CelticMutationHandler:
         lenition_map: A string_map or union of transducers for lenition.
         eclipsis_triggers: A union of strings of eclipsis triggers.
         eclipsis_map: A string_map or union of transducers for eclipsis.
-        TRIGGERS: A union of all triggers for the language.
+        triggers: A union of all triggers for the language.
         sigma_star: A cyclic, unweighted acceptor representing
             the closure over the alphabet.
         preprocessing: A union of language-specific transducers
@@ -44,7 +45,7 @@ class CelticMutationHandler:
 
     def __init__(self, language):
 
-        self.LANGUAGE = language
+        self.language = language
         self.soft_triggers = "None"
         self.soft_map = "None"
         self.hard_triggers = "None"
@@ -60,12 +61,12 @@ class CelticMutationHandler:
         self.eclipsis_triggers = "None"
         self.eclipsis_map = "None"
 
-        SPACE = " "
-        UNICODE = union(*("[{}]".format(i) for i in range(1, 256))).optimize()
+        space = " "
+        unicode_chars = union(*("[{}]".format(i) for i in range(1, 256))).optimize()
 
-        if self.LANGUAGE == "breton":
+        if self.language == "breton":
 
-            self.GRAPHEMES = union("a", "b", "ch", "c'h", "d", "e", "f", "g",
+            self.graphemes = union("a", "b", "ch", "c'h", "d", "e", "f", "g",
                                    "h", "i", "j", "k", "l", "m", "n", "o", "p",
                                    "r", "s", "t", "u", "v", "w", "y", "z",
                                    "â", "ê", "î", "ô", "û", "ù", "ü", "ñ")
@@ -83,7 +84,7 @@ class CelticMutationHandler:
                                          )
             self.mixed_triggers = union("o", "e", "ma")
 
-            self.TRIGGERS = union(self.soft_triggers,
+            self.triggers = union(self.soft_triggers,
                                   self.hard_triggers,
                                   self.spirant_triggers,
                                   self.mixed_triggers)
@@ -125,9 +126,9 @@ class CelticMutationHandler:
         # Welsh is an incomplete placeholder to demonstrate how we can use this
         # class for implementing initial consonant mutations for the other
         # Celtic languages.
-        elif self.LANGUAGE == "welsh":
+        elif self.language == "welsh":
 
-            self.GRAPHEMES = union("a", "b", "ch", "d", "e", "f", "g", "h", "i",
+            self.graphemes = union("a", "b", "ch", "d", "e", "f", "g", "h", "i",
                                    "j", "k", "l", "m", "n", "o", "p", "r", "s",
                                    "t", "u", "w", "y",
                                    "â", "ê", "î", "ô", "û", "ŵ", "ŷ", )
@@ -136,7 +137,7 @@ class CelticMutationHandler:
             self.nasal_triggers = union("fy")
             self.spirant_triggers = union("gyda", "chwe")
 
-            self.TRIGGERS = union(self.soft_triggers,
+            self.triggers = union(self.soft_triggers,
                                   self.nasal_triggers,
                                   self.spirant_triggers)
 
@@ -171,10 +172,10 @@ class CelticMutationHandler:
                 )
 
 
-        self.sigma_star = union(self.GRAPHEMES,
-                                self.TRIGGERS,
-                                SPACE,
-                                UNICODE,
+        self.sigma_star = union(self.graphemes,
+                                self.triggers,
+                                space,
+                                unicode_chars,
                                 ).closure()
 
 
@@ -184,4 +185,3 @@ def main(argv):
 
 if __name__ == '__main__':
     app.run(main)
-
