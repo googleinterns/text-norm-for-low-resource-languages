@@ -7,7 +7,7 @@ from mutation_handler import CelticMutationHandler
 LANGUAGE = "breton"
 MUTATION_HANDLER = CelticMutationHandler(LANGUAGE)
 
-GRAPHEMES = MUTATION_HANDLER.GRAPHEMES
+GRAPHEMES = MUTATION_HANDLER.graphemes
 
 SOFT_TRIGGERS = MUTATION_HANDLER.soft_triggers
 HARD_TRIGGERS = MUTATION_HANDLER.hard_triggers

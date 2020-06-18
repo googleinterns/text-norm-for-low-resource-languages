@@ -72,12 +72,14 @@ class CelticMutationHandler:
                                    "â", "ê", "î", "ô", "û", "ù", "ü", "ñ")
 
             self.soft_triggers = union("da", "dre", "a", "war", "dindan",
-                                       "eme", "en ur", "ne", "na", "ez",
-                                       "ra", "en em", "daou", "div", "pa",
+                                       "eme", "en ur", "ne", "na", "ra",
+                                       "en em", "daou", "div", "pa",
                                        "pe", "an holl", "re",
-                                       #"e", "tra",
+                                       #"e", "tra", "ez",
                                       )
-            self.hard_triggers = union("ho", "az", "ez", "da'z")
+            self.hard_triggers = union("ho", "az", "da'z",
+                                       #"ez",
+                                       )
             self.spirant_triggers = union("he", "va", "tri", "teir", "pevar",
                                           "peder", "nav", "hon",
                                           #"ma", "o"

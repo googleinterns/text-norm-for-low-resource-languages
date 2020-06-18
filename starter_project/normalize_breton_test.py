@@ -8,7 +8,7 @@ class TestStringMethods(unittest.TestCase):
 
     def test_normalize_breton(self):
         'Test the output of normalize_breton.'
-        with open("bre_normalized_sentences.tsv", "r") as filename:
+        with open("testdata/bre_normalized_sentences.tsv", "r") as filename:
             test_cases = filename.readlines()[1:]
 #        test_cases = [(("ma gwin Da gwin tri pesk bara kozh ha KIG",
 #                        "ma gwin da win tri fesk bara kozh ha kig"),
@@ -50,7 +50,6 @@ class TestStringMethods(unittest.TestCase):
     def test_normalize_breton_hard_mutation(self):
         'Test the Breton hard mutation.'
         test_cases = [(("da'z bag", "da'z pag"),
-                       ('ez douarn', 'ez touarn'),
                        ('ho geriadur', 'ho keriadur'),
                        ("ho Gwenn-ha-Du", "ho kwenn-ha-du"))]
         for test in test_cases:

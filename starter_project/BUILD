@@ -12,5 +12,5 @@ py_library(
 py_test(
     name = "normalize_breton_test",
     srcs = ["normalize_breton_test.py"],
-    data = [":bre_normalized_sentences.tsv"]
+    data = glob(["testdata/bre_normalized_sentences.tsv"])
 )
