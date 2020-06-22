@@ -62,7 +62,8 @@ class CelticMutationHandler:
         self.eclipsis_map = "None"
 
         space = " "
-        unicode_chars = union(*("[{}]".format(i) for i in range(1, 256))).optimize()
+        self.sigma_star = union(*("[{}]".format(i) for i in range(1, 256))
+                                ).optimize().closure()
 
         if self.language == "breton":
 
@@ -172,13 +173,6 @@ class CelticMutationHandler:
                 transducer("heddiw", "heddiw"),
                 transducer("cwmwl", "cwmwl"),
                 )
-
-
-        self.sigma_star = union(self.graphemes,
-                                self.triggers,
-                                space,
-                                unicode_chars,
-                                ).closure()
 
 
 def main(argv):
