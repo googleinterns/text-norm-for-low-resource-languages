@@ -61,7 +61,6 @@ class CelticMutationHandler:
         self.eclipsis_triggers = "None"
         self.eclipsis_map = "None"
 
-        space = " "
         self.sigma_star = union(*("[{}]".format(i) for i in range(1, 256))
                                 ).optimize().closure()
 
