@@ -1,7 +1,7 @@
 """Tests for evaluating Celtic initial consonant mutations."""
 
 import unittest
-import normalize_breton_lib as norm
+import normalize_breton_lib
 
 class TestStringMethods(unittest.TestCase):
     """Tests for evaluating initial consonant mutations."""
@@ -16,7 +16,7 @@ class TestStringMethods(unittest.TestCase):
         for sentence in test_cases:
             test_case = sentence.strip().split("\t")[1]
             expected = sentence.strip().split("\t")[2]
-            test_fst = norm.normalize_breton(test_case)
+            test_fst = normalize_breton_lib.normalize_breton(test_case)
             self.assertEqual(test_fst, expected)
 
 
@@ -29,9 +29,9 @@ class TestStringMethods(unittest.TestCase):
                        ("pe mamm", "pe vamm"))]
         for test in test_cases:
             for test_case, expected in test:
-                preprocessed = norm.preprocess(test_case)
-                test_fst = norm.apply_mutation(preprocessed, "soft")
-                postprocessed = norm.postprocess(test_fst)
+                preprocessed = normalize_breton_lib.preprocess(test_case)
+                test_fst = normalize_breton_lib.apply_mutation(preprocessed, "soft")
+                postprocessed = normalize_breton_lib.postprocess(test_fst)
                 self.assertEqual(postprocessed, expected)
 
 
@@ -41,9 +41,9 @@ class TestStringMethods(unittest.TestCase):
                        ("Bara ha kig", "bara ha kig"))]
         for test in test_cases:
             for test_case, expected in test:
-                preprocessed = norm.preprocess(test_case)
-                test_fst = norm.apply_mutation(preprocessed, "soft")
-                postprocessed = norm.postprocess(test_fst)
+                preprocessed = normalize_breton_lib.preprocess(test_case)
+                test_fst = normalize_breton_lib.apply_mutation(preprocessed, "soft")
+                postprocessed = normalize_breton_lib.postprocess(test_fst)
                 self.assertEqual(postprocessed, expected)
 
 
@@ -54,9 +54,9 @@ class TestStringMethods(unittest.TestCase):
                        ("ho Gwenn-ha-Du", "ho kwenn-ha-du"))]
         for test in test_cases:
             for test_case, expected in test:
-                preprocessed = norm.preprocess(test_case)
-                test_fst = norm.apply_mutation(preprocessed, "hard")
-                postprocessed = norm.postprocess(test_fst)
+                preprocessed = normalize_breton_lib.preprocess(test_case)
+                test_fst = normalize_breton_lib.apply_mutation(preprocessed, "hard")
+                postprocessed = normalize_breton_lib.postprocess(test_fst)
                 self.assertEqual(postprocessed, expected)
 
 
@@ -67,9 +67,9 @@ class TestStringMethods(unittest.TestCase):
                        ('nav ki', "nav c'hi"))]
         for test in test_cases:
             for test_case, expected in test:
-                preprocessed = norm.preprocess(test_case)
-                test_fst = norm.apply_mutation(preprocessed, "spirant")
-                postprocessed = norm.postprocess(test_fst)
+                preprocessed = normalize_breton_lib.preprocess(test_case)
+                test_fst = normalize_breton_lib.apply_mutation(preprocessed, "spirant")
+                postprocessed = normalize_breton_lib.postprocess(test_fst)
                 self.assertEqual(postprocessed, expected)
 
 

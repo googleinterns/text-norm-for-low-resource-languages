@@ -8,7 +8,7 @@ file, it will write the sentences that were changed to a new file.
 
 from absl import app
 from absl import flags
-import normalize_breton_lib as norm
+import normalize_breton_lib
 
 FLAGS = flags.FLAGS
 
@@ -28,7 +28,7 @@ def main(argv):
 
     if FLAGS.string_to_normalize is not None:
         input_text: str = FLAGS.string_to_normalize
-        print(norm.normalize_breton(FLAGS.string_to_normalize))
+        print(normalize_breton_lib.normalize_breton(FLAGS.string_to_normalize))
 
     else:
         total_sentences: int = 0
@@ -41,7 +41,7 @@ def main(argv):
             total_sentences += 1
             sentence_id: str = line.split("\t")[0]
             sentence_text: str = line.split("\t")[1]
-            normalized_text: str = norm.normalize_breton(sentence_text)
+            normalized_text: str = normalize_breton_lib.normalize_breton(sentence_text)
 
             if normalized_text != sentence_text.strip().lower():
                 changed_sentences += 1
