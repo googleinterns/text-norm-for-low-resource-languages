@@ -43,7 +43,7 @@ class CelticMutationHandler:
             for postprocessing a string.
     """
 
-    def __init__(self, language):
+    def __init__(self, language: str) -> None:
 
         self.language = language
         self.soft_triggers = "None"
