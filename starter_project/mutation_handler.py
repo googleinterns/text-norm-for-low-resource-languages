@@ -98,25 +98,25 @@ class CelticMutationHandler:
                 ("gw", "w"),
                 ("m", "v"),
                 ))
-            self.hard_map = union(
-                transducer("b", "p"),
-                transducer("d", "t"),
-                transducer("g", "k"),
-                transducer("gw", "kw", -1), # remove because g->k exists?
-                transducer("m", "v"),
-                )
+            self.hard_map = string_map((
+                ("b", "p"),
+                ("d", "t"),
+                ("g", "k"),
+                #("gw", "kw"), # remove because g->k exists?
+                ("m", "v"),
+                ))
             self.spirant_map = string_map((
                 ("p", "f"),
                 ("t", "z"),
                 ("k", "c'h"),
                 ))
-            self.mixed_map = union(
-                transducer("b", "v"),
-                transducer("d", "t"),
-                transducer("g", "c'h"),
-                transducer("gw", "w", -1),
-                transducer("m", "v"),
-                )
+            self.mixed_map = string_map((
+                ("b", "v"),
+                ("d", "t"),
+                ("gw", "w"),
+                ("g", "c'h"),
+                ("m", "v"),
+                ))
 
             self.preprocessing = union(
                 transducer("a ra", "aaaaara"))
@@ -143,15 +143,15 @@ class CelticMutationHandler:
                                   self.nasal_triggers,
                                   self.spirant_triggers)
 
-            self.soft_map = union(
-                transducer("p", "b"),
-                transducer("t", "d"),
-                transducer("c", "g"),
-                transducer("m", "f"),
-                transducer("ll", "l"),
-                transducer("rh", "r"),
-                transducer("ts", "j", -1),
-                )
+            self.soft_map = string_map((
+                ("p", "b"),
+                ("ts", "j"),
+                ("t", "d"),
+                ("c", "g"),
+                ("m", "f"),
+                ("ll", "l"),
+                ("rh", "r"),
+                ))
             self.nasal_map = string_map((
                 ("p", "mh"),
                 ("t", "nh"),

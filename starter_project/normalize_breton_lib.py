@@ -67,23 +67,6 @@ DO_ECLIPSIS = cdrewrite(
     GRAPHEMES,
     SIGMA_STAR)
 
-MUTATION_DICT = {
-    "soft":
-        DO_SOFT_MUTATION,
-    "hard":
-        DO_HARD_MUTATION,
-    "spirant":
-        DO_SPIRANT_MUTATION,
-    "mixed":
-        DO_MIXED_MUTATION,
-    "nasal":
-        DO_NASAL_MUTATION,
-    "lenition":
-        DO_LENITION,
-    "eclipsis":
-        DO_ECLIPSIS,
-}
-
 DO_PREPROCESSING = cdrewrite(
     PREPROCESS,
     union(SPACE, "[BOS]"),
@@ -97,37 +80,19 @@ DO_POSTPROCESSING = cdrewrite(
     SIGMA_STAR)
 
 
-def preprocess(string: str) -> str:
-    """Preprocess the string before normalization."""
-    return compose(string.strip().lower(), DO_PREPROCESSING).string()
-
-
-def postprocess(string: str) -> str:
-    """Postprocess the string after normalization."""
-    return compose(string, DO_POSTPROCESSING).string()
-
-
-def apply_mutation(string: str, mutation: str) -> str:
-    """Applies a single mutation to a string."""
-    applied_mutation = compose(string, MUTATION_DICT.get(mutation)).string()
-    return applied_mutation
-
-
 def normalize_breton(breton_string: str) -> str:
     """Applies Breton mutations."""
-    preprocessed_string = preprocess(breton_string)
-    apply_soft_mutation = apply_mutation(preprocessed_string, "soft")
-    apply_hard_mutation = apply_mutation(apply_soft_mutation, "hard")
-    apply_spirant_mutation = apply_mutation(apply_hard_mutation, "spirant")
-    postprocessed_string = postprocess(apply_spirant_mutation)
-    return postprocessed_string
-
+    return (breton_string.strip().lower() @
+            DO_PREPROCESSING @
+            DO_SOFT_MUTATION @
+            DO_HARD_MUTATION @
+            DO_SPIRANT_MUTATION @
+            DO_POSTPROCESSING).string()
 
 def normalize_welsh(welsh_string: str) -> str:
     """Applies Welsh mutations."""
-    preprocessed_string = preprocess(welsh_string)
-    apply_soft_mutation = apply_mutation(preprocessed_string, "soft")
-    apply_nasal_mutation = apply_mutation(apply_soft_mutation, "nasal")
-    apply_spirant_mutation = apply_mutation(apply_nasal_mutation, "spirant")
-    postprocessed_string = postprocess(apply_spirant_mutation)
-    return postprocessed_string
+    return (welsh_string.strip().lower() @
+            DO_PREPROCESSING @
+            DO_SOFT_MUTATION @
+            DO_NASAL_MUTATION @
+            DO_SPIRANT_MUTATION).string()
