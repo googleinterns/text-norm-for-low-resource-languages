@@ -1,6 +1,6 @@
 # Lint as: python3
 """
-A class for Celtic initial consonant mutations. Features include triggers, targets, and string maps.
+A class for Celtic initial consonant mutations.
 """
 
 #from __future__ import absolute_import
@@ -20,7 +20,6 @@ class CelticMutationHandler:
     """A class containing language-specific info for Celtic consonant mutation.
 
     Attributes:
-        language: A string indicating the language.
         graphemes: A union of strings of the graphemes of the language.
         soft_triggers: A union of strings of soft mutation triggers.
         soft_map: A string_map or union of transducers for the soft mutation.
@@ -34,18 +33,17 @@ class CelticMutationHandler:
         lenition_map: A string_map or union of transducers for lenition.
         eclipsis_triggers: A union of strings of eclipsis triggers.
         eclipsis_map: A string_map or union of transducers for eclipsis.
-        triggers: A union of all triggers for the language.
-        sigma_star: A cyclic, unweighted acceptor representing
-            the closure over the alphabet.
         preprocessing: A union of language-specific transducers
             for preprocessing a string.
         postprocessing: A union of language-specific transducers
             for postprocessing a string.
+        sigma_star: A cyclic, unweighted acceptor representing
+            the closure over the alphabet.
     """
 
-    def __init__(self, language: str) -> None:
-
-        self.language = language
+    def __init__(self: str) -> None:
+        """Initialize attributes to none, other methods will set as needed."""
+        self.graphemes = "None"
         self.soft_triggers = "None"
         self.soft_map = "None"
         self.hard_triggers = "None"
@@ -60,118 +58,113 @@ class CelticMutationHandler:
         self.lenition_map = "None"
         self.eclipsis_triggers = "None"
         self.eclipsis_map = "None"
-
+        self.preprocessing = "None"
+        self.postprocessing = "None"
         self.sigma_star = union(*("[{}]".format(i) for i in range(1, 256))
                                 ).optimize().closure()
 
-        if self.language == "breton":
 
-            self.graphemes = union("a", "b", "ch", "c'h", "d", "e", "f", "g",
-                                   "h", "i", "j", "k", "l", "m", "n", "o", "p",
-                                   "r", "s", "t", "u", "v", "w", "y", "z",
-                                   "â", "ê", "î", "ô", "û", "ù", "ü", "ñ")
+    def breton_handler(self):
+        """Handler for Breton-specific information."""
 
-            self.soft_triggers = union("da", "dre", "a", "war", "dindan",
-                                       "eme", "en ur", "ne", "na", "ra",
-                                       "en em", "daou", "div", "pa",
-                                       "pe", "an holl", "re",
-                                       #"e", "tra", "ez",
-                                      )
-            self.hard_triggers = union("ho", "az", "da'z",
-                                       #"ez",
-                                       )
-            self.spirant_triggers = union("he", "va", "tri", "teir", "pevar",
-                                          "peder", "nav", "hon",
-                                          #"ma", "o"
-                                         )
-            self.mixed_triggers = union("o", "e", "ma")
+        self.graphemes = union("a", "b", "ch", "c'h", "d", "e", "f", "g",
+                               "h", "i", "j", "k", "l", "m", "n", "o", "p",
+                               "r", "s", "t", "u", "v", "w", "y", "z",
+                               "â", "ê", "î", "ô", "û", "ù", "ü", "ñ")
 
-            self.triggers = union(self.soft_triggers,
-                                  self.hard_triggers,
-                                  self.spirant_triggers,
-                                  self.mixed_triggers)
+        self.soft_triggers = union("da", "dre", "a", "war", "dindan",
+                                   "eme", "en ur", "ne", "na", "ra",
+                                   "en em", "daou", "div", "pa",
+                                   "pe", "an holl", "re",
+                                   #"e", "tra", "ez",
+                                  )
+        self.hard_triggers = union("ho", "az", "da'z",
+                                   #"ez",
+                                  )
+        self.spirant_triggers = union("he", "va", "tri", "teir", "pevar",
+                                      "peder", "nav", "hon",
+                                      #"ma", "o"
+                                     )
+        self.mixed_triggers = union("o", "e", "ma")
 
-            self.soft_map = string_map((
-                ("p", "b"),
-                ("t", "d"),
-                ("k", "g"),
-                ("gw", "w"),
-                ("m", "v"),
-                ))
-            self.hard_map = string_map((
-                ("b", "p"),
-                ("d", "t"),
-                ("g", "k"),
-                #("gw", "kw"), # remove because g->k exists?
-                ("m", "v"),
-                ))
-            self.spirant_map = string_map((
-                ("p", "f"),
-                ("t", "z"),
-                ("k", "c'h"),
-                ))
-            self.mixed_map = string_map((
-                ("b", "v"),
-                ("d", "t"),
-                ("gw", "w"),
-                ("g", "c'h"),
-                ("m", "v"),
-                ))
+        self.soft_map = string_map((
+            ("p", "b"),
+            ("t", "d"),
+            ("k", "g"),
+            ("gw", "w"),
+            ("m", "v"),
+            ))
+        self.hard_map = string_map((
+            ("b", "p"),
+            ("d", "t"),
+            ("g", "k"),
+            #("gw", "kw"), # remove because g->k exists?
+            ("m", "v"),
+            ))
+        self.spirant_map = string_map((
+            ("p", "f"),
+            ("t", "z"),
+            ("k", "c'h"),
+            ))
+        self.mixed_map = string_map((
+            ("b", "v"),
+            ("d", "t"),
+            ("gw", "w"),
+            ("g", "c'h"),
+            ("m", "v"),
+            ))
 
-            self.preprocessing = union(
-                transducer("a ra", "aaaaara"))
-            self.postprocessing = union(
-                transducer("aaaaara", "a ra"),
-                transducer("dre va", "dre ma"),
-                )
+        self.preprocessing = union(
+            transducer("a ra", "aaaaara"))
+        self.postprocessing = union(
+            transducer("aaaaara", "a ra"),
+            transducer("dre va", "dre ma"),
+            )
 
-        # Welsh is an incomplete placeholder to demonstrate how we can use this
-        # class for implementing initial consonant mutations for the other
-        # Celtic languages.
-        elif self.language == "welsh":
+    # Welsh is an incomplete placeholder to demonstrate how we can use this
+    # class for implementing initial consonant mutations for the other
+    # Celtic languages.
+    def welsh_handler(self):
+        """Handler for Welsh-specific information."""
 
-            self.graphemes = union("a", "b", "ch", "d", "e", "f", "g", "h", "i",
-                                   "j", "k", "l", "m", "n", "o", "p", "r", "s",
-                                   "t", "u", "w", "y",
-                                   "â", "ê", "î", "ô", "û", "ŵ", "ŷ", )
+        self.graphemes = union("a", "b", "ch", "d", "e", "f", "g", "h", "i",
+                               "j", "k", "l", "m", "n", "o", "p", "r", "s",
+                               "t", "u", "w", "y",
+                               "â", "ê", "î", "ô", "û", "ŵ", "ŷ", )
 
-            self.soft_triggers = union("dau", "dwy")
-            self.nasal_triggers = union("fy")
-            self.spirant_triggers = union("gyda", "chwe")
+        self.soft_triggers = union("dau", "dwy")
+        self.nasal_triggers = union("fy")
+        self.spirant_triggers = union("gyda", "chwe")
 
-            self.triggers = union(self.soft_triggers,
-                                  self.nasal_triggers,
-                                  self.spirant_triggers)
+        self.soft_map = string_map((
+            ("p", "b"),
+            ("ts", "j"),
+            ("t", "d"),
+            ("c", "g"),
+            ("m", "f"),
+            ("ll", "l"),
+            ("rh", "r"),
+            ))
+        self.nasal_map = string_map((
+            ("p", "mh"),
+            ("t", "nh"),
+            ("c", "ngh"),
+            ("b", "m"),
+            ("d", "n"),
+            ("g", "ng"),
+            ))
+        self.spirant_map = string_map((
+            ("p", "ph"),
+            ("t", "th"),
+            ("c", "ch"),
+            ))
 
-            self.soft_map = string_map((
-                ("p", "b"),
-                ("ts", "j"),
-                ("t", "d"),
-                ("c", "g"),
-                ("m", "f"),
-                ("ll", "l"),
-                ("rh", "r"),
-                ))
-            self.nasal_map = string_map((
-                ("p", "mh"),
-                ("t", "nh"),
-                ("c", "ngh"),
-                ("b", "m"),
-                ("d", "n"),
-                ("g", "ng"),
-                ))
-            self.spirant_map = string_map((
-                ("p", "ph"),
-                ("t", "th"),
-                ("c", "ch"),
-                ))
-
-            self.preprocessing = union(
-                transducer("cath", "cath"))
-            self.postprocessing = union(
-                transducer("heddiw", "heddiw"),
-                transducer("cwmwl", "cwmwl"),
-                )
+        self.preprocessing = union(
+            transducer("cath", "cath"))
+        self.postprocessing = union(
+            transducer("heddiw", "heddiw"),
+            transducer("cwmwl", "cwmwl"),
+            )
 
 
 def main(argv):

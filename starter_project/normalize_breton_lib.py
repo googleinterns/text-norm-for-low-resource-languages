@@ -4,8 +4,8 @@
 from pynini import *
 import mutation_handler
 
-LANGUAGE = "breton"
-MUTATION_HANDLER = mutation_handler.CelticMutationHandler(LANGUAGE)
+MUTATION_HANDLER = mutation_handler.CelticMutationHandler()
+MUTATION_HANDLER.breton_handler()
 
 GRAPHEMES = MUTATION_HANDLER.graphemes
 
