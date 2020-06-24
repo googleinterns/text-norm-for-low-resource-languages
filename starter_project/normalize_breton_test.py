@@ -6,6 +6,7 @@ import normalize_breton_lib
 class TestStringMethods(unittest.TestCase):
     """Tests for evaluating initial consonant mutations."""
 
+
     def test_normalize_breton(self):
         'Test the output of normalize_breton.'
         with open("testdata/bre_normalized_sentences.tsv", "r") as test_file:
@@ -26,11 +27,7 @@ class TestStringMethods(unittest.TestCase):
                        ("pe mamm", "pe vamm"))]
         for test in test_cases:
             for test_case, expected in test:
-                normalized_text = (test_case.strip().lower() @
-                                   normalize_breton_lib.DO_PREPROCESSING @
-                                   normalize_breton_lib.DO_SOFT_MUTATION @
-                                   normalize_breton_lib.DO_POSTPROCESSING
-                                   ).string()
+                normalized_text = normalize_breton_lib.apply_single_mutation(test_case, "soft")
                 self.assertEqual(normalized_text, expected)
 
 
@@ -40,11 +37,7 @@ class TestStringMethods(unittest.TestCase):
                        ("Bara ha kig", "bara ha kig"))]
         for test in test_cases:
             for test_case, expected in test:
-                normalized_text = (test_case.strip().lower() @
-                                   normalize_breton_lib.DO_PREPROCESSING @
-                                   normalize_breton_lib.DO_SOFT_MUTATION @
-                                   normalize_breton_lib.DO_POSTPROCESSING
-                                   ).string()
+                normalized_text = normalize_breton_lib.apply_single_mutation(test_case, "soft")
                 self.assertEqual(normalized_text, expected)
 
 
@@ -55,11 +48,7 @@ class TestStringMethods(unittest.TestCase):
                        ("ho Gwenn-ha-Du", "ho kwenn-ha-du"))]
         for test in test_cases:
             for test_case, expected in test:
-                normalized_text = (test_case.strip().lower() @
-                                   normalize_breton_lib.DO_PREPROCESSING @
-                                   normalize_breton_lib.DO_HARD_MUTATION @
-                                   normalize_breton_lib.DO_POSTPROCESSING
-                                   ).string()
+                normalized_text = normalize_breton_lib.apply_single_mutation(test_case, "hard")
                 self.assertEqual(normalized_text, expected)
 
 
@@ -70,11 +59,7 @@ class TestStringMethods(unittest.TestCase):
                        ('nav ki', "nav c'hi"))]
         for test in test_cases:
             for test_case, expected in test:
-                normalized_text = (test_case.strip().lower() @
-                                   normalize_breton_lib.DO_PREPROCESSING @
-                                   normalize_breton_lib.DO_SPIRANT_MUTATION @
-                                   normalize_breton_lib.DO_POSTPROCESSING
-                                   ).string()
+                normalized_text = normalize_breton_lib.apply_single_mutation(test_case, "spirant")
                 self.assertEqual(normalized_text, expected)
 
 

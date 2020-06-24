@@ -80,6 +80,23 @@ DO_POSTPROCESSING = cdrewrite(
     SIGMA_STAR)
 
 
+def apply_single_mutation(string, mutation):
+        """Do pre/postprocessing and a single mutation."""
+        mutation_dict = {"soft": DO_SOFT_MUTATION,
+                         "hard": DO_HARD_MUTATION,
+                         "spirant": DO_SPIRANT_MUTATION,
+                         "mixed": DO_MIXED_MUTATION,
+                         "nasal": DO_NASAL_MUTATION,
+                         "lenition": DO_LENITION,
+                         "eclipsis": DO_ECLIPSIS
+                         }
+        return (string.strip().lower() @
+                DO_PREPROCESSING @
+                mutation_dict.get(mutation) @
+                DO_POSTPROCESSING
+                ).string()
+
+
 def normalize_breton(breton_string: str) -> str:
     """Applies Breton mutations."""
     return (breton_string.strip().lower() @
