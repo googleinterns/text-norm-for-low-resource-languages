@@ -10,9 +10,6 @@ class TestStringMethods(unittest.TestCase):
         'Test the output of normalize_breton.'
         with open("testdata/bre_normalized_sentences.tsv", "r") as test_file:
             test_cases = test_file.readlines()[1:]
-#        test_cases = [(("ma gwin Da gwin tri pesk bara kozh ha KIG",
-#                        "ma gwin da win tri fesk bara kozh ha kig"),
-#                       ("da Kemper", "da gemper"))]
         for sentence in test_cases:
             test_case = sentence.strip().split("\t")[1]
             expected = sentence.strip().split("\t")[2]

@@ -3,11 +3,6 @@
 A class for Celtic initial consonant mutations.
 """
 
-#from __future__ import absolute_import
-#from __future__ import division
-#from __future__ import google_type_annotations
-#from __future__ import print_function
-
 from dataclasses import dataclass
 from absl import app
 from absl import flags
@@ -98,7 +93,6 @@ class CelticMutationHandler:
             ("b", "p"),
             ("d", "t"),
             ("g", "k"),
-            #("gw", "kw"), # remove because g->k exists?
             ("m", "v"),
             ))
         self.spirant_map = string_map((
