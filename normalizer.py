@@ -8,17 +8,17 @@ the sentences that were changed to a new file.
 
 from absl import app
 from absl import flags
-import normalize_breton_lib
+import normalizer_lib
 
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string('string_to_normalize', None, 'the string to normalize')
 
-INFILE: str = "./testdata/test-sentences.txt"
-OUTFILE: str = "normalized_sentences.tsv"
+#INFILE: str = "./testdata/test-sentences.txt"
+#OUTFILE: str = "normalized_sentences.tsv"
 
-with open(INFILE) as f:
-    SENTENCES = f.readlines()
+#with open(INFILE) as f:
+#    SENTENCES = f.readlines()
 
 
 def main(argv):
