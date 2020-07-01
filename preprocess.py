@@ -1,32 +1,50 @@
 # Lint as: python3
-"""TODO(azupon): DO NOT SUBMIT without one-line documentation for preprocess.
-
-TODO(azupon): DO NOT SUBMIT without a detailed description of preprocess.
+"""Methods to preprocess data from different sources for text normalization.
 """
 
+import re
+from typing import List
 from absl import app
 from absl import flags
-from typing import List
-import re
-import unicodedata
 
 FLAGS = flags.FLAGS
 
 
-def process_UD_data(ud_file: str) -> List[str]:
+def process_ud_data(ud_file: str) -> List[str]:
     "Processes UD conllu file into list of strings for normalization."
     with open(ud_file) as infile:
         ud_lines = infile.readlines()
-    UD_SENTENCES: List[str] = []
+    ud_sentences: List[str] = []
     for line in ud_lines:
         if "# text" in line:
-            SENTENCE:str = unicodedata.normalize("NFC", line[9:].strip())
-            LSB = re.sub("\[", "\\[", SENTENCE)
-            RSB = re.sub("\]", "\\]", LSB)
-            UD_SENTENCES.append(RSB)
+            sentence: str = line[9:].strip()
+            sub_left_bracket = re.sub(r"\[", "\\[", sentence)
+            sub_right_bracket = re.sub(r"\]", "\\]", sub_left_bracket)
+            ud_sentences.append(sub_right_bracket)
         else:
             continue
-    return UD_SENTENCES
+    return ud_sentences
+
+
+def process_um_data(um_file: str) -> List[str]:
+    "Processes UniMorph file into list of strings for normalization."
+    raise NotImplementedError
+
+
+def process_ancrubadan_data(ac_file: str) -> List[str]:
+    "Processes An Crubadan file into list of strings for normalization."
+    raise NotImplementedError
+
+
+def process_oscar_data(oscar_file: str) -> List[str]:
+    "Processes OSCAR file into list of strings for normalization."
+    raise NotImplementedError
+
+
+def process_lcc_data(lcc_file: str) -> List[str]:
+    "Processes Leipzig Corpora Collection file for normalization."
+    raise NotImplementedError
+
 
 def main(argv):
     if len(argv) > 1:
