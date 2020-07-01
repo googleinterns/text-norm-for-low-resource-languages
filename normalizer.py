@@ -6,19 +6,21 @@ sentences to normalize. If it uses the external file, it will write
 the sentences that were changed to a new file.
 """
 
+from typing import List
+from tqdm import tqdm
 from absl import app
 from absl import flags
 import normalizer_lib
+import preprocess
 
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string('string_to_normalize', None, 'the string to normalize')
 
-#INFILE: str = "./testdata/test-sentences.txt"
-#OUTFILE: str = "normalized_sentences.tsv"
+UD_FILE: str = "./language_data/af/UD_Afrikaans-AfriBooms/af_afribooms-ud-train.conllu"
+UD_TEXT: List[str] = preprocess.process_ud_data(UD_FILE)
 
-#with open(INFILE) as f:
-#    SENTENCES = f.readlines()
+OUTFILE: str = "./normalized_sentences.tsv"
 
 
 def main(argv):
@@ -38,10 +40,11 @@ def main(argv):
         output_file = open(OUTFILE, "w")
         output_file.write("SENTENCE_ID\tSENTENCE_TEXT\tNORMALIZED_TEXT\n")
 
-        for line in SENTENCES:
+        i = 0
+        for line in tqdm(UD_TEXT):
             total_sentences += 1
-            sentence_id: str = line.split("\t")[0]
-            sentence_text: str = line.split("\t")[1]
+            sentence_id: str = str(i)
+            sentence_text: str = line
             normalized_text: str = normalizer_lib.normalize_everything(sentence_text)
 
             if normalized_text != sentence_text.strip().lower():
