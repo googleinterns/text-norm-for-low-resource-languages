@@ -14,6 +14,8 @@ FINAL_PUNCTUATION = union("!", '"', ",", ".", ":", ";", "?")
 
 HYPHEN = acceptor("-")
 SPACE = acceptor(" ")
+VOWELS = union("A", "E", "I", "O", "U",
+               "a", "e", "i", "o", "u")
 
 SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
                                 ).optimize().closure()
@@ -38,7 +40,7 @@ LOAN_CLASSIFIER = transducer(HYPHEN, "")
 DO_LOAN_CLASSIFIER = cdrewrite(
     LOAN_CLASSIFIER,
     union("[BOS]", SPACE) + NOUN_CLASSIFIERS,
-    GRAPHEMES,
+    VOWELS,
     SIGMA_STAR)
 
 LANGUAGE_SPECIFIC_PREPROCESSING = DO_LOAN_CLASSIFIER
