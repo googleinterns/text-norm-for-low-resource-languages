@@ -16,12 +16,6 @@ PUNCTUATION = union(INITIAL_PUNCTUATION, FINAL_PUNCTUATION, OTHER_PUNCTUATION)
 NUMBERS = union("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
 SPACE = acceptor(" ")
 
-VALID_WORDS = union(
-    GRAPHEMES.plus,
-    PUNCTUATION.plus,
-    NUMBERS.plus,
-    SPACE.plus).optimize()
-
 SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
                    ).optimize().closure()
 
@@ -56,28 +50,27 @@ DO_LANGUAGE_SPECIFIC_PREPROCESSING = LANGUAGE.LANGUAGE_SPECIFIC_PREPROCESSING
 
 # Step 4: Discard examples not associated with a pronunciation
 # e.g. "how are you today товарищ?" -> "how are you today?"
-# FIXME: not working yet
 
+WORDS = GRAPHEMES.plus + (SPACE.plus + GRAPHEMES.plus).star
+SENTENCE = (PUNCTUATION.ques + GRAPHEMES.plus +
+            (PUNCTUATION.star + SPACE.plus + GRAPHEMES.plus).star + PUNCTUATION.ques)
 
-#def pass_only_valid(string: str) -> Fst:
-#    "Accept only valid sentences in the language."
-#    STRING = acceptor(string).optimize()
-#    OVERLAP = intersect(STRING, VALID_WORDS.plus).optimize()
-#    VALID_STRING = "***REJECT***"
-#    VALID_STRING = STRING if (OVERLAP == STRING) else acceptor("***REJECT***")
-#    TRANSDUCE_VALID_STRING = transducer(STRING, VALID_STRING)
-#    return cdrewrite(TRANSDUCE_VALID_STRING, "", "", SIGMA_STAR)
-
-
-NONWORDS = union("т", "о", "в")
-
-DISCARD_NONWORDS = transducer(NONWORDS.plus, "")
-
-DO_DISCARD_NONWORDS = cdrewrite(
-    DISCARD_NONWORDS,
-    "",
-    "",
-    SIGMA_STAR)
+def pass_only_valid(string: str) -> str:
+    "Accept only valid tokens in the language."
+    valid_token = GRAPHEMES.plus
+    returned: List[str] = []
+    split_string = string.split(" ")
+    for token in split_string:
+        print(token)
+        try:
+            token @ valid_token
+            print("pass")
+            returned.append(token)
+        except:
+            print("fail")
+            returned.append("<REJECTED_TOKEN>")
+    print(returned)
+    return " ".join(returned)
 
 
 # Step 5: Detach punctuation from words
@@ -113,11 +106,16 @@ DO_DELETE_FREESTANDING_PUNCTUATION = cdrewrite(
 def normalize_everything(string: str) -> str:
     "Applies FST rewrite rules to normalize text."
     string = unicodedata.normalize("NFC", string.lower())
-    return (string
-            #@ DO_REMOVE_EXTRA_WHITESPACE
-            @ DO_LANGUAGE_SPECIFIC_PREPROCESSING
-            #@ unicode_normalize(string) ## SLOW, doing this above instead
-            @ DO_SEPARATE_PUNCTUATION
-            @ DO_DELETE_FREESTANDING_PUNCTUATION
-            @ DO_REMOVE_EXTRA_WHITESPACE
-            ).optimize().string()
+    filtered_string = string @ SENTENCE
+    #filtered_string = pass_only_valid(string)
+    try:
+        return (filtered_string
+                @ DO_REMOVE_EXTRA_WHITESPACE
+                @ DO_LANGUAGE_SPECIFIC_PREPROCESSING
+                #@ unicode_normalize(string) ## SLOW, doing this above instead
+                @ DO_SEPARATE_PUNCTUATION
+                @ DO_DELETE_FREESTANDING_PUNCTUATION
+                @ DO_REMOVE_EXTRA_WHITESPACE
+                ).optimize().string()
+    except:
+        return "<STRING REJECTED>"
