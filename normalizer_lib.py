@@ -26,8 +26,8 @@ REMOVE_EXTRA_WHITESPACE = transducer(SPACE.plus, SPACE)
 
 DO_REMOVE_EXTRA_WHITESPACE = cdrewrite(
     REMOVE_EXTRA_WHITESPACE,
-    union(GRAPHEMES, PUNCTUATION, "[BOS]"),
-    union(GRAPHEMES, PUNCTUATION, "[EOS]"),
+    union(GRAPHEMES, PUNCTUATION, NUMBERS, "[BOS]"),
+    union(GRAPHEMES, PUNCTUATION, NUMBERS, "[EOS]"),
     SIGMA_STAR)
 
 
@@ -51,25 +51,21 @@ DO_LANGUAGE_SPECIFIC_PREPROCESSING = LANGUAGE.LANGUAGE_SPECIFIC_PREPROCESSING
 # Step 4: Discard examples not associated with a pronunciation
 # e.g. "how are you today товарищ?" -> "how are you today?"
 
-WORDS = GRAPHEMES.plus + (SPACE.plus + GRAPHEMES.plus).star
-SENTENCE = (PUNCTUATION.ques + GRAPHEMES.plus +
-            (PUNCTUATION.star + SPACE.plus + GRAPHEMES.plus).star + PUNCTUATION.ques)
+SENTENCE = (INITIAL_PUNCTUATION.ques + (GRAPHEMES.plus | NUMBERS.plus) + FINAL_PUNCTUATION.ques +
+            (SPACE.plus + GRAPHEMES.plus).star + FINAL_PUNCTUATION.ques)
+
 
 def pass_only_valid(string: str) -> str:
-    "Accept only valid tokens in the language."
+    "Allows only valid tokens of the language to pass through."
     valid_token = GRAPHEMES.plus
     returned: List[str] = []
-    split_string = string.split(" ")
+    remove_extra_whitespace = (string @ DO_REMOVE_EXTRA_WHITESPACE).string()
+    split_string = remove_extra_whitespace.split(" ")
     for token in split_string:
-        print(token)
-        try:
-            token @ valid_token
-            print("pass")
+        if difference(acceptor(token), SENTENCE).num_states() == 0:
             returned.append(token)
-        except:
-            print("fail")
-            returned.append("<REJECTED_TOKEN>")
-    print(returned)
+        else:
+          returned.append("<REJECTED_TOKEN>")
     return " ".join(returned)
 
 
@@ -106,11 +102,11 @@ DO_DELETE_FREESTANDING_PUNCTUATION = cdrewrite(
 def normalize_everything(string: str) -> str:
     "Applies FST rewrite rules to normalize text."
     string = unicodedata.normalize("NFC", string.lower())
-    filtered_string = string @ SENTENCE
-    #filtered_string = pass_only_valid(string)
+    #filtered_string = string @ SENTENCE # for all-or-nothing filtering
+    filtered_string = pass_only_valid(string) # for token-based filtering
     try:
         return (filtered_string
-                @ DO_REMOVE_EXTRA_WHITESPACE
+                #@ DO_REMOVE_EXTRA_WHITESPACE
                 @ DO_LANGUAGE_SPECIFIC_PREPROCESSING
                 #@ unicode_normalize(string) ## SLOW, doing this above instead
                 @ DO_SEPARATE_PUNCTUATION
