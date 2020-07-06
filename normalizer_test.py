@@ -20,5 +20,42 @@ class TestStringMethods(unittest.TestCase):
                 self.assertEqual(test_fst, expected)
 
 
+    def test_remove_extra_whitespace(self):
+        'Test removing extra whitespace.'
+        for test in [(("hi       there", "hi there"),
+                      ("my friend    ", "my friend "),
+                      ("   the sun", " the sun"),
+                      ("   all   the   spaces   ", " all the spaces "))]:
+            for test_case, expected in test:
+                with self.subTest(test_case=test_case):
+                    normalized_text = (test_case @ normalizer_lib.DO_REMOVE_EXTRA_WHITESPACE).string()
+                    self.assertEqual(normalized_text, expected)
+
+
+    def test_separate_punctuation(self):
+        'Test separating punctuation from tokens.'
+        for test in [(("hello, friend", "hello , friend"),
+                      ("the end.", "the end ."),
+                      ('"What', '" What'),
+                      ('"Who, he asked, left?"', '" Who , he asked , left ? "'),
+                      ("Don't separate apostrophes", "Don't separate apostrophes"),
+                      ("Keep ice-cream together", "Keep ice-cream together"))]:
+            for test_case, expected in test:
+                with self.subTest(test_case=test_case):
+                    normalized_text = (test_case @ normalizer_lib.DO_SEPARATE_PUNCTUATION).string()
+                    self.assertEqual(normalized_text, expected)
+
+
+    def test_delete_freestanding_punctuation(self):
+        'Test deleting freestanding punctuation.'
+        for test in [(("hello , friend", "hello  friend"),
+                      ("the end .", "the end "),
+                      ('" What', ' What'),
+                      ('" Who , he asked , left ? "', ' Who  he asked  left  '))]:
+            for test_case, expected in test:
+                with self.subTest(test_case=test_case):
+                    normalized_text = (test_case @ normalizer_lib.DO_DELETE_FREESTANDING_PUNCTUATION).string()
+                    self.assertEqual(normalized_text, expected)
+
 if __name__ == '__main__':
       unittest.main()
