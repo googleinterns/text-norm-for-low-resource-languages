@@ -57,5 +57,16 @@ class TestStringMethods(unittest.TestCase):
                     normalized_text = (test_case @ normalizer_lib.DO_DELETE_FREESTANDING_PUNCTUATION).string()
                     self.assertEqual(normalized_text, expected)
 
+
+    def test_pass_only_valid(self):
+        'Test deleting tokens not in language.'
+        for test in [(("hello, товарищ", "hello, <REJECTED_TOKEN>"),
+                      ("ABCÄÖÜß", "<REJECTED_TOKEN>"),
+                      ("Где мой dog?", "<REJECTED_TOKEN> <REJECTED_TOKEN> dog?"))]:
+            for test_case, expected in test:
+                with self.subTest(test_case=test_case):
+                    normalized_text = normalizer_lib.pass_only_valid(test_case)
+                    self.assertEqual(normalized_text, expected)
+
 if __name__ == '__main__':
       unittest.main()
