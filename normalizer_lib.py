@@ -65,7 +65,7 @@ def pass_only_valid(string: str) -> str:
         if difference(acceptor(token), SENTENCE).num_states() == 0:
             returned.append(token)
         else:
-          returned.append("<REJECTED_TOKEN>")
+            returned.append("<REJECTED_TOKEN>")
     return " ".join(returned)
 
 
@@ -113,5 +113,5 @@ def normalize_everything(string: str) -> str:
                 @ DO_DELETE_FREESTANDING_PUNCTUATION
                 @ DO_REMOVE_EXTRA_WHITESPACE
                 ).optimize().string()
-    except:
+    except Warning:
         return "<STRING REJECTED>"
