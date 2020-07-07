@@ -22,12 +22,12 @@ SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
 
 # Step 1: Remove all extra whitespace between words
 
-REMOVE_EXTRA_WHITESPACE = transducer(SPACE.plus, SPACE)
+REMOVE_EXTRA_WHITESPACE = transducer(SPACE, "")
 
 DO_REMOVE_EXTRA_WHITESPACE = cdrewrite(
     REMOVE_EXTRA_WHITESPACE,
-    union(GRAPHEMES, PUNCTUATION, NUMBERS, "[BOS]"),
-    union(GRAPHEMES, PUNCTUATION, NUMBERS, "[EOS]"),
+    "",
+    SPACE,
     SIGMA_STAR)
 
 
@@ -78,11 +78,11 @@ DO_SEPARATE_PUNCTUATION = (
     cdrewrite(
         SEPARATE_PUNCTUATION,
         union(GRAPHEMES, PUNCTUATION),
-        PUNCTUATION,
+        PUNCTUATION + union(PUNCTUATION, SPACE, "[EOS]"),
         SIGMA_STAR) @
     cdrewrite(
         SEPARATE_PUNCTUATION,
-        PUNCTUATION,
+        union(PUNCTUATION, SPACE, "[BOS]") + PUNCTUATION,
         union(GRAPHEMES, PUNCTUATION),
         SIGMA_STAR))
 
