@@ -13,7 +13,7 @@ INITIAL_PUNCTUATION = LANGUAGE.INITIAL_PUNCTUATION
 FINAL_PUNCTUATION = LANGUAGE.FINAL_PUNCTUATION
 OTHER_PUNCTUATION = union(r"\[", r"\]")
 PUNCTUATION = union(INITIAL_PUNCTUATION, FINAL_PUNCTUATION, OTHER_PUNCTUATION)
-NUMBERS = union("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+NUMBERS = LANGUAGE.NUMBERS
 SPACE = acceptor(" ")
 
 SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
@@ -22,10 +22,8 @@ SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
 
 # Step 1: Remove all extra whitespace between words
 
-REMOVE_EXTRA_WHITESPACE = transducer(SPACE, "")
-
-DO_REMOVE_EXTRA_WHITESPACE = cdrewrite(
-    REMOVE_EXTRA_WHITESPACE,
+REMOVE_EXTRA_WHITESPACE = cdrewrite(
+    transducer(SPACE, ""),
     "",
     SPACE,
     SIGMA_STAR)
@@ -33,7 +31,7 @@ DO_REMOVE_EXTRA_WHITESPACE = cdrewrite(
 
 # Step 2: Language-specific formatting fixes
 
-DO_LANGUAGE_SPECIFIC_PREPROCESSING = LANGUAGE.LANGUAGE_SPECIFIC_PREPROCESSING
+LANGUAGE_SPECIFIC_NORM = LANGUAGE.LANGUAGE_SPECIFIC_PREPROCESSING
 
 
 # Step 3: Apply NFC unicode normalize
@@ -55,33 +53,40 @@ SENTENCE = (INITIAL_PUNCTUATION.ques + (GRAPHEMES.plus | NUMBERS.plus) + FINAL_P
             (SPACE.plus + GRAPHEMES.plus).star + FINAL_PUNCTUATION.ques)
 
 
-def pass_only_valid(string: str) -> str:
-    "Allows only valid tokens of the language to pass through."
+def pass_only_valid_tokens(string: str) -> str:
+    """Replaces invalid tokens in a sentence with <UNK>, keeps the rest.
+
+    Args:
+        string: A line from a corpus.
+
+    Returns:
+        The line, but where invalid tokens have been replaced by <UNK>.
+    """
     valid_token = GRAPHEMES.plus
     returned: List[str] = []
-    remove_extra_whitespace = (string @ DO_REMOVE_EXTRA_WHITESPACE).string()
+    remove_extra_whitespace = (string @ REMOVE_EXTRA_WHITESPACE).string()
     split_string = remove_extra_whitespace.split(" ")
     for token in split_string:
         if difference(acceptor(token), SENTENCE).num_states() == 0:
             returned.append(token)
         else:
-            returned.append("<REJECTED_TOKEN>")
+            returned.append("<UNK>")
     return " ".join(returned)
 
 
 # Step 5: Detach punctuation from words
 # e.g. "Who are you?" -> "Who are you ?"
 
-SEPARATE_PUNCTUATION = transducer("", SPACE)
+INSERT_SPACE = transducer("", SPACE)
 
-DO_SEPARATE_PUNCTUATION = (
+SEPARATE_PUNCTUATION = (
     cdrewrite(
-        SEPARATE_PUNCTUATION,
+        INSERT_SPACE,
         union(GRAPHEMES, PUNCTUATION),
         PUNCTUATION + union(PUNCTUATION, SPACE, "[EOS]"),
         SIGMA_STAR) @
     cdrewrite(
-        SEPARATE_PUNCTUATION,
+        INSERT_SPACE,
         union(PUNCTUATION, SPACE, "[BOS]") + PUNCTUATION,
         union(GRAPHEMES, PUNCTUATION),
         SIGMA_STAR))
@@ -90,28 +95,35 @@ DO_SEPARATE_PUNCTUATION = (
 # Step 7: Delete freestanding punctuation
 # e.g. "hi there ?" -> "hi there
 
-DELETE_FREESTANDING_PUNCTUATION = transducer(PUNCTUATION, "")
+DELETE_PUNCTUATION = transducer(PUNCTUATION, "")
 
-DO_DELETE_FREESTANDING_PUNCTUATION = cdrewrite(
-    DELETE_FREESTANDING_PUNCTUATION,
+DELETE_FREESTANDING_PUNCTUATION = cdrewrite(
+    DELETE_PUNCTUATION,
     union("[BOS]", SPACE),
     union("[EOS]", ""),
     SIGMA_STAR)
 
 
-def normalize_everything(string: str) -> str:
-    "Applies FST rewrite rules to normalize text."
+def normalizer(string: str) -> str:
+    """Applies FST rewrite rules to normalize text.
+
+    Args:
+        string: A line from a corpus.
+
+    Returns:
+        The normalized line from the corpus.
+    """
     string = unicodedata.normalize("NFC", string.lower())
     #filtered_string = string @ SENTENCE # for all-or-nothing filtering
-    filtered_string = pass_only_valid(string) # for token-based filtering
+    filtered_string = pass_only_valid_tokens(string) # for token-based filtering
     try:
         return (filtered_string
-                #@ DO_REMOVE_EXTRA_WHITESPACE
-                @ DO_LANGUAGE_SPECIFIC_PREPROCESSING
+                #@ REMOVE_EXTRA_WHITESPACE
+                @ LANGUAGE_SPECIFIC_NORM
                 #@ unicode_normalize(string) ## SLOW, doing this above instead
-                @ DO_SEPARATE_PUNCTUATION
-                @ DO_DELETE_FREESTANDING_PUNCTUATION
-                @ DO_REMOVE_EXTRA_WHITESPACE
+                @ SEPARATE_PUNCTUATION
+                @ DELETE_FREESTANDING_PUNCTUATION
+                @ REMOVE_EXTRA_WHITESPACE
                 ).optimize().string()
     except Warning:
         return "<STRING REJECTED>"
