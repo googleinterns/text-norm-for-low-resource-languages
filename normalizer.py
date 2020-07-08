@@ -17,8 +17,9 @@ FLAGS = flags.FLAGS
 
 flags.DEFINE_string('string_to_normalize', None, 'the string to normalize')
 
-UD_FILE: str = "./language_data/af/UD_Afrikaans-AfriBooms/af_afribooms-ud-train.conllu"
-UD_TEXT: List[str] = preprocess.process_ud_data(UD_FILE)
+flags.DEFINE_string('data_path', None, 'the path to the input file')
+
+DATA_TEXT: List[str] = preprocess.process_data(FLAGS.data_path)
 
 OUTFILE: str = "./normalized_sentences.tsv"
 
@@ -31,7 +32,7 @@ def main(argv):
 
     if FLAGS.string_to_normalize is not None:
         input_text: str = FLAGS.string_to_normalize
-        print(normalizer_lib.normalize_everything(FLAGS.string_to_normalize))
+        print(normalizer_lib.normalizer(FLAGS.string_to_normalize))
 
     else:
         total_sentences: int = 0
@@ -41,11 +42,11 @@ def main(argv):
         output_file.write("SENTENCE_ID\tSENTENCE_TEXT\tNORMALIZED_TEXT\n")
 
         i = 0
-        for line in tqdm(UD_TEXT):
+        for line in tqdm(DATA_TEXT):
             total_sentences += 1
             sentence_id: str = str(i)
             sentence_text: str = line
-            normalized_text: str = normalizer_lib.normalize_everything(sentence_text)
+            normalized_text: str = normalizer_lib.normalizer(sentence_text)
 
             if normalized_text != sentence_text.strip().lower():
                 changed_sentences += 1
