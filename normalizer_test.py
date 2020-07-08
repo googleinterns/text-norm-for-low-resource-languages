@@ -46,6 +46,10 @@ class TestNormalizer(unittest.TestCase):
                        '" Who , he asked , left ? "'),
                       ("Don't separate apostrophes",
                        "Don't separate apostrophes"),
+                      ("initial 'apostrophe",
+                       "initial 'apostrophe"),
+                      ("final' apostrophe",
+                       "final ' apostrophe"),
                       ("Keep ice-cream together",
                        "Keep ice-cream together"))]:
             for test_case, expected in test:
@@ -72,9 +76,9 @@ class TestNormalizer(unittest.TestCase):
 
     def test_pass_only_valid(self):
         'Test deleting tokens not in language.'
-        for test in [(("hello, товарищ", "hello, <REJECTED_TOKEN>"),
-                      ("ABCÄÖÜß", "<REJECTED_TOKEN>"),
-                      ("Где мой dog?", "<REJECTED_TOKEN> <REJECTED_TOKEN> dog?"))]:
+        for test in [(("hello, товарищ", "hello, <UNK>"),
+                      ("ABCÄÖÜß", "<UNK>"),
+                      ("Где мой dog?", "<UNK> <UNK> dog?"))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
                     normalized_text = normalizer_lib.pass_only_valid_tokens(test_case)
