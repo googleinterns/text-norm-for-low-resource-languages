@@ -29,7 +29,7 @@ class TestNormalizer(unittest.TestCase):
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
                     normalized_text = (test_case @
-                                       normalizer_lib.DO_REMOVE_EXTRA_WHITESPACE
+                                       normalizer_lib.REMOVE_EXTRA_WHITESPACE
                                        ).string()
                     self.assertEqual(normalized_text, expected)
 
@@ -51,7 +51,7 @@ class TestNormalizer(unittest.TestCase):
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
                     normalized_text = (test_case @
-                                       normalizer_lib.DO_SEPARATE_PUNCTUATION
+                                       normalizer_lib.SEPARATE_PUNCTUATION
                                        ).string()
                     self.assertEqual(normalized_text, expected)
 
@@ -65,7 +65,7 @@ class TestNormalizer(unittest.TestCase):
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
                     normalized_text = (test_case @
-                                       normalizer_lib.DO_DELETE_FREESTANDING_PUNCTUATION
+                                       normalizer_lib.DELETE_FREESTANDING_PUNCTUATION
                                        ).string()
                     self.assertEqual(normalized_text, expected)
 
@@ -77,7 +77,7 @@ class TestNormalizer(unittest.TestCase):
                       ("Где мой dog?", "<REJECTED_TOKEN> <REJECTED_TOKEN> dog?"))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = normalizer_lib.pass_only_valid(test_case)
+                    normalized_text = normalizer_lib.pass_only_valid_tokens(test_case)
                     self.assertEqual(normalized_text, expected)
 
 if __name__ == '__main__':
