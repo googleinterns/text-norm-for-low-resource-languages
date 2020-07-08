@@ -77,18 +77,21 @@ def pass_only_valid_tokens(string: str) -> str:
 # Step 5: Detach punctuation from words
 # e.g. "Who are you?" -> "Who are you ?"
 
+
+NON_GRAPHEME_PUNCT = difference(PUNCTUATION, GRAPHEMES)
+
 INSERT_SPACE = transducer("", SPACE)
 
 SEPARATE_PUNCTUATION = (
     cdrewrite(
         INSERT_SPACE,
-        union(GRAPHEMES, PUNCTUATION),
-        PUNCTUATION + union(PUNCTUATION, SPACE, "[EOS]"),
+        union("[BOS]", SPACE, GRAPHEMES) + union(NON_GRAPHEME_PUNCT),
+        union(PUNCTUATION, GRAPHEMES) + union("[EOS]", SPACE, GRAPHEMES),
         SIGMA_STAR) @
     cdrewrite(
         INSERT_SPACE,
-        union(PUNCTUATION, SPACE, "[BOS]") + PUNCTUATION,
-        union(GRAPHEMES, PUNCTUATION),
+        GRAPHEMES,
+        PUNCTUATION + union("[EOS]", SPACE),
         SIGMA_STAR))
 
 
@@ -100,7 +103,7 @@ DELETE_PUNCTUATION = transducer(PUNCTUATION, "")
 DELETE_FREESTANDING_PUNCTUATION = cdrewrite(
     DELETE_PUNCTUATION,
     union("[BOS]", SPACE),
-    union("[EOS]", ""),
+    union("[EOS]", SPACE),
     SIGMA_STAR)
 
 
