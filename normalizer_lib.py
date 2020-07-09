@@ -2,10 +2,12 @@
 """Library of language-agnostic FST rewrite rules to normalize text."""
 
 import unicodedata
+import conf
 from pynini import *
 from config import *
 
-LANGUAGE = af
+
+LANGUAGE = conf.LANGUAGE
 
 GRAPHEMES = LANGUAGE.GRAPHEMES
 
