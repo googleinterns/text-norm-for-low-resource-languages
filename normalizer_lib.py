@@ -22,6 +22,20 @@ SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
                    ).optimize().closure()
 
 
+class Verbalizable:
+
+
+    def __init__(self: str) -> None:
+        self.verbalizable = "None"
+
+
+    def verbalizable():
+        TOKEN = INITIAL_PUNCTUATION.ques + (GRAPHEMES.plus | NUMBERS.plus).plus + FINAL_PUNCTUATION.ques
+        EMAIL_ADDRESS = GRAPHEMES.plus + "@" + GRAPHEMES.plus + closure("." + GRAPHEMES.plus, 1, 2)
+        WEB_ADDRESS = (("http" + acceptor("s").ques + "://").ques + "www.").ques + union(GRAPHEMES, NUMBERS).plus + closure("." + GRAPHEMES.plus, 1, 2)
+        return union(TOKEN, EMAIL_ADDRESS, WEB_ADDRESS)
+
+
 # Step 1: Remove all extra whitespace between words
 
 REMOVE_EXTRA_WHITESPACE = cdrewrite(
@@ -51,9 +65,6 @@ LANGUAGE_SPECIFIC_NORM = LANGUAGE.LANGUAGE_SPECIFIC_PREPROCESSING
 # Step 4: Discard examples not associated with a pronunciation
 # e.g. "how are you today товарищ?" -> "how are you today?"
 
-SENTENCE = (INITIAL_PUNCTUATION.ques + (GRAPHEMES.plus | NUMBERS.plus) + FINAL_PUNCTUATION.ques +
-            (SPACE.plus + GRAPHEMES.plus).star + FINAL_PUNCTUATION.ques)
-
 
 def pass_only_valid_tokens(string: str) -> str:
     """Replaces invalid tokens in a sentence with <UNK>, keeps the rest.
@@ -64,12 +75,12 @@ def pass_only_valid_tokens(string: str) -> str:
     Returns:
         The line, but where invalid tokens have been replaced by <UNK>.
     """
-    valid_token = GRAPHEMES.plus
+    valid_token = Verbalizable.verbalizable()
     returned: List[str] = []
     remove_extra_whitespace = (string @ REMOVE_EXTRA_WHITESPACE).string()
     split_string = remove_extra_whitespace.split(" ")
     for token in split_string:
-        if difference(acceptor(token), SENTENCE).num_states() == 0:
+        if difference(acceptor(token), valid_token).num_states() == 0:
             returned.append(token)
         else:
             returned.append("<UNK>")
@@ -87,13 +98,13 @@ INSERT_SPACE = transducer("", SPACE)
 SEPARATE_PUNCTUATION = (
     cdrewrite(
         INSERT_SPACE,
-        union("[BOS]", SPACE, GRAPHEMES) + union(NON_GRAPHEME_PUNCT),
-        union(PUNCTUATION, GRAPHEMES) + union("[EOS]", SPACE, GRAPHEMES),
+        union("[BOS]", SPACE) + union(NON_GRAPHEME_PUNCT),
+        union(PUNCTUATION, Verbalizable.verbalizable()) + union("[EOS]", SPACE, Verbalizable.verbalizable()),
         SIGMA_STAR) @
     cdrewrite(
         INSERT_SPACE,
-        GRAPHEMES,
-        PUNCTUATION + union("[EOS]", SPACE),
+        union(Verbalizable.verbalizable(), PUNCTUATION),
+        PUNCTUATION + union("[EOS]", SPACE, PUNCTUATION),
         SIGMA_STAR))
 
 
@@ -127,7 +138,7 @@ def normalizer(string: str) -> str:
                 @ LANGUAGE_SPECIFIC_NORM
                 #@ unicode_normalize(string) ## SLOW, doing this above instead
                 @ SEPARATE_PUNCTUATION
-                @ DELETE_FREESTANDING_PUNCTUATION
+                #@ DELETE_FREESTANDING_PUNCTUATION
                 @ REMOVE_EXTRA_WHITESPACE
                 ).optimize().string()
     except Warning:
