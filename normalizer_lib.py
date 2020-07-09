@@ -30,10 +30,23 @@ class Verbalizable:
 
 
     def verbalizable():
+        """Returns union of verbalizable tokens.
+
+        args: none
+
+        returns: Union of acceptors for verbalizable tokens.
+        """
         TOKEN = INITIAL_PUNCTUATION.ques + (GRAPHEMES.plus | NUMBERS.plus).plus + FINAL_PUNCTUATION.ques
+
         EMAIL_ADDRESS = GRAPHEMES.plus + "@" + GRAPHEMES.plus + closure("." + GRAPHEMES.plus, 1, 2)
+
         WEB_ADDRESS = (("http" + acceptor("s").ques + "://").ques + "www.").ques + union(GRAPHEMES, NUMBERS).plus + closure("." + GRAPHEMES.plus, 1, 2)
-        return union(TOKEN, EMAIL_ADDRESS, WEB_ADDRESS)
+
+        TIME = closure(NUMBERS, 1, 2) + closure(":" + closure(NUMBERS, 1, 2), 1, 2)
+
+        FANCY_NUMBERS = closure(NUMBERS, 1, 6) | (closure(NUMBERS, 1,6) + union(",", ".") + closure(NUMBERS, 1, 4)) | ((closure(NUMBERS, 1, 3) + union(",", ".")).ques + closure(NUMBERS, 1, 3) + (union(",", ".") + closure(NUMBERS, 1,4).ques))
+
+        return union(TOKEN, EMAIL_ADDRESS, WEB_ADDRESS, TIME, FANCY_NUMBERS)
 
 
 # Step 1: Remove all extra whitespace between words
@@ -75,7 +88,7 @@ def pass_only_valid_tokens(string: str) -> str:
     Returns:
         The line, but where invalid tokens have been replaced by <UNK>.
     """
-    valid_token = Verbalizable.verbalizable()
+    valid_token = INITIAL_PUNCTUATION.ques + Verbalizable.verbalizable() + FINAL_PUNCTUATION.ques
     returned: List[str] = []
     remove_extra_whitespace = (string @ REMOVE_EXTRA_WHITESPACE).string()
     split_string = remove_extra_whitespace.split(" ")
