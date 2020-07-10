@@ -8,15 +8,29 @@ class TestNormalizer(unittest.TestCase):
     """Tests for evaluating text normalizer."""
 
 
-    def test_normalizer(self):
+    def test_token_normalizer(self):
         'Test the output of normalizer.'
+        raise NotImplementedError
         with open("testdata/normalized_sentences.tsv", "r") as test_file:
             test_cases = test_file.readlines()[1:]
         for sentence in test_cases:
             with self.subTest(sentence=sentence):
                 test_case = sentence.strip().split("\t")[1]
                 expected = sentence.strip().split("\t")[2]
-                test_fst = normalizer_lib.normalizer(test_case)
+                test_fst = normalizer_lib.token_normalizer(test_case)
+                self.assertEqual(test_fst, expected)
+
+
+    def test_sentence_normalizer(self):
+        'Test the output of normalizer.'
+        raise NotImplementedError
+        with open("testdata/normalized_sentences.tsv", "r") as test_file:
+            test_cases = test_file.readlines()[1:]
+        for sentence in test_cases:
+            with self.subTest(sentence=sentence):
+                test_case = sentence.strip().split("\t")[1]
+                expected = sentence.strip().split("\t")[2]
+                test_fst = normalizer_lib.sentence_normalizer(test_case)
                 self.assertEqual(test_fst, expected)
 
 

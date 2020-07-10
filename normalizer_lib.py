@@ -167,7 +167,7 @@ def apply_fst_rules(string: str) -> str:
         ).optimize().string()
 
 
-def token_based_normalizer(string: str) -> str:
+def token_normalizer(string: str) -> str:
     """Normalizes text by applying FST rewrite rules.
 
     Args:
@@ -181,7 +181,7 @@ def token_based_normalizer(string: str) -> str:
     return apply_fst_rules(filtered_string)
 
 
-def sentence_based_normalizer(string: str) -> str:
+def sentence_normalizer(string: str) -> str:
     """Normalizes text by applying FST rewrite rules.
 
     Args:

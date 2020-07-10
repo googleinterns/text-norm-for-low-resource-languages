@@ -17,6 +17,8 @@ FLAGS = flags.FLAGS
 
 flags.DEFINE_string('string_to_normalize', None, 'the string to normalize')
 
+flags.DEFINE_string('pass_valid', 'token', 'pass valid tokens or sentences')
+
 flags.DEFINE_string('data_path', None, 'the path to the input file')
 
 DATA_TEXT: List[str] = preprocess.process_data(FLAGS.data_path)
@@ -32,7 +34,10 @@ def main(argv):
 
     if FLAGS.string_to_normalize is not None:
         input_text: str = FLAGS.string_to_normalize
-        print(normalizer_lib.normalizer(FLAGS.string_to_normalize))
+        print("TOKEN_BASED:\t"+
+              normalizer_lib.token_normalizer(FLAGS.string_to_normalize))
+        print("SENTENCE_BASED:\t"+
+              normalizer_lib.sentence_normalizer(FLAGS.string_to_normalize))
 
     else:
         total_sentences: int = 0
@@ -46,14 +51,21 @@ def main(argv):
             total_sentences += 1
             sentence_id: str = str(i)
             sentence_text: str = line
-            normalized_text: str = normalizer_lib.normalizer(sentence_text)
-
+            if FLAGS.pass_valid == "token":
+                normalized_text: str = normalizer_lib.token_normalizer(
+                    sentence_text)
+            elif FLAGS.pass_valid == "sentence":
+                normalized_text: str = normalizer_lib.sentence_normalizer(
+                    sentence_text)
             if normalized_text != sentence_text.strip().lower():
                 changed_sentences += 1
-                newline = sentence_id+"\t"+sentence_text.strip().lower()+"\t"+normalized_text+"\n"
+                newline = (sentence_id+"\t"+
+                           sentence_text.strip().lower()+"\t"+
+                           normalized_text+"\n")
                 output_file.write(newline)
 
-        print("Changed {} out of {} sentences!".format(changed_sentences, total_sentences))
+        print("Changed {} out of {} sentences!".format(
+            changed_sentences, total_sentences))
 
 
 if __name__ == '__main__':
