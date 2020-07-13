@@ -5,27 +5,45 @@ Either normalizes the text from a flag, or loads an external file of
 sentences to normalize. If it uses the external file, it will write
 the sentences that were changed to a new file.
 """
-
 from typing import List
 from tqdm import tqdm
 from absl import app
 from absl import flags
 import normalizer_lib
 import preprocess
+import importlib
 
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string('string_to_normalize', None, 'the string to normalize')
-
-UD_FILE: str = "./language_data/af/UD_Afrikaans-AfriBooms/af_afribooms-ud-train.conllu"
-UD_TEXT: List[str] = preprocess.process_ud_data(UD_FILE)
-
-OUTFILE: str = "./normalized_sentences.tsv"
+flags.DEFINE_string('language', None, 'the language to normalize')
+flags.DEFINE_string('data_source', None, 'data source to preprocess')
 
 
 def main(argv):
     """Normalizes text by all steps in the text normalizer."""
 
+    LANGUAGE = importlib.import_module("config."+FLAGS.language)
+    DATA_SOURCE: str = FLAGS.data_source
+    # TODO: find a better way of getting this from the configs
+    if DATA_SOURCE == "ud":
+        INFILE = LANGUAGE.ud
+    elif DATA_SOURCE == "um":
+        INFILE = LANGUAGE.um
+    elif DATA_SOURCE == "ac":
+        INFILE = LANGUAGE.ac
+    elif DATA_SOURCE == "lcc":
+        INFILE = LANGUAGE.lcc
+    try:
+        INPUT_TEXT: List[str] = preprocess.process_data(INFILE, FLAGS.data_source)
+    except:
+        print("No data file from '{}' for '{}'".format(DATA_SOURCE, FLAGS.language))
+        return
+    OUTFILE: str = "./output/"+FLAGS.language+"_"+DATA_SOURCE+"_"+"normalized.tsv"
+
+    print("LANGUAGE:\t"+FLAGS.language)
+    print("DATA_SOURCE:\t"+DATA_SOURCE)
+    print("INFILE:\t"+INFILE)
     if len(argv) > 1:
         raise app.UsageError("Too many command-line arguments.")
 
@@ -41,7 +59,7 @@ def main(argv):
         output_file.write("SENTENCE_ID\tSENTENCE_TEXT\tNORMALIZED_TEXT\n")
 
         i = 0
-        for line in tqdm(UD_TEXT):
+        for line in tqdm(INPUT_TEXT):
             total_sentences += 1
             sentence_id: str = str(i)
             sentence_text: str = line
