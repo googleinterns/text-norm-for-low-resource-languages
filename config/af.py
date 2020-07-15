@@ -1,3 +1,5 @@
+"Afrikaans config with language-specific information."
+
 from pynini import *
 
 GRAPHEMES = union("'", "'", "-",
@@ -17,7 +19,7 @@ FINAL_PUNCTUATION = union("!", '"', ",", ".", ":", ";", "?")
 NUMBERS = union("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
 
 SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
-                                ).optimize().closure()
+                   ).optimize().closure()
 
 AF_INDEF_ARTICLE = cdrewrite(
     transducer("'n", "<&>"),
@@ -27,8 +29,8 @@ AF_INDEF_ARTICLE = cdrewrite(
 
 LANGUAGE_SPECIFIC_PREPROCESSING = AF_INDEF_ARTICLE
 
-ud = "language_data/af/UD_Afrikaans-AfriBooms/af_afribooms-ud-train.conllu"
-um = ""
-ac = ""
-oscar = ""
-lcc = ""
+UD = "language_data/af/UD_Afrikaans-AfriBooms/af_afribooms-ud-train.conllu"
+UM = ""
+AC = ""
+OSCAR = ""
+LCC = ""

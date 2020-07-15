@@ -1,3 +1,5 @@
+"Zulu config with language-specific information."
+
 from pynini import *
 
 GRAPHEMES = union("'", "-",
@@ -22,7 +24,7 @@ VOWELS = union("A", "E", "I", "O", "U",
                "a", "e", "i", "o", "u")
 
 SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
-                                ).optimize().closure()
+                   ).optimize().closure()
 
 NOUN_CLASSIFIERS = union("umu", "um", "u",
                          "aba", "ab", "abe", "o",
@@ -47,8 +49,8 @@ ZU_LOAN_CLASSIFIER = cdrewrite(
 
 LANGUAGE_SPECIFIC_PREPROCESSING = ZU_LOAN_CLASSIFIER
 
-ud = ""
-um = ""
-ac = ""
-oscar = ""
-lcc = ""
+UD = ""
+UM = ""
+AC = ""
+OSCAR = ""
+LCC = ""

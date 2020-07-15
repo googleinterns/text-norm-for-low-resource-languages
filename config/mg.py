@@ -1,3 +1,5 @@
+"Malagasy config with language-specific information."
+
 from pynini import *
 
 GRAPHEMES = union("'", "-",
@@ -19,7 +21,7 @@ FINAL_PUNCTUATION = union("!", '"', ",", ".", ":", ";", "?")
 NUMBERS = union("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
 
 SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
-                                ).optimize().closure()
+                   ).optimize().closure()
 
 MG_VELAR_NASAL = cdrewrite(
     transducer("ñ", "n̈"),
@@ -29,9 +31,9 @@ MG_VELAR_NASAL = cdrewrite(
 
 LANGUAGE_SPECIFIC_PREPROCESSING = MG_VELAR_NASAL
 
-ud = ""
-um = ""
-ac = "language_data/mg/mg_ac/mg-words.txt"
-oscar = ""
-lcc = "language_data/mg/mlg_wikipedia_2014_30K/mlg_wikipedia_2014_30K-sentences.txt"
-#lcc = "language_data/mg/mlg_wikipedia_2014_30K/mlg_web_2012_30K-sentences.txt"
+UD = ""
+UM = ""
+AC = "language_data/mg/mg_ac/mg-words.txt"
+OSCAR = ""
+LCC = "language_data/mg/mlg_wikipedia_2014_30K/mlg_wikipedia_2014_30K-sentences.txt"
+#LCC = "language_data/mg/mlg_wikipedia_2014_30K/mlg_web_2012_30K-sentences.txt"

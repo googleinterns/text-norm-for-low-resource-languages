@@ -1,3 +1,5 @@
+"Bambara config with language-specific information."
+
 from pynini import *
 
 GRAPHEMES = union("'", "-",
@@ -19,8 +21,8 @@ FINAL_PUNCTUATION = union("!", '"', ",", ".", ":", ";", "?")
 
 NUMBERS = union("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
 
-ud = ""
-um = ""
-ac = ""
-oscar = ""
-lcc = ""
+UD = ""
+UM = ""
+AC = ""
+OSCAR = ""
+LCC = ""
