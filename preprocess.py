@@ -65,7 +65,8 @@ def process_ud_data(ud_file: str) -> List[str]:
     ud_sentences: List[str] = []
     for line in ud_lines:
         if "# text" in line:
-            sentence: str = substitute_brackets(line)
+            text:str = line.split(" text = ")[1]
+            sentence: str = substitute_brackets(text)
             ud_sentences.append(sentence)
         else:
             continue

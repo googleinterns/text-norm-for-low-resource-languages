@@ -86,7 +86,7 @@ def main(argv):
                 changed_sentences += 1
                 newline = sentence_id+"\t"+sentence_text.strip().lower()+"\t"+normalized_text+"\n"
                 output_file.write(newline)
-
+            i += 1
         print("Changed {} out of {} sentences!".format(changed_sentences, total_sentences))
 
 
