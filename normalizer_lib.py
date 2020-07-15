@@ -50,9 +50,19 @@ class Verbalizable:
                        union(GRAPHEMES, NUMBERS).plus +
                        closure("." + GRAPHEMES.plus, 1, 2))
 
+        # For times. Two numbers, a colon, followed by two more numbers,
+        # optionally followed by another colon and two numbers.
+        # Typically e.g. 12:25, but also 12:25:04 for seconds.
+        # Will allow non-standard times like 40:70:80 !
         time = (closure(NUMBERS, 1, 2) +
                 closure(":" + closure(NUMBERS, 1, 2), 1, 2))
 
+        # For large numbers. Allows either 1-6 numerals, e.g. 150000;
+        # 1-6 numerals followed by a decimal separator and up to 4 decimals,
+        # e.g. 2552.4575; or allows 1-3 numerals followed by a grouping
+        # separator, 1-3 more numerals, a decimal separator, and 1-4 more
+        # numerals, e.g. 120,000.65
+        # Will allow non-standard things like 50,00,00 !
         fancy_numbers = (closure(NUMBERS, 1, 6) |
                          (closure(NUMBERS, 1, 6)
                           + union(",", ".") + closure(NUMBERS, 1, 4)) |
@@ -65,7 +75,8 @@ class Verbalizable:
         return union(token, email_address, web_address, time, fancy_numbers)
 
 
-# Step 1: Remove all extra whitespace between words
+# Remove all extra whitespace between words
+# e.g. "hi      there" -> "hi there"
 
 REMOVE_EXTRA_WHITESPACE = cdrewrite(
     transducer(SPACE, ""),
@@ -74,12 +85,12 @@ REMOVE_EXTRA_WHITESPACE = cdrewrite(
     SIGMA_STAR)
 
 
-# Step 2: Language-specific formatting fixes
+# Language-specific formatting fixes
 
 LANGUAGE_SPECIFIC_NORM = LANGUAGE.LANGUAGE_SPECIFIC_PREPROCESSING
 
 
-# Step 4: Discard examples not associated with a pronunciation
+#Discard invalid tokens
 # e.g. "how are you today товарищ?" -> "how are you today?"
 
 
@@ -122,11 +133,10 @@ def pass_only_valid_sentences(string: str) -> str:
     return string
 
 
-# Step 5: Detach punctuation from words
+# Detach punctuation from words
 # e.g. "Who are you?" -> "Who are you ?"
 
-
-NON_GRAPHEME_PUNCT = difference(PUNCTUATION, GRAPHEMES)
+NON_GRAPHEME_PUNCT = difference(PUNTUATION, GRAPHEMES)
 
 INSERT_SPACE = transducer("", SPACE)
 
@@ -144,7 +154,7 @@ SEPARATE_PUNCTUATION = (
         SIGMA_STAR))
 
 
-# Step 7: Delete freestanding punctuation
+# Delete freestanding punctuation
 # e.g. "hi there ?" -> "hi there
 
 DELETE_PUNCTUATION = transducer(PUNCTUATION, "")
