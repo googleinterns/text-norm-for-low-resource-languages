@@ -12,8 +12,12 @@ INITIAL_PUNCTUATION = union('"', "'")
 
 FINAL_PUNCTUATION = union("!", '"', ",", ".", ":", ";", "?")
 
+NUMBERS = union("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+
 HYPHEN = acceptor("-")
+
 SPACE = acceptor(" ")
+
 VOWELS = union("A", "E", "I", "O", "U",
                "a", "e", "i", "o", "u")
 
@@ -42,3 +46,9 @@ ZU_LOAN_CLASSIFIER = cdrewrite(
     SIGMA_STAR)
 
 LANGUAGE_SPECIFIC_PREPROCESSING = ZU_LOAN_CLASSIFIER
+
+ud = ""
+um = ""
+ac = ""
+oscar = ""
+lcc = ""

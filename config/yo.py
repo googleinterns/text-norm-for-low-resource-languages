@@ -15,3 +15,11 @@ GRAPHEMES = union("'", "-",
 INITIAL_PUNCTUATION = union('"', "'")
 
 FINAL_PUNCTUATION = union("!", '"', ",", ".", ":", ";", "?")
+
+NUMBERS = union("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+
+ud = ""
+um = ""
+ac = ""
+oscar = ""
+lcc = ""
