@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+!/usr/bin/env python
 """Library of language-agnostic FST rewrite rules to normalize text."""
 
 import unicodedata
@@ -19,6 +19,7 @@ OTHER_PUNCTUATION = union(r"\[", r"\]")
 PUNCTUATION = union(INITIAL_PUNCTUATION, FINAL_PUNCTUATION, OTHER_PUNCTUATION)
 NUMBERS = LANGUAGE.NUMBERS
 SPACE = acceptor(" ")
+UNDERSCORE = acceptor("_")
 
 SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
                    ).optimize().closure()
@@ -40,7 +41,7 @@ class Verbalizable:
                  (GRAPHEMES.plus | NUMBERS.plus).plus +
                  FINAL_PUNCTUATION.ques)
 
-        email_address = (GRAPHEMES.plus +
+        email_address = (union(GRAPHEMES, NUMBERS, UNDERSCORE, ".").plus +
                          "@" +
                          GRAPHEMES.plus +
                          closure("." + GRAPHEMES.plus, 1, 2))
@@ -48,7 +49,8 @@ class Verbalizable:
         web_address = ((("http" + acceptor("s").ques + "://").ques +
                         "www.").ques +
                        union(GRAPHEMES, NUMBERS).plus +
-                       closure("." + GRAPHEMES.plus, 1, 2))
+                       closure("." + GRAPHEMES.plus, 1, 2) +
+                       ("/" | ("/" + union(GRAPHEMES, NUMBERS)).star))
 
         # For times. Two numbers, a colon, followed by two more numbers,
         # optionally followed by another colon and two numbers.
