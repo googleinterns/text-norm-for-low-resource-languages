@@ -35,10 +35,8 @@ NOUN_CLASSIFIERS = union("umu", "um", "u",
                          "uku", "uk",
                          "uku", "uk").optimize().closure()
 
-LOAN_CLASSIFIER = transducer(HYPHEN, "")
-
 ZU_LOAN_CLASSIFIER = cdrewrite(
-    LOAN_CLASSIFIER,
+    transducer(HYPHEN, ""),
     union("[BOS]", SPACE) + NOUN_CLASSIFIERS,
     VOWELS,
     SIGMA_STAR)
