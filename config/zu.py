@@ -16,10 +16,6 @@ FINAL_PUNCTUATION = union("!", '"', ",", ".", ":", ";", "?")
 
 NUMBERS = union("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
 
-HYPHEN = acceptor("-")
-
-SPACE = acceptor(" ")
-
 VOWELS = union("A", "E", "I", "O", "U",
                "a", "e", "i", "o", "u")
 
@@ -41,13 +37,13 @@ NOUN_CLASSIFIERS = union("umu", "um", "u",
                          "uku", "uk",
                          "uku", "uk").optimize().closure()
 
-ZU_LOAN_CLASSIFIER = cdrewrite(
-    transducer(HYPHEN, ""),
-    union("[BOS]", SPACE) + NOUN_CLASSIFIERS,
+REMOVE_HYPHEN_AFTER_NOUN_CLASSIFIER = cdrewrite(
+    transducer("-", ""),
+    union("[BOS]", " ") + NOUN_CLASSIFIERS,
     VOWELS,
     SIGMA_STAR)
 
-LANGUAGE_SPECIFIC_PREPROCESSING = ZU_LOAN_CLASSIFIER
+LANGUAGE_SPECIFIC_PREPROCESSING = REMOVE_HYPHEN_AFTER_NOUN_CLASSIFIER
 
 UD = ""
 UM = ""
