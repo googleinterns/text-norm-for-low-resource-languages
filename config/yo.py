@@ -1,3 +1,5 @@
+"Yoruba config with language-specific information."
+
 from pynini import *
 
 GRAPHEMES = union("'", "-",
