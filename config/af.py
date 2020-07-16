@@ -3,10 +3,7 @@
 from pynini import *
 from config import utils
 
-GRAPHEMES = union("'", "'", "-",
-                  "a", "b", "c", "d", "e", "f", "g", "h", "i",
-                  "j", "k", "l", "m", "n", "o", "p", "q", "r",
-                  "s", "t", "u", "v", "w", "x", "y", "z",
+GRAPHEMES = union(utils.DEFAULT_LATIN, "'", "'", "-",
                   "à", "á", "ä", "è", "é", "ê", "ë",
                   "í", "ï", "ò", "ó", "ô", "ö", "ú", "ü")
 

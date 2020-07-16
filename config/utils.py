@@ -3,6 +3,10 @@
 
 from pynini import *
 
+DEFAULT_LATIN = union("a", "b", "c", "d", "e", "f", "g", "h", "i",
+                      "j", "k", "l", "m", "n", "o", "p", "q", "r",
+                      "s", "t", "u", "v", "w", "x", "y", "z")
+
 DEFAULT_INITIAL_PUNCTUATION = union("\"", "'")
 DEFAULT_FINAL_PUNCTUATION = union("!", "\"", ",", ".", ":", ";", "?")
 GEEZ_FINAL_PUNCTUATION = union("፠", "፡", "።", "፣", "፤",

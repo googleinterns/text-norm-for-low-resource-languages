@@ -3,10 +3,7 @@
 from pynini import *
 from config import utils
 
-GRAPHEMES = union("'", "-", "ʼ"
-                  "a", "b", "c", "d", "e", "f", "g", "h", "i",
-                  "j", "k", "l", "m", "n", "o", "p", "q", "r",
-                  "s", "t", "u", "v", "w", "x", "y", "z",
+GRAPHEMES = union(utils.DEFAULT_LATIN, "'", "-", "ʼ"
                   "ɓ", "ɗ", "ƙ", "ƴ", "r̃")
 
 INITIAL_PUNCTUATION = utils.DEFAULT_INITIAL_PUNCTUATION
