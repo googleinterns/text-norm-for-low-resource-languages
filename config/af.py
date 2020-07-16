@@ -16,14 +16,6 @@ FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
 NUMERALS = utils.WESTERN_ARABIC_NUMERALS
 
-AF_INDEF_ARTICLE = cdrewrite(
-    transducer("'n", "<&>"),
-    union("[BOS]", " "),
-    " ",
-    utils.SIGMA_STAR)
-
-LANGUAGE_SPECIFIC_PREPROCESSING = AF_INDEF_ARTICLE
-
 UD = "language_data/af/UD_Afrikaans-AfriBooms/af_afribooms-ud-train.conllu"
 UM = ""
 AC = ""
