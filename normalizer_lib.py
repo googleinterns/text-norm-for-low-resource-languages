@@ -8,7 +8,7 @@ from pynini import *
 from config import *
 
 
-LANGUAGE = conf.LANGUAGE
+LANGUAGE = af
 
 GRAPHEMES = LANGUAGE.GRAPHEMES
 
@@ -88,7 +88,13 @@ REMOVE_EXTRA_WHITESPACE = cdrewrite(
 
 # Language-specific formatting fixes
 
-LANGUAGE_SPECIFIC_NORM = LANGUAGE.LANGUAGE_SPECIFIC_PREPROCESSING
+try:
+    LANGUAGE_SPECIFIC_NORM = LANGUAGE.LANGUAGE_SPECIFIC_PREPROCESSING
+except:
+    LANGUAGE_SPECIFIC_NORM = cdrewrite(transducer("", ""),
+                                       "",
+                                       "",
+                                       SIGMA_STAR)
 
 
 #Discard invalid tokens
