@@ -1,11 +1,10 @@
-!/usr/bin/env python
+#/usr/bin/env python
 """Library of language-agnostic FST rewrite rules to normalize text."""
 
 import unicodedata
 from dataclasses import dataclass
 from typing import List
 from pynini import *
-import conf
 from config import *
 
 
@@ -17,7 +16,7 @@ INITIAL_PUNCTUATION = LANGUAGE.INITIAL_PUNCTUATION
 FINAL_PUNCTUATION = LANGUAGE.FINAL_PUNCTUATION
 OTHER_PUNCTUATION = union(r"\[", r"\]")
 PUNCTUATION = union(INITIAL_PUNCTUATION, FINAL_PUNCTUATION, OTHER_PUNCTUATION)
-NUMBERS = LANGUAGE.NUMBERS
+NUMERALS = LANGUAGE.NUMERALS
 SPACE = acceptor(" ")
 UNDERSCORE = acceptor("_")
 
@@ -38,26 +37,26 @@ class Verbalizable:
         returns: Union of acceptors for verbalizable tokens.
         """
         token = (INITIAL_PUNCTUATION.ques +
-                 (GRAPHEMES.plus | NUMBERS.plus).plus +
+                 (GRAPHEMES.plus | NUMERALS.plus).plus +
                  FINAL_PUNCTUATION.ques)
 
-        email_address = (union(GRAPHEMES, NUMBERS, UNDERSCORE, ".").plus +
+        email_address = (union(GRAPHEMES, NUMERALS, UNDERSCORE, ".").plus +
                          "@" +
                          GRAPHEMES.plus +
                          closure("." + GRAPHEMES.plus, 1, 2))
 
         web_address = ((("http" + acceptor("s").ques + "://").ques +
                         "www.").ques +
-                       union(GRAPHEMES, NUMBERS).plus +
+                       union(GRAPHEMES, NUMERALS).plus +
                        closure("." + GRAPHEMES.plus, 1, 2) +
-                       ("/" | ("/" + union(GRAPHEMES, NUMBERS)).star))
+                       ("/" | ("/" + union(GRAPHEMES, NUMERALS)).star))
 
         # For times. Two numbers, a colon, followed by two more numbers,
         # optionally followed by another colon and two numbers.
         # Typically e.g. 12:25, but also 12:25:04 for seconds.
         # Will allow non-standard times like 40:70:80 !
-        time = (closure(NUMBERS, 1, 2) +
-                closure(":" + closure(NUMBERS, 1, 2), 1, 2))
+        time = (closure(NUMERALS, 1, 2) +
+                closure(":" + closure(NUMERALS, 1, 2), 1, 2))
 
         # For large numbers. Allows either 1-6 numerals, e.g. 150000;
         # 1-6 numerals followed by a decimal separator and up to 4 decimals,
@@ -65,14 +64,14 @@ class Verbalizable:
         # separator, 1-3 more numerals, a decimal separator, and 1-4 more
         # numerals, e.g. 120,000.65
         # Will allow non-standard things like 50,00,00 !
-        fancy_numbers = (closure(NUMBERS, 1, 6) |
-                         (closure(NUMBERS, 1, 6)
-                          + union(",", ".") + closure(NUMBERS, 1, 4)) |
-                         ((closure(NUMBERS, 1, 3) +
+        fancy_numbers = (closure(NUMERALS, 1, 6) |
+                         (closure(NUMERALS, 1, 6)
+                          + union(",", ".") + closure(NUMERALS, 1, 4)) |
+                         ((closure(NUMERALS, 1, 3) +
                            union(",", ".")).ques +
-                          closure(NUMBERS, 1, 3) +
+                          closure(NUMERALS, 1, 3) +
                           (union(",", ".") +
-                           closure(NUMBERS, 1, 4).ques)))
+                           closure(NUMERALS, 1, 4).ques)))
 
         return union(token, email_address, web_address, time, fancy_numbers)
 
@@ -138,7 +137,7 @@ def pass_only_valid_sentences(string: str) -> str:
 # Detach punctuation from words
 # e.g. "Who are you?" -> "Who are you ?"
 
-NON_GRAPHEME_PUNCT = difference(PUNTUATION, GRAPHEMES)
+NON_GRAPHEME_PUNCT = difference(PUNCTUATION, GRAPHEMES)
 
 INSERT_SPACE = transducer("", SPACE)
 

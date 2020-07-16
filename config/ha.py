@@ -1,6 +1,7 @@
 "Hausa config with language-specific information."
 
 from pynini import *
+from config import utils
 
 GRAPHEMES = union("'", "-", "ʼ"
                   "A", "B", "C", "D", "E", "F", "G", "H", "I",
@@ -12,11 +13,11 @@ GRAPHEMES = union("'", "-", "ʼ"
                   "Ɓ", "Ɗ", "Ƙ", "Ƙ", "R̃",
                   "ɓ", "ɗ", "ƙ", "ƴ", "r̃")
 
-INITIAL_PUNCTUATION = union('"', "'")
+INITIAL_PUNCTUATION = utils.DEFAULT_INITIAL_PUNCTUATION
 
-FINAL_PUNCTUATION = union("!", '"', ",", ".", ":", ";", "?")
+FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
-NUMBERS = union("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+NUMERALS = utils.WESTERN_ARABIC_NUMERALS
 
 UD = ""
 UM = ""

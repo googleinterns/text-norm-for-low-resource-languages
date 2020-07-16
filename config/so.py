@@ -1,6 +1,7 @@
 "Somali config with language-specific information."
 
 from pynini import *
+from config import utils
 
 GRAPHEMES = union("'", "-",
                   "A", "B", "C", "D", "E", "F", "G", "H", "I",
@@ -10,11 +11,11 @@ GRAPHEMES = union("'", "-",
                   "j", "k", "l", "m", "n", "o", "p", "q", "r",
                   "s", "t", "u", "v", "w", "x", "y", "z")
 
-INITIAL_PUNCTUATION = union('"', "'")
+INITIAL_PUNCTUATION = utils.DEFAULT_INITIAL_PUNCTUATION
 
-FINAL_PUNCTUATION = union("!", '"', ",", ".", ":", ";", "?")
+FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
-NUMBERS = union("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+NUMERALS = utils.WESTERN_ARABIC_NUMERALS
 
 UD = ""
 UM = ""

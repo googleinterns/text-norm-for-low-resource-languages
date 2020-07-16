@@ -1,6 +1,7 @@
 "Amharic config with language-specific information."
 
 from pynini import *
+from config import utils
 
 GRAPHEMES = union("'", "-",
                   "ሀ", "ሁ", "ሂ", "ሃ", "ሄ", "ህ", "ሆ",
@@ -43,13 +44,13 @@ GRAPHEMES = union("'", "-",
                   "ፈ", "ፉ", "ፊ", "ፋ", "ፌ", "ፍ", "ፎ", "ፏ",
                   "ፐ", "ፑ", "ፒ", "ፓ", "ፔ", "ፕ", "ፖ", "ፗ")
 
-INITIAL_PUNCTUATION = union('"', "'", "”", "“")
+INITIAL_PUNCTUATION = utils.DEFAULT_INITIAL_PUNCTUATION
 
-FINAL_PUNCTUATION = union("!", '"', ",", ".", ":", ";", "?",
-                          "፠", "፡", "።", "፣", "፤",
-                          "፥", "፦", "፧", "፨")
+FINAL_PUNCTUATION = union(utils.DEFAULT_FINAL_PUNCTUATION,
+                          utils.GEEZ_FINAL_PUNCTUATION)
 
-NUMBERS = union("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+NUMERALS = union(utils.WESTERN_ARABIC_NUMERALS,
+                 utils.GEEZ_NUMERALS)
 
 UD = ""
 UM = ""

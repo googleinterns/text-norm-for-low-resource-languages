@@ -1,6 +1,7 @@
 "Afrikaans config with language-specific information."
 
 from pynini import *
+from config import utils
 
 GRAPHEMES = union("'", "'", "-",
                   "A", "B", "C", "D", "E", "F", "G", "H", "I",
@@ -12,20 +13,17 @@ GRAPHEMES = union("'", "'", "-",
                   "à", "á", "ä", "è", "é", "ê", "ë",
                   "í", "ï", "ò", "ó", "ô", "ö", "ú", "ü")
 
-INITIAL_PUNCTUATION = union('"', "'")
+INITIAL_PUNCTUATION = utils.DEFAULT_INITIAL_PUNCTUATION
 
-FINAL_PUNCTUATION = union("!", '"', ",", ".", ":", ";", "?")
+FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
-NUMBERS = union("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
-
-SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
-                   ).optimize().closure()
+NUMERALS = utils.WESTERN_ARABIC_NUMERALS
 
 AF_INDEF_ARTICLE = cdrewrite(
     transducer("'n", "<&>"),
     union("[BOS]", " "),
     " ",
-    SIGMA_STAR)
+    utils.SIGMA_STAR)
 
 LANGUAGE_SPECIFIC_PREPROCESSING = AF_INDEF_ARTICLE
 

@@ -1,6 +1,7 @@
 "Malagasy config with language-specific information."
 
 from pynini import *
+from config import utils
 
 GRAPHEMES = union("'", "-",
                   "A", "B", "C", "D", "E", "F", "G",
@@ -14,20 +15,17 @@ GRAPHEMES = union("'", "-",
                   "À", "Â", "È", "É", "Ê", "Ë", "Ì", "Ò", "Ô", "Ù",
                   "à", "â", "è", "é", "ê", "ë", "ì", "ò", "ô", "ù")
 
-INITIAL_PUNCTUATION = union('"', "'")
+INITIAL_PUNCTUATION = utils.DEFAULT_INITIAL_PUNCTUATION
 
-FINAL_PUNCTUATION = union("!", '"', ",", ".", ":", ";", "?")
+FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
-NUMBERS = union("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
-
-SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
-                   ).optimize().closure()
+NUMERALS = utils.WESTERN_ARABIC_NUMERALS
 
 MG_VELAR_NASAL = cdrewrite(
     transducer("ñ", "n̈"),
     "",
     "",
-    SIGMA_STAR)
+    utils.SIGMA_STAR)
 
 LANGUAGE_SPECIFIC_PREPROCESSING = MG_VELAR_NASAL
 

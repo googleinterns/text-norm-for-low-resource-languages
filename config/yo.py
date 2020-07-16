@@ -1,6 +1,7 @@
 "Yoruba config with language-specific information."
 
 from pynini import *
+from config import utils
 
 GRAPHEMES = union("'", "-",
                   "A", "B", "C", "D", "E", "F", "G", "H", "I",
@@ -14,14 +15,14 @@ GRAPHEMES = union("'", "-",
                   "Ṣ", "ṣ", "Ẹ", "Ẹ̀", "Ẹ́", "ẹ", "ẹ̀", "ẹ́",
                   "Ọ", "Ọ̀", "Ọ́", "ọ", "ọ̀", "ọ́")
 
-INITIAL_PUNCTUATION = union('"', "'")
+INITIAL_PUNCTUATION = utils.DEFAULT_INITIAL_PUNCTUATION
 
-FINAL_PUNCTUATION = union("!", '"', ",", ".", ":", ";", "?")
+FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
-NUMBERS = union("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+NUMERALS = utils.WESTERN_ARABIC_NUMERALS
 
-ud = ""
-um = ""
-ac = ""
-oscar = ""
-lcc = ""
+UD = ""
+UM = ""
+AC = ""
+OSCAR = ""
+LCC = ""
