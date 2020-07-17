@@ -1,17 +1,12 @@
 # Lint as: python3
-"""Methods to preprocess data from different sources for text normalization.
-"""
+"Methods to preprocess data from different sources for text normalization."
 
 import re
 from typing import List
-from absl import app
-from absl import flags
-
-FLAGS = flags.FLAGS
 
 
 def process_data(data_file: str, data_source:str) -> List[str]:
-    """Processes data depending on the data source.
+    """Processes data into list of strings depending on the data source.
 
     Args:
         data_file: The path to the data file.
@@ -35,13 +30,7 @@ def process_data(data_file: str, data_source:str) -> List[str]:
         return process_lcc_data(data_file)
     else:
         print("Pick a data source!")
-#    return {
-#        "ud": process_ud_data(data_file),
-#        "um": process_um_data(data_file),
-#        "ac": process_ancrubadan_data(data_file),
-#        "oscar": process_oscar_data(data_file),
-#        "lcc": process_lcc_data(data_file)
-#    }.get(data_source, None)
+        return
 
 
 def process_ud_data(ud_file: str) -> List[str]:

@@ -5,25 +5,33 @@ Either normalizes the text from a flag, or loads an external file of
 sentences to normalize. If it uses the external file, it will write
 the sentences that were changed to a new file.
 """
+import importlib
 from typing import List
 from tqdm import tqdm
 from absl import app
 from absl import flags
 import normalizer_lib
 import preprocess
-import importlib
 
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string('string_to_normalize', None, 'the string to normalize')
 flags.DEFINE_string('language', None, 'the language to normalize')
 flags.DEFINE_string('data_source', None, 'data source to preprocess')
-
+flags.DEFINE_string('pass_valid', "token", 'pass only valid tokens or sentences')
 
 def main(argv):
-    """Normalizes text by all steps in the text normalizer."""
+    """Normalizes text by all steps in the text normalizer.
 
-    LANGUAGE = importlib.import_module("config."+FLAGS.language)
+    If given an input string and a language flag, will normalize that string
+    using the language's config. If given the language flag and data source
+    flag, will normalize the file listed for that data source in the language's
+    config file, saving the output to a new tsv file.
+    """
+    try:
+        language = importlib.import_module("config."+FLAGS.language)
+    except:
+        raise app.UsageError("Needs a value for the language flag.")
 
     if len(argv) > 1:
         raise app.UsageError("Too many command-line arguments.")
@@ -34,33 +42,37 @@ def main(argv):
               normalizer_lib.token_normalizer(FLAGS.string_to_normalize))
         print("SENTENCE_BASED:\t"+
               normalizer_lib.sentence_normalizer(FLAGS.string_to_normalize))
-
     else:
-        DATA_SOURCE: str = FLAGS.data_source
-        # TODO: find a better way of getting this from the configs
-        if DATA_SOURCE == "ud":
-            INFILE = LANGUAGE.ud
-        elif DATA_SOURCE == "um":
-            INFILE = LANGUAGE.um
-        elif DATA_SOURCE == "ac":
-            INFILE = LANGUAGE.ac
-        elif DATA_SOURCE == "lcc":
-            INFILE = LANGUAGE.lcc
+        data_source: str = FLAGS.data_source
+        if data_source == "ud":
+            infile = language.UD
+        elif data_source == "um":
+            infile = language.UM
+        elif data_source == "ac":
+            infile = language.AC
+        elif data_source == "oscar":
+            infile = language.OSCAR
+        elif data_source == "lcc":
+            infile = language.LCC
         try:
-            INPUT_TEXT: List[str] = preprocess.process_data(INFILE, FLAGS.data_source)
-        except:
-            print("No data file from '{}' for '{}'".format(DATA_SOURCE, FLAGS.language))
+            input_text: List[str] = preprocess.process_data(infile, FLAGS.data_source)
+        except Exception:
+            print("No data file from '{}' for '{}'".format(data_source, FLAGS.language))
             return
-        OUTFILE: str = "./output/"+FLAGS.language+"_"+DATA_SOURCE+"_"+"normalized.tsv"
+        outfile: str = ("./output/"+
+                        FLAGS.language+"_"+
+                        data_source+"_"+
+                        FLAGS.pass_valid+"_"+
+                        "normalized.tsv")
 
         total_sentences: int = 0
         changed_sentences: int = 0
 
-        output_file = open(OUTFILE, "w")
+        output_file = open(outfile, "w")
         output_file.write("SENTENCE_ID\tSENTENCE_TEXT\tNORMALIZED_TEXT\n")
 
         i = 0
-        for line in tqdm(INPUT_TEXT):
+        for line in tqdm(input_text):
             total_sentences += 1
             sentence_id: str = str(i)
             sentence_text: str = line
