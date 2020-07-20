@@ -3,9 +3,10 @@
 
 import re
 from typing import List
+from absl import app
 
 
-def process_data(data_file: str, data_source:str) -> List[str]:
+def process_data(data_file: str, data_source: str) -> List[str]:
     """Processes data into list of strings depending on the data source.
 
     Args:
@@ -28,9 +29,8 @@ def process_data(data_file: str, data_source:str) -> List[str]:
         return process_oscar_data(data_file)
     elif data_source == "lcc":
         return process_lcc_data(data_file)
-    else:
-        print("Pick a data source!")
-        return
+    print("Pick a data source!")
+    raise Exception
 
 
 def process_ud_data(ud_file: str) -> List[str]:
@@ -47,14 +47,13 @@ def process_ud_data(ud_file: str) -> List[str]:
     Returns:
         A list of processed sentences.
     """
-    # TODO: use helper function or keep the two lines in each of these methods?
     ud_lines: List[str] = read_file_as_lines(ud_file)
     with open(ud_file) as infile:
         ud_lines = infile.readlines()
     ud_sentences: List[str] = []
     for line in ud_lines:
         if "# text" in line:
-            text:str = line.split(" text = ")[1]
+            text: str = line.split(" text = ")[1]
             sentence: str = substitute_brackets(text)
             ud_sentences.append(sentence)
         else:
@@ -63,8 +62,6 @@ def process_ud_data(ud_file: str) -> List[str]:
 
 
 def process_um_data(um_file: str) -> List[str]:
-    # TODO: do we even want to use this data? It's not clear if it
-    # even needs to be normalized, since it seems hand-crafted.
     """Processes UniMorph file into list of strings for normalization.
 
     UM data format is the word lemma, followed by a tab, followed by
@@ -74,7 +71,6 @@ def process_um_data(um_file: str) -> List[str]:
 
 
 def process_ancrubadan_data(ac_file: str) -> List[str]:
-    # TODO: decide if we want to use the unigrams or bigrams from AC
     """Processes An Crubadan file into list of strings for normalization.
 
     An Crubadan data format is the word, followed by a space, followed by
@@ -129,7 +125,7 @@ def process_lcc_data(lcc_file: str) -> List[str]:
     lcc_lines = read_file_as_lines(lcc_file)
     lcc_sentences: List[str] = []
     for line in lcc_lines:
-        text:str = line.strip().split("\t")[1]
+        text: str = line.strip().split("\t")[1]
         sentence: str = substitute_brackets(text)
         lcc_sentences.append(sentence)
     return lcc_sentences
@@ -137,7 +133,7 @@ def process_lcc_data(lcc_file: str) -> List[str]:
 
 def read_file_as_lines(filename: str) -> List[str]:
     """Reads in filename as list of lines."""
-    with open (filename) as infile:
+    with open(filename) as infile:
         file_lines = infile.readlines()
     return file_lines
 
