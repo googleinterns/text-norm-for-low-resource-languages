@@ -1,62 +1,62 @@
 #/usr/bin/env python
 """Library of language-agnostic FST rewrite rules to normalize text."""
 
+import importlib
 import unicodedata
-from dataclasses import dataclass
 from typing import List
 from pynini import *
-from config import *
+import config.utils as utils
 
+class NormalizerLib:
+    """Loads language-specific information for the text normalizer."""
 
-LANGUAGE = af
+    def __init__(self, language):
+        self.language = importlib.import_module("config."+language)
+        self.graphemes = self.language.GRAPHEMES
+        self.initial_punctuation = self.language.INITIAL_PUNCTUATION
+        self.final_punctuation = self.language.FINAL_PUNCTUATION
+        self.other_punctuation = union(r"\[", r"\]")
+        self.punctuation = union(self.initial_punctuation,
+                                 self.final_punctuation,
+                                 self.other_punctuation)
+        self.numerals = self.language.NUMERALS
+        try:
+            self.language_specific_preprocessing = self.language.LANGUAGE_SPECIFIC_PREPROCESSING
+        except Exception:
+            self.language_specific_preprocessing = None
 
-GRAPHEMES = LANGUAGE.GRAPHEMES
+    SIGMA_STAR = utils.SIGMA_STAR
+    SPACE = acceptor(" ")
+    UNDERSCORE = acceptor("_")
 
-INITIAL_PUNCTUATION = LANGUAGE.INITIAL_PUNCTUATION
-FINAL_PUNCTUATION = LANGUAGE.FINAL_PUNCTUATION
-OTHER_PUNCTUATION = union(r"\[", r"\]")
-PUNCTUATION = union(INITIAL_PUNCTUATION, FINAL_PUNCTUATION, OTHER_PUNCTUATION)
-NUMERALS = LANGUAGE.NUMERALS
-SPACE = acceptor(" ")
-UNDERSCORE = acceptor("_")
-
-SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
-                   ).optimize().closure()
-
-
-@dataclass
-class Verbalizable:
-    """Contains verbalizable tokens."""
-
-    @staticmethod
-    def verbalizable():
+    def verbalizable(self):
         """Returns union of verbalizable tokens.
 
         args: none
 
         returns: Union of acceptors for verbalizable tokens.
         """
-        token = (INITIAL_PUNCTUATION.ques +
-                 (GRAPHEMES.plus | NUMERALS.plus).plus +
-                 FINAL_PUNCTUATION.ques)
+        token = (self.initial_punctuation.ques +
+                 (self.graphemes.plus | self.numerals.plus).plus +
+                 self.final_punctuation.ques)
 
-        email_address = (union(GRAPHEMES, NUMERALS, UNDERSCORE, ".").plus +
+        email_address = (union(self.graphemes, self.numerals, self.UNDERSCORE, ".").plus +
                          "@" +
-                         GRAPHEMES.plus +
-                         closure("." + GRAPHEMES.plus, 1, 2))
+                         self.graphemes.plus +
+                         closure("." + self.graphemes.plus, 1, 2))
 
         web_address = ((("http" + acceptor("s").ques + "://").ques +
                         "www.").ques +
-                       union(GRAPHEMES, NUMERALS).plus +
-                       closure("." + GRAPHEMES.plus, 1, 2) +
-                       ("/" | ("/" + union(GRAPHEMES, NUMERALS)).star))
+                       union(self.graphemes, self.numerals).plus +
+                       closure("." + self.graphemes.plus, 1, 2) +
+                       ("/" | ("/" + union(self.graphemes, self.numerals)).star))
 
         # For times. Two numbers, a colon, followed by two more numbers,
         # optionally followed by another colon and two numbers.
         # Typically e.g. 12:25, but also 12:25:04 for seconds.
         # Will allow non-standard times like 40:70:80 !
-        time = (closure(NUMERALS, 1, 2) +
-                closure(":" + closure(NUMERALS, 1, 2), 1, 2))
+        time = (closure(self.numerals, 1, 2) +
+                closure(":" + closure(self.numerals, 1, 2), 1, 2))
 
         # For large numbers. Allows either 1-6 numerals, e.g. 150000;
         # 1-6 numerals followed by a decimal separator and up to 4 decimals,
@@ -64,149 +64,179 @@ class Verbalizable:
         # separator, 1-3 more numerals, a decimal separator, and 1-4 more
         # numerals, e.g. 120,000.65
         # Will allow non-standard things like 50,00,00 !
-        fancy_numbers = (closure(NUMERALS, 1, 6) |
-                         (closure(NUMERALS, 1, 6)
-                          + union(",", ".") + closure(NUMERALS, 1, 4)) |
-                         ((closure(NUMERALS, 1, 3) +
+        fancy_numbers = (closure(self.numerals, 1, 6) |
+                         (closure(self.numerals, 1, 6)
+                          + union(",", ".") + closure(self.numerals, 1, 4)) |
+                         ((closure(self.numerals, 1, 3) +
                            union(",", ".")).ques +
-                          closure(NUMERALS, 1, 3) +
+                          closure(self.numerals, 1, 3) +
                           (union(",", ".") +
-                           closure(NUMERALS, 1, 4).ques)))
+                           closure(self.numerals, 1, 4).ques)))
 
         return union(token, email_address, web_address, time, fancy_numbers)
 
 
-# Remove all extra whitespace between words
-# e.g. "hi      there" -> "hi there"
-
-REMOVE_EXTRA_WHITESPACE = cdrewrite(
-    transducer(SPACE, ""),
-    "",
-    SPACE,
-    SIGMA_STAR)
+    # Remove all extra whitespace between words
+    # e.g. "hi      there" -> "hi there"
 
 
-# Language-specific formatting fixes
-
-try:
-    LANGUAGE_SPECIFIC_NORM = LANGUAGE.LANGUAGE_SPECIFIC_PREPROCESSING
-except:
-    LANGUAGE_SPECIFIC_NORM = cdrewrite(transducer("", ""),
-                                       "",
-                                       "",
-                                       SIGMA_STAR)
-
-
-#Discard invalid tokens
-# e.g. "how are you today товарищ?" -> "how are you today?"
+    def remove_extra_whitespace(self, string: Fst) -> Fst:
+        "Removes extra whitespace."
+        print("Removing extra whitespace...")
+        remove_extra_whitespace = cdrewrite(
+            transducer(self.SPACE, ""),
+            "",
+            self.SPACE,
+            self.SIGMA_STAR)
+        return (string @ remove_extra_whitespace).optimize()
 
 
-def pass_only_valid_tokens(string: str) -> str:
-    """Replaces invalid strings in a sentence.
-
-    Args:
-        string: A line from a corpus.
-
-    Returns:
-        The line, where invalid tokens have been replaced with <UNK>.
-    """
-    valid_token = INITIAL_PUNCTUATION.ques + Verbalizable.verbalizable() + FINAL_PUNCTUATION.ques
-    returned: List[str] = []
-    remove_extra_whitespace = (string @ REMOVE_EXTRA_WHITESPACE).string()
-    split_string = remove_extra_whitespace.split(" ")
-    for token in split_string:
-        if difference(acceptor(token), valid_token).num_states() == 0:
-            returned.append(token)
-        else:
-            returned.append("<UNK>")
-    return " ".join(returned)
+    # Language-specific formatting fixes
 
 
-def pass_only_valid_sentences(string: str) -> str:
-    """Replaces invalid sentences.
-
-    Args:
-        string: A line from a corpus.
-
-    Returns:
-        The line or the line replaced with <SENTENCE_REJECTED>.
-    """
-    valid_token = INITIAL_PUNCTUATION.ques + Verbalizable.verbalizable() + FINAL_PUNCTUATION.ques
-    remove_extra_whitespace = (string @ REMOVE_EXTRA_WHITESPACE).string()
-    split_string = remove_extra_whitespace.split(" ")
-    for token in split_string:
-        if difference(acceptor(token), valid_token).num_states() != 0:
-            return "<SENTENCE_REJECTED>"
-    return string
+    def language_specific_fixes(self, string: Fst) -> Fst:
+        "Applies language-specific formatting fixes."
+        print("Applying language-specific fixes...")
+        if self.language_specific_preprocessing:
+            return (string @ self.language_specific_preprocessing).optimize()
+        return string
 
 
-# Detach punctuation from words
-# e.g. "Who are you?" -> "Who are you ?"
-
-NON_GRAPHEME_PUNCT = difference(PUNCTUATION, GRAPHEMES)
-
-INSERT_SPACE = transducer("", SPACE)
-
-SEPARATE_PUNCTUATION = (
-    cdrewrite(
-        INSERT_SPACE,
-        union("[BOS]", SPACE) + union(NON_GRAPHEME_PUNCT),
-        (union(PUNCTUATION, Verbalizable.verbalizable()) +
-         union("[EOS]", SPACE, Verbalizable.verbalizable())),
-        SIGMA_STAR) @
-    cdrewrite(
-        INSERT_SPACE,
-        union(Verbalizable.verbalizable(), PUNCTUATION),
-        PUNCTUATION + union("[EOS]", SPACE, PUNCTUATION),
-        SIGMA_STAR))
+    #Discard invalid tokens
+    # e.g. "how are you today товарищ?" -> "how are you today?"
 
 
-# Delete freestanding punctuation
-# e.g. "hi there ?" -> "hi there
+    def pass_only_valid_tokens(self, string) -> str:
+        """Replaces invalid strings in a sentence.
 
-DELETE_PUNCTUATION = transducer(PUNCTUATION, "")
+        Args:
+            string: A line from a corpus.
 
-DELETE_FREESTANDING_PUNCTUATION = cdrewrite(
-    DELETE_PUNCTUATION,
-    union("[BOS]", SPACE),
-    union("[EOS]", SPACE),
-    SIGMA_STAR)
+        Returns:
+            The line, where invalid tokens have been replaced with <UNK>.
+        """
+        print("Replacing invalid tokens...")
+        valid_token = (self.initial_punctuation.ques +
+                       self.verbalizable() +
+                       self.final_punctuation.ques)
+        returned: List[str] = []
+        remove_extra_whitespace = self.remove_extra_whitespace(string).string()
+        split_string = remove_extra_whitespace.split(" ")
+        for token in split_string:
+            if difference(acceptor(token), valid_token).num_states() == 0:
+                returned.append(token)
+            else:
+                returned.append("<UNK>")
+        return " ".join(returned)
 
 
-def apply_fst_rules(string: str) -> str:
-    """Applies FST rewrite rules."""
-    return string if (string == "<STRING_REJECTED>") else (
-        string
-        @ LANGUAGE_SPECIFIC_NORM
-        @ SEPARATE_PUNCTUATION
-        @ DELETE_FREESTANDING_PUNCTUATION
-        @ REMOVE_EXTRA_WHITESPACE
+    def pass_only_valid_sentences(self, string) -> str:
+        """Replaces invalid sentences.
+
+        Args:
+            string: A line from a corpus.
+
+        Returns:
+            The line or the line replaced with <SENTENCE_REJECTED>.
+        """
+        print("Replacing invalid sentences...")
+        valid_token = (self.initial_punctuation.ques +
+                       self.verbalizable() +
+                       self.final_punctuation.ques)
+        remove_extra_whitespace = self.remove_extra_whitespace(string).string()
+        split_string = remove_extra_whitespace.split(" ")
+        for token in split_string:
+            if difference(acceptor(token), valid_token).num_states() != 0:
+                return "<SENTENCE_REJECTED>"
+        return string
+
+
+    # Detach punctuation from words
+    # e.g. "Who are you?" -> "Who are you ?"
+
+
+    def detach_punctuation(self, string: Fst) -> Fst:
+        "Detaches punctuation from words."
+        print("Detaching punctuation from words...")
+        non_grapheme_punct = difference(self.punctuation, self.graphemes)
+
+        insert_space = transducer("", self.SPACE)
+
+        separate_punctuation = (
+            cdrewrite(
+                insert_space,
+                union("[BOS]", self.SPACE) + union(non_grapheme_punct),
+                (union(self.punctuation, self.verbalizable()) +
+                 union("[EOS]", self.SPACE, self.verbalizable())),
+                self.SIGMA_STAR) @
+            cdrewrite(
+                insert_space,
+                union(self.verbalizable(), self.punctuation),
+                self.punctuation + union("[EOS]", self.SPACE, self.punctuation),
+                self.SIGMA_STAR))
+        return string @ separate_punctuation
+
+
+    # Delete freestanding punctuation
+    # e.g. "hi there ?" -> "hi there
+
+
+    def delete_freestanding_punctuation(self, string: Fst) -> Fst:
+        "Deletes freestanding punctuation."
+        print("Deleting freestanding punctuation...")
+        delete_freestanding_punctuation = cdrewrite(
+            transducer(self.punctuation, ""),
+            union("[BOS]", self.SPACE),
+            union("[EOS]", self.SPACE),
+            self.SIGMA_STAR)
+        return (string @ delete_freestanding_punctuation).optimize()
+
+
+    def apply_fst_rules(self, string: str) -> str:
+        """Applies FST rewrite rules."""
+        print("Applying all FST rewrite rules...")
+        return string if (string == "<STRING_REJECTED>") else (
+            self.remove_extra_whitespace(
+                self.delete_freestanding_punctuation(
+                    self.detach_punctuation(
+                        self.language_specific_fixes(string)
+                    )
+                )
+            )
         ).optimize().string()
+#            string
+#            @ self.language_specific_fixes(string)
+#            @ self.detach_punctuation(string)
+#            @ self.delete_freestanding_punctuation(string)
+#            @ self.remove_extra_whitespace(string)
+#            ).optimize().string()
 
 
-def token_normalizer(string: str) -> str:
-    """Normalizes text by applying FST rewrite rules.
+    def token_normalizer(self, string: str) -> str:
+        """Normalizes text by applying FST rewrite rules.
 
-    Args:
-        string: A line from a corpus.
+        Args:
+            string: A line from a corpus.
 
-    Returns:
-        The normalized line from the corpus.
-    """
-    string = unicodedata.normalize("NFC", string.lower())
-    filtered_string = pass_only_valid_tokens(string)
-    return apply_fst_rules(filtered_string)
+        Returns:
+            The normalized line from the corpus.
+        """
+        print("\nRunning token-based normalizer...")
+        string = unicodedata.normalize("NFC", string.lower())
+        filtered_string = self.pass_only_valid_tokens(string)
+        return self.apply_fst_rules(filtered_string)
 
 
-def sentence_normalizer(string: str) -> str:
-    """Normalizes text by applying FST rewrite rules.
+    def sentence_normalizer(self, string: str) -> str:
+        """Normalizes text by applying FST rewrite rules.
 
-    Args:
-        string: A line from a corpus.
+        Args:
+            string: A line from a corpus.
 
-    Returns:
-        The normalized line from the corpus.
-    """
-    string = unicodedata.normalize("NFC", string.lower())
-    filtered_string = pass_only_valid_sentences(string)
-    return apply_fst_rules(filtered_string)
+        Returns:
+            The normalized line from the corpus.
+        """
+        print("\nRunning sentence-based normalizer...")
+        string = unicodedata.normalize("NFC", string.lower())
+        filtered_string = self.pass_only_valid_sentences(string)
+        return self.apply_fst_rules(filtered_string)
