@@ -56,18 +56,18 @@ class TestNormalizer(unittest.TestCase):
                        "hello , friend"),
                       ("the end.",
                        "the end ."),
-                      ('"What',
-                       '" What'),
-                      ('"Who, he asked, left?"',
-                       '" Who , he asked , left ? "'),
-                      ("Don't separate apostrophes",
-                       "Don't separate apostrophes"),
+                      ('"what',
+                       '" what'),
+                      ('"who, he asked, left?"',
+                       '" who , he asked , left ? "'),
+                      ("don't separate apostrophes",
+                       "don't separate apostrophes"),
                       ("initial 'apostrophe",
                        "initial 'apostrophe"),
                       ("final' apostrophe",
                        "final ' apostrophe"),
-                      ("Keep ice-cream together",
-                       "Keep ice-cream together"))]:
+                      ("keep ice-cream together",
+                       "keep ice-cream together"))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
                     normalized_text = (test_case @
@@ -80,8 +80,8 @@ class TestNormalizer(unittest.TestCase):
         'Test deleting freestanding punctuation.'
         for test in [(("hello , friend", "hello  friend"),
                       ("the end .", "the end "),
-                      ('" What', ' What'),
-                      ('" Who , he asked , left ? "', ' Who  he asked  left  '))]:
+                      ('" what', ' what'),
+                      ('" who , he asked , left ? "', ' who  he asked  left  '))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
                     normalized_text = (test_case @
