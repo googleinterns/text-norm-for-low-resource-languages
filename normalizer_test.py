@@ -2,7 +2,9 @@
 """Tests for evaluating text normalizer."""
 
 import unittest
+from typing import List
 import normalizer_lib
+import preprocess
 
 class TestNormalizer(unittest.TestCase):
     """Tests for evaluating text normalizer."""
@@ -97,6 +99,29 @@ class TestNormalizer(unittest.TestCase):
                 with self.subTest(test_case=test_case):
                     normalized_text = normalizer_lib.pass_only_valid_tokens(test_case)
                     self.assertEqual(normalized_text, expected)
+
+
+    def test_load_file(self):
+        'Test loading in a file that exists.'
+        infile = "testdata/test_mg_ac.txt"
+        try:
+            input_text: List[str] = preprocess.process_data(infile, "ac")
+        except Exception:
+            input_text = None
+        expected = ["amin'ny"]
+        self.assertEqual(input_text, expected)
+
+
+    def test_load_missing_file(self):
+        'Test loading in a file that does not exist.'
+        infile = ""
+        try:
+            input_text: List[str] = preprocess.process_data(infile, "ud")
+        except Exception:
+            input_text = None
+        expected = None
+        self.assertEqual(input_text, expected)
+
 
 if __name__ == '__main__':
     unittest.main()
