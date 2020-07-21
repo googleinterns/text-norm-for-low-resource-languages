@@ -85,7 +85,8 @@ def process_ancrubadan_data(ac_file: str) -> List[str]:
     ac_lines = read_file_as_lines(ac_file)
     ac_words: List[str] = []
     for line in ac_lines:
-        word: str = substitute_brackets(line)
+        text: str = line.split(" ")[0]
+        word: str = substitute_brackets(text)
         ac_words.append(word)
     return ac_words
 
