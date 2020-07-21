@@ -132,14 +132,26 @@ def process_lcc_data(lcc_file: str) -> List[str]:
 
 
 def read_file_as_lines(filename: str) -> List[str]:
-    """Reads in filename as list of lines."""
+    """Reads in filename as list of lines.
+
+    Args:
+        filename: The path of the filename to read in.
+
+    Returns: A list of strings.
+    """
     with open(filename) as infile:
         file_lines = infile.readlines()
     return file_lines
 
 
 def substitute_brackets(string: str) -> str:
-    """Substitutes square brackets to work in Pynini."""
+    """Substitutes square brackets to work in Pynini.
+
+    Args:
+        string: A line from the corpus (one or more sentences).
+
+    Returns: The same line with square brackets escaped by slashes.
+    """
     sub_left_bracket = re.sub(r"\[", "\\[", string.strip())
     sub_right_bracket = re.sub(r"\]", "\\]", sub_left_bracket)
     return sub_right_bracket
