@@ -28,7 +28,9 @@ py_test(
     srcs = ["normalizer_test.py"],
     data = glob([
         "testdata/test_sentences.tsv",
-        "testdata/test_mg_ac.txt"
+        "testdata/test_mg_ac.txt",
+        "testdata/test_zu_lcc_input.tsv",
+        "testdata/test_zu_lcc_expected.txt"
         ]
                 )
 )

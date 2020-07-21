@@ -10,6 +10,17 @@ class TestNormalizer(unittest.TestCase):
     """Tests for evaluating text normalizer."""
 
 
+    def test_end_to_end_with_file(self):
+        'Test loading a file and normalizing it.'
+        #language = importlib.import_module("config.zu")
+        infile = "testdata/test_zu_lcc_input.tsv"
+        input_text: List[str] = preprocess.process_data(infile, "lcc")
+        normalized_text = normalizer_lib.token_normalizer(input_text[0])
+        with open("testdata/test_zu_lcc_expected.txt", "r") as expected_file:
+            expected = expected_file.readlines()[0].strip()
+        self.assertEqual(normalized_text, expected)
+
+
     def test_token_normalizer(self):
         'Test the output of normalizer.'
         raise NotImplementedError
