@@ -24,8 +24,8 @@ py_library(
 )
 
 py_test(
-    name = "normalizer_test",
-    srcs = ["normalizer_test.py"],
+    name = "normalizer_lib_test",
+    srcs = ["normalizer_lib_test.py"],
     data = glob([
         "testdata/test_sentences.tsv",
         "testdata/test_mg_ac_input.txt",
