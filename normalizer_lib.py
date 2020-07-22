@@ -41,16 +41,20 @@ class NormalizerLib:
                  (self.graphemes.plus | self.numerals.plus).plus +
                  self.final_punctuation.ques).optimize()
 
-        email_address = (union(self.graphemes, self.numerals, self.UNDERSCORE, ".").plus +
+        email_address = (self.initial_punctuation.ques +
+                         union(self.graphemes, self.numerals, self.UNDERSCORE, ".").plus +
                          "@" +
                          self.graphemes.plus +
-                         closure("." + self.graphemes.plus, 1, 2)).optimize()
+                         closure("." + self.graphemes.plus, 1, 2) +
+                         self.final_punctuation.star).optimize()
 
-        web_address = ((("http" + acceptor("s").ques + "://").ques +
+        web_address = (self.initial_punctuation.ques +
+                       (("http" + acceptor("s").ques + "://").ques +
                         "www.").ques +
                        union(self.graphemes, self.numerals).plus +
                        closure("." + self.graphemes.plus, 1, 2) +
-                       ("/" | ("/" + union(self.graphemes, self.numerals)).star)).optimize()
+                       ("/" + union(self.graphemes, self.numerals).star).star +
+                       self.final_punctuation.star).optimize()
 
         # For times. Two numbers, a colon, followed by two more numbers,
         # optionally followed by another colon and two numbers.
@@ -81,33 +85,31 @@ class NormalizerLib:
     # e.g. "hi      there" -> "hi there"
 
 
-    def remove_extra_whitespace(self, string: Fst) -> Fst:
+    def remove_extra_whitespace(self, fst: Fst) -> Fst:
         "Removes extra whitespace."
-        print("Removing extra whitespace...")
         remove_extra_whitespace = cdrewrite(
             transducer(self.SPACE, ""),
             "",
             self.SPACE,
             self.SIGMA_STAR)
-        return (string @ remove_extra_whitespace).optimize()
+        return (fst @ remove_extra_whitespace).optimize()
 
 
     # Language-specific formatting fixes
 
 
-    def language_specific_fixes(self, string: Fst) -> Fst:
+    def language_specific_fixes(self, fst: Fst) -> Fst:
         "Applies language-specific formatting fixes."
-        print("Applying language-specific fixes...")
         if self.language_specific_preprocessing:
-            return (string @ self.language_specific_preprocessing).optimize()
-        return string
+            return (fst @ self.language_specific_preprocessing).optimize
+        return fst
 
 
     #Discard invalid tokens
     # e.g. "how are you today товарищ?" -> "how are you today?"
 
 
-    def pass_only_valid_tokens(self, string) -> str:
+    def pass_only_valid_tokens(self, string) -> List[str]:
         """Replaces invalid strings in a sentence.
 
         Args:
@@ -116,7 +118,6 @@ class NormalizerLib:
         Returns:
             The line, where invalid tokens have been replaced with <UNK>.
         """
-        print("Replacing invalid tokens...")
         valid_token = (self.initial_punctuation.ques +
                        self.verbalizable() +
                        self.final_punctuation.ques)
@@ -128,10 +129,10 @@ class NormalizerLib:
                 returned.append(token)
             else:
                 returned.append("<UNK>")
-        return " ".join(returned)
+        return returned
 
 
-    def pass_only_valid_sentences(self, string) -> str:
+    def pass_only_valid_sentences(self, string) -> List[str]:
         """Replaces invalid sentences.
 
         Args:
@@ -140,7 +141,6 @@ class NormalizerLib:
         Returns:
             The line or the line replaced with <SENTENCE_REJECTED>.
         """
-        print("Replacing invalid sentences...")
         valid_token = (self.initial_punctuation.ques +
                        self.verbalizable() +
                        self.final_punctuation.ques)
@@ -148,74 +148,52 @@ class NormalizerLib:
         split_string = remove_extra_whitespace.split(" ")
         for token in split_string:
             if difference(acceptor(token), valid_token).num_states() != 0:
-                return "<SENTENCE_REJECTED>"
-        return string
+                return ["<SENTENCE_REJECTED>"]
+        return split_string
 
 
     # Detach punctuation from words
     # e.g. "Who are you?" -> "Who are you ?"
 
 
-    def detach_punctuation(self, string: Fst) -> Fst:
+    def detach_punctuation(self, fst: Fst) -> Fst:
         "Detaches punctuation from words."
-        print("Detaching punctuation from words...")
         non_grapheme_punct = difference(self.punctuation, self.graphemes)
         insert_space = transducer("", self.SPACE)
-        time_start = time.time()
-        #call_verbalizable = self.verbalizable()
-        #DELTA_STAR = union(self.graphemes, self.punctuation. self.SPACE)
+#        time_start = time.time()
         detach_leading_punctuation = cdrewrite(
             insert_space,
-            union("[BOS]", self.SPACE) + union(non_grapheme_punct),
-            (union(self.punctuation, self.verbalizable()) +
-             union("[EOS]", self.SPACE, self.verbalizable())),
+            union("[BOS]") + non_grapheme_punct.plus,
+            union(non_grapheme_punct, self.graphemes, self.numerals),
             self.SIGMA_STAR)
         detach_trailing_punctuation = cdrewrite(
             insert_space,
-            union(self.verbalizable(), self.punctuation),
-            self.punctuation + union("[EOS]", self.SPACE, self.punctuation),
+            union(non_grapheme_punct, self.graphemes, self.numerals, "/"),
+            non_grapheme_punct.plus + "[EOS]",
             self.SIGMA_STAR)
 
-#        separate_punctuation = (
-#            cdrewrite(
-#                insert_space,
-#                union("[BOS]", self.SPACE) + union(non_grapheme_punct),
-#                (union(self.punctuation, self.verbalizable()) +
-#                 union("[EOS]", self.SPACE, self.verbalizable())),
-#                union("[EOS]", self.SPACE),
-#                self.SIGMA_STAR).optimize() @
-#            cdrewrite(
-#                insert_space,
-#                union(self.verbalizable(), self.punctuation),
-#                self.punctuation,
-#                self.punctuation + union("[EOS]", self.SPACE, self.punctuation),
-#                self.SIGMA_STAR).optimize()
-#        )
 
-        returned = (string @ detach_leading_punctuation @ detach_trailing_punctuation).optimize()
-        print("time to detach punctuation:", time.time()-time_start)
+        returned = (fst @ detach_leading_punctuation @ detach_trailing_punctuation).optimize()
+        #print("time to detach punctuation:", time.time()-time_start)
         return returned
-#        return string @ separate_punctuation
 
 
     # Delete freestanding punctuation
     # e.g. "hi there ?" -> "hi there
 
 
-    def delete_freestanding_punctuation(self, string: Fst) -> Fst:
+    def delete_freestanding_punctuation(self, fst: Fst) -> Fst:
         "Deletes freestanding punctuation."
-        print("Deleting freestanding punctuation...")
         delete_freestanding_punctuation = cdrewrite(
             transducer(self.punctuation, ""),
             union("[BOS]", self.SPACE),
             union("[EOS]", self.SPACE),
             self.SIGMA_STAR)
-        return (string @ delete_freestanding_punctuation).optimize()
+        return (fst @ delete_freestanding_punctuation).optimize()
 
 
     def apply_fst_rules(self, string: str) -> str:
         """Applies FST rewrite rules."""
-        print("Applying all FST rewrite rules...")
         return string if (string == "<STRING_REJECTED>") else (
             self.remove_extra_whitespace(
                 self.delete_freestanding_punctuation(
@@ -226,10 +204,10 @@ class NormalizerLib:
             )
         ).optimize().string()
 #            string
-#            @ self.language_specific_fixes(string)
-#            @ self.detach_punctuation(string)
-#            @ self.delete_freestanding_punctuation(string)
-#            @ self.remove_extra_whitespace(string)
+#            @ self.language_specific_fixes()
+#            @ self.detach_punctuation()
+#            @ self.delete_freestanding_punctuation()
+#            @ self.remove_extra_whitespace()
 #            ).optimize().string()
 
 
@@ -242,10 +220,13 @@ class NormalizerLib:
         Returns:
             The normalized line from the corpus.
         """
-        print("\nRunning token-based normalizer...")
         string = unicodedata.normalize("NFC", string.lower())
         filtered_string = self.pass_only_valid_tokens(string)
-        return self.apply_fst_rules(filtered_string)
+        returned = []
+        for token in filtered_string:
+            normalized_token = self.apply_fst_rules(token).strip()
+            returned.append(normalized_token)
+        return " ".join(returned)
 
 
     def sentence_normalizer(self, string: str) -> str:
@@ -257,7 +238,10 @@ class NormalizerLib:
         Returns:
             The normalized line from the corpus.
         """
-        print("\nRunning sentence-based normalizer...")
         string = unicodedata.normalize("NFC", string.lower())
         filtered_string = self.pass_only_valid_sentences(string)
-        return self.apply_fst_rules(filtered_string)
+        returned = []
+        for token in filtered_string:
+            normalized_token = self.apply_fst_rules(token).strip()
+            returned.append(normalized_token)
+        return " ".join(returned)
