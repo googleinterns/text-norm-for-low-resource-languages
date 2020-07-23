@@ -16,8 +16,9 @@ class TestNormalizer(unittest.TestCase):
         infile = "testdata/test_zu_lcc_input.tsv"
         input_text: List[str] = preprocess.process_data(infile, "lcc")
         normalized_text = normalizer_lib.token_normalizer(input_text[0])
-        with open("testdata/test_zu_lcc_expected.txt", "r") as expected_file:
-            expected = expected_file.readlines()[0].strip()
+        expected = ("iningizimu afrika iyizwe elisezansi ezwenikazi "
+                    "lase-afrika yaziwa ngokusemthethweni ngokuthi "
+                    "iriphabhuliki yaseningizimu afrika")
         self.assertEqual(normalized_text, expected)
 
 
