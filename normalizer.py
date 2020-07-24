@@ -33,7 +33,7 @@ def main(argv):
     except:
         raise app.UsageError("Needs a value for the language flag.")
 
-    language_library = normalizer_lib.NormalizerLib(FLAGS.language)
+    norm = normalizer_lib.NormalizerLib(FLAGS.language)
 
     if len(argv) > 1:
         raise app.UsageError("Too many command-line arguments.")
@@ -41,9 +41,9 @@ def main(argv):
     if FLAGS.string_to_normalize is not None:
         input_text: str = FLAGS.string_to_normalize
         print("TOKEN_BASED:\t"+
-              language_library.token_normalizer(FLAGS.string_to_normalize))
+              norm.token_normalizer(FLAGS.string_to_normalize))
         print("SENTENCE_BASED:\t"+
-              language_library.sentence_normalizer(FLAGS.string_to_normalize))
+              norm.sentence_normalizer(FLAGS.string_to_normalize))
     else:
         data_source: str = FLAGS.data_source
         if data_source == "ud":
@@ -78,10 +78,10 @@ def main(argv):
             sentence_id: str = str(i)
             sentence_text: str = line
             if FLAGS.pass_valid == "token":
-                normalized_text: str = language_library.token_normalizer(
+                normalized_text: str = norm.token_normalizer(
                     sentence_text)
             elif FLAGS.pass_valid == "sentence":
-                normalized_text: str = language_library.sentence_normalizer(
+                normalized_text: str = norm.sentence_normalizer(
                     sentence_text)
             if normalized_text != sentence_text.strip().lower():
                 changed_sentences += 1
