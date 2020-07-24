@@ -47,20 +47,11 @@ GRAPHEMES = union("'", "-",
 
 INITIAL_PUNCTUATION = utils.DEFAULT_INITIAL_PUNCTUATION
 
-GEEZ_FINAL_PUNCTUATION = union("፠", "፡", "።", "፣", "፤",
-                               "፥", "፦", "፧", "፨")
-
 FINAL_PUNCTUATION = union(utils.DEFAULT_FINAL_PUNCTUATION,
-                          GEEZ_FINAL_PUNCTUATION)
-
-GEEZ_NUMERALS = union("፩", "፪", "፫", "፬", "፭",
-                      "፮", "፯", "፰", "፱", "፲",
-                      "፳", "፴", "፵", "፶", "፷",
-                      "፸", "፹", "፺", "፻",
-                      "፲፻", "፻፻", "፲፻፻")
+                          utils.GEEZ_FINAL_PUNCTUATION)
 
 NUMERALS = union(byte.DIGIT,
-                 GEEZ_NUMERALS)
+                 utils.GEEZ_NUMERALS)
 
 UD = ""
 UM = ""
