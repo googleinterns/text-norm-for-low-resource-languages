@@ -57,7 +57,9 @@ class TestNormalizer(unittest.TestCase):
                       ("   all   the   spaces   ", " all the spaces "))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = NORM.remove_extra_whitespace(test_case).string()
+                    normalized_text = (test_case @
+                                       NORM.remove_extra_whitespace()
+                                       ).optimize().string()
                     self.assertEqual(normalized_text, expected)
 
 
@@ -84,7 +86,7 @@ class TestNormalizer(unittest.TestCase):
                       ("12:25", "12:25"))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = NORM.detach_punctuation(test_case).string()
+                    normalized_text = (test_case @ NORM.detach_punctuation()).optimize().string()
                     self.assertEqual(normalized_text, expected)
 
 
@@ -96,7 +98,9 @@ class TestNormalizer(unittest.TestCase):
                       ('" who , he asked , left ? "', ' who  he asked  left  '))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = NORM.delete_freestanding_punctuation(test_case).string()
+                    normalized_text = (test_case @
+                                       NORM.delete_freestanding_punctuation()
+                                       ).optimize().string()
                     self.assertEqual(normalized_text, expected)
 
 

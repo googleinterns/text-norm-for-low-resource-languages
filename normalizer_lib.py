@@ -83,24 +83,24 @@ class NormalizerLib:
     # e.g. "hi      there" -> "hi there"
 
 
-    def remove_extra_whitespace(self, fst: Fst) -> Fst:
+    def remove_extra_whitespace(self) -> Fst:
         "Removes extra whitespace."
         remove_extra_whitespace = cdrewrite(
             pynutil.delete(byte.SPACE),
             "",
             byte.SPACE,
             self.SIGMA_STAR)
-        return (fst @ remove_extra_whitespace).optimize()
+        return remove_extra_whitespace
 
 
     # Language-specific formatting fixes
 
 
-    def language_specific_fixes(self, fst: Fst) -> Fst:
+    def language_specific_fixes(self) -> Fst:
         "Applies language-specific formatting fixes."
         if self.language_specific_preprocessing:
-            return (fst @ self.language_specific_preprocessing).optimize()
-        return fst
+            return self.language_specific_preprocessing
+        return self
 
 
     #Discard invalid tokens
@@ -120,7 +120,7 @@ class NormalizerLib:
                        self.verbalizable() +
                        self.final_punctuation.ques)
         returned: List[str] = []
-        remove_extra_whitespace = self.remove_extra_whitespace(string).string()
+        remove_extra_whitespace = (string @ self.remove_extra_whitespace()).optimize().string()
         split_string = remove_extra_whitespace.split(" ")
         for token in split_string:
             if difference(acceptor(token), valid_token).num_states() == 0:
@@ -142,7 +142,7 @@ class NormalizerLib:
         valid_token = (self.initial_punctuation.ques +
                        self.verbalizable() +
                        self.final_punctuation.ques)
-        remove_extra_whitespace = self.remove_extra_whitespace(string).string()
+        remove_extra_whitespace = (string @ self.remove_extra_whitespace()).optimize().string()
         split_string = remove_extra_whitespace.split(" ")
         for token in split_string:
             if difference(acceptor(token), valid_token).num_states() != 0:
@@ -154,7 +154,7 @@ class NormalizerLib:
     # e.g. "Who are you?" -> "Who are you ?"
 
 
-    def detach_punctuation(self, fst: Fst) -> Fst:
+    def detach_punctuation(self) -> Fst:
         "Detaches punctuation from words."
         non_grapheme_punct = difference(self.punctuation, self.graphemes)
         detach_leading_punctuation = cdrewrite(
@@ -167,40 +167,32 @@ class NormalizerLib:
             union(non_grapheme_punct, self.graphemes, self.numerals, "/"),
             self.punctuation.plus + union("[EOS]", byte.SPACE),
             self.SIGMA_STAR)
-        return (fst @ detach_leading_punctuation @ detach_trailing_punctuation).optimize()
+        return (detach_leading_punctuation @ detach_trailing_punctuation).optimize()
 
 
     # Delete freestanding punctuation
     # e.g. "hi there ?" -> "hi there
 
 
-    def delete_freestanding_punctuation(self, fst: Fst) -> Fst:
+    def delete_freestanding_punctuation(self) -> Fst:
         "Deletes freestanding punctuation."
         delete_freestanding_punctuation = cdrewrite(
             pynutil.delete(self.punctuation),
             union("[BOS]", byte.SPACE),
             union("[EOS]", byte.SPACE),
             self.SIGMA_STAR)
-        return (fst @ delete_freestanding_punctuation).optimize()
+        return delete_freestanding_punctuation
 
 
     def apply_fst_rules(self, string: str) -> str:
         """Applies FST rewrite rules."""
         return string if (string == "<STRING_REJECTED>") else (
-            self.remove_extra_whitespace(
-                self.delete_freestanding_punctuation(
-                    self.detach_punctuation(
-                        self.language_specific_fixes(string)
-                    )
-                )
-            )
-        ).optimize().string()
-#            string
-#            @ self.language_specific_fixes()
-#            @ self.detach_punctuation()
-#            @ self.delete_freestanding_punctuation()
-#            @ self.remove_extra_whitespace()
-#            ).optimize().string()
+            string
+            @ self.language_specific_fixes()
+            @ self.detach_punctuation()
+            @ self.delete_freestanding_punctuation()
+            @ self.remove_extra_whitespace()
+            ).optimize().string()
 
 
     def token_normalizer(self, string: str) -> str:
