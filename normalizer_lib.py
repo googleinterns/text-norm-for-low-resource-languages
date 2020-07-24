@@ -6,10 +6,9 @@ from dataclasses import dataclass
 from typing import List
 from pynini import *
 from pynini.lib import byte, pynutil
-from config import *
+import config.zu as zu
 
-
-LANGUAGE = af
+LANGUAGE = zu
 
 GRAPHEMES = LANGUAGE.GRAPHEMES
 
@@ -18,8 +17,8 @@ FINAL_PUNCTUATION = LANGUAGE.FINAL_PUNCTUATION
 OTHER_PUNCTUATION = union(r"\[", r"\]")
 PUNCTUATION = union(INITIAL_PUNCTUATION, FINAL_PUNCTUATION, OTHER_PUNCTUATION)
 NUMERALS = LANGUAGE.NUMERALS
+#byte.SPACE = acceptor(" ")
 UNDERSCORE = acceptor("_")
-
 SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
                    ).optimize().closure()
 
@@ -90,7 +89,7 @@ REMOVE_EXTRA_WHITESPACE = cdrewrite(
 
 try:
     LANGUAGE_SPECIFIC_NORM = LANGUAGE.LANGUAGE_SPECIFIC_PREPROCESSING
-except:
+except Exception:
     LANGUAGE_SPECIFIC_NORM = cdrewrite(cross("", ""),
                                        "",
                                        "",
@@ -147,13 +146,13 @@ NON_GRAPHEME_PUNCT = difference(PUNCTUATION, GRAPHEMES)
 
 SEPARATE_PUNCTUATION = (
     cdrewrite(
-        pynutil.insert(byte.SPACE),
+        pynutil.insert(" "),
         union("[BOS]", byte.SPACE) + union(NON_GRAPHEME_PUNCT),
         (union(PUNCTUATION, Verbalizable.verbalizable()) +
          union("[EOS]", byte.SPACE, Verbalizable.verbalizable())),
         SIGMA_STAR) @
     cdrewrite(
-        pynutil.insert(byte.SPACE),
+        pynutil.insert(" "),
         union(Verbalizable.verbalizable(), PUNCTUATION),
         PUNCTUATION + union("[EOS]", byte.SPACE, PUNCTUATION),
         SIGMA_STAR))
@@ -177,7 +176,7 @@ def apply_fst_rules(string: str) -> str:
         @ SEPARATE_PUNCTUATION
         @ DELETE_FREESTANDING_PUNCTUATION
         @ REMOVE_EXTRA_WHITESPACE
-        ).optimize().string()
+        ).optimize().string().rstrip()
 
 
 def token_normalizer(string: str) -> str:

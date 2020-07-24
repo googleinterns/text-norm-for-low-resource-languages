@@ -24,7 +24,24 @@ py_library(
 )
 
 py_test(
-    name = "normalizer_test",
-    srcs = ["normalizer_test.py"],
-    data = glob(["testdata/test_sentences.tsv"])
+    name = "normalizer_lib_test",
+    srcs = ["normalizer_lib_test.py"],
+    data = glob([
+        "testdata/test_sentences.tsv",
+        "testdata/test_zu_lcc_input.tsv",
+        ]
+                )
+)
+
+py_test(
+    name = "preprocess_test",
+    srcs = ["preprocess_test.py"],
+    data = glob([
+        "testdata/test_wo_ud_input.txt",
+        "testdata/test_zu_um_input.txt",
+        "testdata/test_mg_ac_input.txt",
+        "testdata/test_af_oscar_input.txt",
+        "testdata/test_so_lcc_input.txt",
+        ]
+                )
 )
