@@ -5,10 +5,9 @@ import unicodedata
 from dataclasses import dataclass
 from typing import List
 from pynini import *
-from config import *
+import config.zu as zu
 
-
-LANGUAGE = af
+LANGUAGE = zu
 
 GRAPHEMES = LANGUAGE.GRAPHEMES
 
@@ -181,7 +180,7 @@ def apply_fst_rules(string: str) -> str:
         @ SEPARATE_PUNCTUATION
         @ DELETE_FREESTANDING_PUNCTUATION
         @ REMOVE_EXTRA_WHITESPACE
-        ).optimize().string()
+        ).optimize().string().rstrip()
 
 
 def token_normalizer(string: str) -> str:

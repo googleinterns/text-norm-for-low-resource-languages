@@ -2,10 +2,24 @@
 """Tests for evaluating text normalizer."""
 
 import unittest
+from typing import List
 import normalizer_lib
+import preprocess
 
 class TestNormalizer(unittest.TestCase):
     """Tests for evaluating text normalizer."""
+
+
+    def test_end_to_end_with_file(self):
+        'Test loading a file and normalizing it.'
+        #language = importlib.import_module("config.zu")
+        infile = "testdata/test_zu_lcc_input.tsv"
+        input_text: List[str] = preprocess.process_data(infile, "lcc")
+        normalized_text = normalizer_lib.token_normalizer(input_text[0])
+        expected = ("iningizimu afrika iyizwe elisezansi ezwenikazi "
+                    "lase-afrika yaziwa ngokusemthethweni ngokuthi "
+                    "iriphabhuliki yaseningizimu afrika")
+        self.assertEqual(normalized_text, expected)
 
 
     def test_token_normalizer(self):
@@ -54,18 +68,18 @@ class TestNormalizer(unittest.TestCase):
                        "hello , friend"),
                       ("the end.",
                        "the end ."),
-                      ('"What',
-                       '" What'),
-                      ('"Who, he asked, left?"',
-                       '" Who , he asked , left ? "'),
-                      ("Don't separate apostrophes",
-                       "Don't separate apostrophes"),
+                      ('"what',
+                       '" what'),
+                      ('"who, he asked, left?"',
+                       '" who , he asked , left ? "'),
+                      ("don't separate apostrophes",
+                       "don't separate apostrophes"),
                       ("initial 'apostrophe",
                        "initial 'apostrophe"),
                       ("final' apostrophe",
                        "final ' apostrophe"),
-                      ("Keep ice-cream together",
-                       "Keep ice-cream together"))]:
+                      ("keep ice-cream together",
+                       "keep ice-cream together"))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
                     normalized_text = (test_case @
@@ -78,8 +92,8 @@ class TestNormalizer(unittest.TestCase):
         'Test deleting freestanding punctuation.'
         for test in [(("hello , friend", "hello  friend"),
                       ("the end .", "the end "),
-                      ('" What', ' What'),
-                      ('" Who , he asked , left ? "', ' Who  he asked  left  '))]:
+                      ('" what', ' what'),
+                      ('" who , he asked , left ? "', ' who  he asked  left  '))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
                     normalized_text = (test_case @
@@ -97,6 +111,7 @@ class TestNormalizer(unittest.TestCase):
                 with self.subTest(test_case=test_case):
                     normalized_text = normalizer_lib.pass_only_valid_tokens(test_case)
                     self.assertEqual(normalized_text, expected)
+
 
 if __name__ == '__main__':
     unittest.main()
