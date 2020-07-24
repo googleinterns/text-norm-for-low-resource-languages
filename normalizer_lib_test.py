@@ -3,6 +3,7 @@
 
 import unittest
 from typing import List
+from pynini.lib import rewrite
 import normalizer_lib
 import preprocess
 
@@ -57,9 +58,9 @@ class TestNormalizer(unittest.TestCase):
                       ("   all   the   spaces   ", " all the spaces "))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = (test_case @
-                                       NORM.remove_extra_whitespace()
-                                       ).optimize().string()
+                    normalized_text = rewrite.one_top_rewrite(
+                        test_case,
+                        NORM.remove_extra_whitespace())
                     self.assertEqual(normalized_text, expected)
 
 
@@ -86,7 +87,9 @@ class TestNormalizer(unittest.TestCase):
                       ("12:25", "12:25"))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = (test_case @ NORM.detach_punctuation()).optimize().string()
+                    normalized_text = rewrite.one_top_rewrite(
+                        test_case,
+                        NORM.detach_punctuation())
                     self.assertEqual(normalized_text, expected)
 
 
@@ -98,9 +101,9 @@ class TestNormalizer(unittest.TestCase):
                       ('" who , he asked , left ? "', ' who  he asked  left  '))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = (test_case @
-                                       NORM.delete_freestanding_punctuation()
-                                       ).optimize().string()
+                    normalized_text = rewrite.one_top_rewrite(
+                        test_case,
+                        NORM.delete_freestanding_punctuation())
                     self.assertEqual(normalized_text, expected)
 
 
