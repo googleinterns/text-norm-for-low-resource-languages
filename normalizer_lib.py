@@ -100,7 +100,8 @@ class NormalizerLib:
         "Applies language-specific formatting fixes."
         if self.language_specific_preprocessing:
             return self.language_specific_preprocessing
-        return self
+        generic_fst = cdrewrite(cross("", ""), "", "", self.SIGMA_STAR)
+        return generic_fst
 
 
     #Discard invalid tokens
