@@ -33,7 +33,7 @@ REMOVE_HYPHEN_AFTER_NOUN_CLASSIFIER = cdrewrite(
     pynutil.delete("-"),
     union("[BOS]", byte.SPACE) + NOUN_CLASSIFIERS,
     VOWELS,
-    utils.SIGMA_STAR)
+    byte.BYTES.closure())
 
 LANGUAGE_SPECIFIC_PREPROCESSING = REMOVE_HYPHEN_AFTER_NOUN_CLASSIFIER
 

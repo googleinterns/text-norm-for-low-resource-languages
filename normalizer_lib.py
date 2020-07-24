@@ -17,10 +17,8 @@ FINAL_PUNCTUATION = LANGUAGE.FINAL_PUNCTUATION
 OTHER_PUNCTUATION = union(r"\[", r"\]")
 PUNCTUATION = union(INITIAL_PUNCTUATION, FINAL_PUNCTUATION, OTHER_PUNCTUATION)
 NUMERALS = LANGUAGE.NUMERALS
-#byte.SPACE = acceptor(" ")
 UNDERSCORE = acceptor("_")
-SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
-                   ).optimize().closure()
+SIGMA_STAR = byte.BYTES.closure()
 
 
 @dataclass

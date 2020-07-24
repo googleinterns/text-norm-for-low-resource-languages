@@ -18,7 +18,7 @@ MG_VELAR_NASAL = cdrewrite(
     cross("ñ", "n̈"),
     "",
     "",
-    utils.SIGMA_STAR)
+    byte.BYTES.closure())
 
 LANGUAGE_SPECIFIC_PREPROCESSING = MG_VELAR_NASAL
 
