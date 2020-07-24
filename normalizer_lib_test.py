@@ -6,16 +6,14 @@ from typing import List
 import normalizer_lib
 import preprocess
 
-NORM = normalizer_lib.NormalizerLib("af")
+NORM = normalizer_lib.NormalizerLib("zu")
 
 class TestNormalizer(unittest.TestCase):
     """Tests for evaluating text normalizer."""
 
-    #norm = normalizer_lib.NormalizerLib("af")
 
     def test_end_to_end_with_file(self):
         'Test loading a file and normalizing it.'
-        #language = importlib.import_module("config.zu")
         infile = "testdata/test_zu_lcc_input.tsv"
         input_text: List[str] = preprocess.process_data(infile, "lcc")
         normalized_text = NORM.token_normalizer(input_text[0])
@@ -60,9 +58,6 @@ class TestNormalizer(unittest.TestCase):
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
                     normalized_text = NORM.remove_extra_whitespace(test_case).string()
-#                    normalized_text = (test_case @
-#                                       normalizer_lib.REMOVE_EXTRA_WHITESPACE
-#                                       ).string()
                     self.assertEqual(normalized_text, expected)
 
 
@@ -90,9 +85,6 @@ class TestNormalizer(unittest.TestCase):
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
                     normalized_text = NORM.detach_punctuation(test_case).string()
-#                    normalized_text = (test_case @
-#                                       normalizer_lib.SEPARATE_PUNCTUATION
-#                                       ).string()
                     self.assertEqual(normalized_text, expected)
 
 
@@ -105,9 +97,6 @@ class TestNormalizer(unittest.TestCase):
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
                     normalized_text = NORM.delete_freestanding_punctuation(test_case).string()
-#                    normalized_text = (test_case @
-#                                       normalizer_lib.DELETE_FREESTANDING_PUNCTUATION
-#                                       ).string()
                     self.assertEqual(normalized_text, expected)
 
 
@@ -119,7 +108,6 @@ class TestNormalizer(unittest.TestCase):
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
                     normalized_text = NORM.pass_only_valid_tokens(test_case)
-#                    normalized_text = normalizer_lib.pass_only_valid_tokens(test_case)
                     self.assertEqual(normalized_text, expected)
 
 
