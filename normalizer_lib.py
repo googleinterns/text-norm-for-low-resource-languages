@@ -27,6 +27,7 @@ class NormalizerLib:
 
     SIGMA_STAR = byte.BYTES.closure()
     UNDERSCORE = acceptor("_")
+    DUMMY_REWRITE = cdrewrite(cross("", ""), "", "", SIGMA_STAR)
 
     def verbalizable(self):
 
@@ -100,8 +101,7 @@ class NormalizerLib:
         "Applies language-specific formatting fixes."
         if self.language_specific_preprocessing:
             return self.language_specific_preprocessing
-        generic_fst = cdrewrite(cross("", ""), "", "", self.SIGMA_STAR)
-        return generic_fst
+        return self.DUMMY_REWRITE
 
 
     #Discard invalid tokens
