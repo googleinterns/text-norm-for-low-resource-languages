@@ -1,0 +1,41 @@
+
+# sent_id = wo_wtb-ud-train_35
+# text = Ndax ku jëkk a jël dakkantal boobu, di Decce Fu Njogu FAAL, dañu naan damm na li Kajoor seqante woon ak Jolof, ndax Jolof moo nangu woon Kajoor.
+1       Ndax    ndax    CCONJ   CONJ    _       17      cc      17:cc   _
+2       ku      bu      PRON    PRON    NounClass=Wol1|Number=Sing|Person=3|PronType=Rel        17      dislocated      17:dislocated   _
+3       jëkk    jëkk    VERB    VERB    Mood=Ind|VerbForm=Fin   2       acl:relcl       2:acl:relcl     _
+4       a       a       PART    PART    _       5       mark    5:mark  _
+5       jël     jël     VERB    VERB    VerbForm=Inf    3       xcomp   3:xcomp _
+6       dakkantal       dakkantal       NOUN    NOUN    _       5       obj     5:obj   _
+7       boobu   boobu   DET     DET     Deixis=Prox|DeixisRef=2|NounClass=Wol5|Number=Sing|PronType=Dem 6       det     6:det   SpaceAfter=No
+8       ,       ,       PUNCT   COMMA   _       10      punct   10:punct        _
+9       di      di      AUX     COP     Aspect=Imp|Mood=Ind|Tense=Pres|VerbForm=Fin     10      cop     10:cop  _
+10      Decce   Decce   PROPN   NAME    _       2       appos   2:appos _
+11      Fu      Fu      PROPN   NAME    _       10      flat    10:flat _
+12      Njogu   Njogu   PROPN   NAME    _       10      flat    10:flat _
+13      FAAL    FAAL    PROPN   NAME    _       10      flat    10:flat SpaceAfter=No
+14      ,       ,       PUNCT   COMMA   _       13      punct   13:punct        _
+15-16   dañu    _       _       _       _       _       _       _       _
+15      da      da      AUX     INFL    FocusType=Verb|Mood=Ind 17      aux     17:aux  _
+16      ñu      mu      PRON    PRON    Case=Nom|Number=Plur|Person=3|PronType=Prs      17      nsubj   17:nsubj        _
+17      naan    naan    VERB    VERB    Mood=Ind|VerbForm=Fin   0       root    0:root  _
+18      damm    damm    VERB    VERB    Mood=Ind|VerbForm=Fin   17      ccomp   17:ccomp        _
+19      na      na      AUX     INFL    Aspect=Perf|Mood=Ind|Number=Sing|Person=3       18      aux     18:aux  _
+20      li      bi      PRON    PRON    Definite=Def|Deixis=Prox|NounClass=Wol7|Number=Sing|PronType=Rel        18      obj     18:obj  _
+21      Kajoor  Kajoor  PROPN   NAME    _       22      nsubj   22:nsubj        _
+22      seqante seqante VERB    VERB    Mood=Ind|VerbForm=Fin   20      acl:relcl       20:acl:relcl    _
+23      woon    woon    AUX     CL      Tense=Past      22      aux     22:aux  _
+24      ak      ak      ADP     PREP    _       25      case    25:case _
+25      Jolof   Jolof   PROPN   NAME    _       22      obl     22:obl  SpaceAfter=No
+26      ,       ,       PUNCT   COMMA   _       25      punct   25:punct        _
+27      ndax    ndax    SCONJ   COMP    _       31      mark    31:mark _
+28      Jolof   Jolof   PROPN   NAME    _       31      dislocated      31:dislocated   _
+29-30   moo     _       _       _       _       _       _       _       _
+29      mu      mu      PRON    PRON    Case=Nom|Number=Sing|Person=3|PronType=Prs      31      nsubj   31:nsubj        _
+30      a       a       AUX     INFL    FocusType=Subj|Mood=Ind 31      aux     31:aux  _
+31      nangu   nangu   VERB    VERB    Mood=Ind|VerbForm=Fin   17      advcl   17:advcl        _
+32      woon    woon    AUX     CL      Tense=Past      31      aux     31:aux  _
+33      Kajoor  Kajoor  PROPN   NAME    _       31      obj     31:obj  SpaceAfter=No
+34      .       .       PUNCT   PERIOD  _       17      punct   17:punct        _
+
+

@@ -3,9 +3,10 @@
 
 import re
 from typing import List
+from absl import app
 
 
-def process_data(data_file: str, data_source:str) -> List[str]:
+def process_data(data_file: str, data_source: str) -> List[str]:
     """Processes data into list of strings depending on the data source.
 
     Args:
@@ -28,9 +29,8 @@ def process_data(data_file: str, data_source:str) -> List[str]:
         return process_oscar_data(data_file)
     elif data_source == "lcc":
         return process_lcc_data(data_file)
-    else:
-        print("Pick a data source!")
-        return
+    print("Pick a data source!")
+    raise Exception
 
 
 def process_ud_data(ud_file: str) -> List[str]:
@@ -38,8 +38,23 @@ def process_ud_data(ud_file: str) -> List[str]:
 
     UD data format follows the CONLL data format, where each sentence includes
     metadata and each token is on a separate line. Each line includes info
-    about the token, lemma, part of speech, and dependency syntax. For this
-    function we only care about the token.
+    about the token, lemma, part of speech, and dependency syntax. For example:
+
+        # sent_id = GEN_1.1
+        # text = Ní ìbẹ̀rẹ̀ ohun gbogbo Ọlọ́run dá àwọn ọ̀run àti ayé.
+        # text_en = In the beginning God created the heaven and the earth.
+        1       Ní      ní      ADP     _       _       2       case    _       Gloss=in|Ref=GEN_1.1
+        2       ìbẹ̀rẹ̀   ìbẹ̀rẹ̀   NOUN    _       _       6       obl     _       Gloss=beginning|Ref=GEN_1.1
+        3       ohun    ohun    NOUN    _       _       5       nmod    _       Gloss=things|Ref=GEN_1.1
+        4       gbogbo  gbogbo  DET     _       _       5       det     _       Gloss=all|Ref=GEN_1.1
+        5       Ọlọ́run  ọlọ́run  NOUN    _       _       6       nsubj   _       Gloss=god|Ref=GEN_1.1
+        6       dá      dá      VERB    _       _       0       root    _       Gloss=made|Ref=GEN_1.1
+        7       àwọn    àwọn    DET     _       _       8       det     _       Gloss=the|Ref=GEN_1.1
+        8       ọ̀run    ọ̀run    NOUN    _       _       6       obj     _       Gloss=heaven|Ref=GEN_1.1
+        9       àti     àti     CCONJ   _       _       10      cc      _       Gloss=and|Ref=GEN_1.1
+        10      ayé     ayé     NOUN    _       _       8       conj    _       Gloss=earth|Ref=GEN_1.1|SpaceAfter=No
+        11      .       .       PUNCT   _       _       6       punct   _       Gloss=.|Ref=GEN_1.1
+
 
     Args:
         ud_file: The ud data file to process.
@@ -47,14 +62,13 @@ def process_ud_data(ud_file: str) -> List[str]:
     Returns:
         A list of processed sentences.
     """
-    # TODO: use helper function or keep the two lines in each of these methods?
     ud_lines: List[str] = read_file_as_lines(ud_file)
     with open(ud_file) as infile:
         ud_lines = infile.readlines()
     ud_sentences: List[str] = []
     for line in ud_lines:
         if "# text" in line:
-            text:str = line.split(" text = ")[1]
+            text: str = line.split(" text = ")[1]
             sentence: str = substitute_brackets(text)
             ud_sentences.append(sentence)
         else:
@@ -63,22 +77,43 @@ def process_ud_data(ud_file: str) -> List[str]:
 
 
 def process_um_data(um_file: str) -> List[str]:
-    # TODO: do we even want to use this data? It's not clear if it
-    # even needs to be normalized, since it seems hand-crafted.
     """Processes UniMorph file into list of strings for normalization.
 
     UM data format is the word lemma, followed by a tab, followed by
     the inflected form of the word, followed by another tab, followed by
-    fine-grained morphological information."""
-    raise NotImplementedError
+    fine-grained morphological information. For example:
+
+        ubuntu  wobuntu N;SG;PSSB1
+        ubuntu  elobuntu  N;SG;LGSPEC1;PSSB5
+        ubuntu  yobuntu N;SG;PSSB4
+        ubuntu  obobuntu  N;SG;LGSPEC1;PSSB14
+
+    Args:
+        um_file: The um data file to process.
+
+    Returns:
+        A list of processed words.
+    """
+    um_lines = read_file_as_lines(um_file)
+    um_words: List[str] = []
+    for line in um_lines:
+        text: str = line.strip().split("\t")[0]
+        word: str = substitute_brackets(text)
+        um_words.append(word)
+    return um_words
 
 
 def process_ancrubadan_data(ac_file: str) -> List[str]:
-    # TODO: decide if we want to use the unigrams or bigrams from AC
     """Processes An Crubadan file into list of strings for normalization.
 
     An Crubadan data format is the word, followed by a space, followed by
-    the totalcount of that word in the corpora that were crawled.
+    the total count of that word in the corpora that were crawled. For example:
+
+        die 188641
+        en 83603
+        van 81295
+        het 64692
+        'n 62512
 
     Args:
         ac_file: The ac data file to process.
@@ -89,7 +124,8 @@ def process_ancrubadan_data(ac_file: str) -> List[str]:
     ac_lines = read_file_as_lines(ac_file)
     ac_words: List[str] = []
     for line in ac_lines:
-        word: str = substitute_brackets(line)
+        text: str = line.split(" ")[0]
+        word: str = substitute_brackets(text)
         ac_words.append(word)
     return ac_words
 
@@ -98,7 +134,9 @@ def process_oscar_data(oscar_file: str) -> List[str]:
     """Processes OSCAR file into list of strings for normalization.
 
     OSCAR data format is one (or more) sentences per line. This processing
-    does not separate these into separate sentences.
+    does not separate these into separate sentences. For example:
+
+        Ìpínlẹ̀ Ẹdó jẹ́ ìkan nínú àwọn ìpínlẹ̀ mẹ́rìndínlógójì ní orílẹ̀ èdè Nàìjíríà. Ó sàgbè pẹ̀lú àríwá àti ìwọ̀ oòrùn ìpínlẹ̀ Kogi, àgbè pẹ̀lú gúúsù ìpínlẹ̀ Delta àti ìlà-oòrùn ìpínlẹ̀ Ondo.
 
     Args:
         ac_file: The ac data file to process.
@@ -117,8 +155,10 @@ def process_oscar_data(oscar_file: str) -> List[str]:
 def process_lcc_data(lcc_file: str) -> List[str]:
     """Processes Leipzig Corpora Collection file for normalization.
 
-    LCC data format is the sentence index, followed by a tab,
-    followed by the sentence text.
+    LCC data format is the sentence index, followed by spaces,
+    followed by the sentence text. For example:
+
+        634     Annagase Mu’miniin dhab ah ma nahay?
 
     Args:
         lcc_file: The lcc data file to process.
@@ -129,21 +169,33 @@ def process_lcc_data(lcc_file: str) -> List[str]:
     lcc_lines = read_file_as_lines(lcc_file)
     lcc_sentences: List[str] = []
     for line in lcc_lines:
-        text:str = line.strip().split("\t")[1]
+        text: str = re.sub(r"^[0-9]+\s+", "", line)
         sentence: str = substitute_brackets(text)
         lcc_sentences.append(sentence)
     return lcc_sentences
 
 
 def read_file_as_lines(filename: str) -> List[str]:
-    """Reads in filename as list of lines."""
-    with open (filename) as infile:
+    """Reads in filename as list of lines.
+
+    Args:
+        filename: The path of the filename to read in.
+
+    Returns: A list of strings.
+    """
+    with open(filename) as infile:
         file_lines = infile.readlines()
     return file_lines
 
 
 def substitute_brackets(string: str) -> str:
-    """Substitutes square brackets to work in Pynini."""
+    """Substitutes square brackets to work in Pynini.
+
+    Args:
+        string: A line from the corpus (one or more sentences).
+
+    Returns: The same line with square brackets escaped by slashes.
+    """
     sub_left_bracket = re.sub(r"\[", "\\[", string.strip())
     sub_right_bracket = re.sub(r"\]", "\\]", sub_left_bracket)
     return sub_right_bracket

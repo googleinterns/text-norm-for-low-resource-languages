@@ -2,14 +2,28 @@
 """Tests for evaluating text normalizer."""
 
 import unittest
+from typing import List
 import normalizer_lib
+import preprocess
 
-norm = normalizer_lib.NormalizerLib("af")
+NORM = normalizer_lib.NormalizerLib("af")
 
 class TestNormalizer(unittest.TestCase):
     """Tests for evaluating text normalizer."""
 
     #norm = normalizer_lib.NormalizerLib("af")
+
+    def test_end_to_end_with_file(self):
+        'Test loading a file and normalizing it.'
+        #language = importlib.import_module("config.zu")
+        infile = "testdata/test_zu_lcc_input.tsv"
+        input_text: List[str] = preprocess.process_data(infile, "lcc")
+        normalized_text = NORM.token_normalizer(input_text[0])
+        expected = ("iningizimu afrika iyizwe elisezansi ezwenikazi "
+                    "lase-afrika yaziwa ngokusemthethweni ngokuthi "
+                    "iriphabhuliki yaseningizimu afrika")
+        self.assertEqual(normalized_text, expected)
+
 
     def test_token_normalizer(self):
         'Test the output of normalizer.'
@@ -20,7 +34,7 @@ class TestNormalizer(unittest.TestCase):
             with self.subTest(sentence=sentence):
                 test_case = sentence.strip().split("\t")[1]
                 expected = sentence.strip().split("\t")[2]
-                test_fst = normalizer_lib.token_normalizer(test_case)
+                test_fst = NORM.token_normalizer(test_case)
                 self.assertEqual(test_fst, expected)
 
 
@@ -33,7 +47,7 @@ class TestNormalizer(unittest.TestCase):
             with self.subTest(sentence=sentence):
                 test_case = sentence.strip().split("\t")[1]
                 expected = sentence.strip().split("\t")[2]
-                test_fst = normalizer_lib.sentence_normalizer(test_case)
+                test_fst = NORM.sentence_normalizer(test_case)
                 self.assertEqual(test_fst, expected)
 
 
@@ -45,7 +59,7 @@ class TestNormalizer(unittest.TestCase):
                       ("   all   the   spaces   ", " all the spaces "))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = norm.remove_extra_whitespace(test_case).string()
+                    normalized_text = NORM.remove_extra_whitespace(test_case).string()
 #                    normalized_text = (test_case @
 #                                       normalizer_lib.REMOVE_EXTRA_WHITESPACE
 #                                       ).string()
@@ -75,7 +89,7 @@ class TestNormalizer(unittest.TestCase):
                       ("12:25", "12:25"))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = norm.detach_punctuation(test_case).string()
+                    normalized_text = NORM.detach_punctuation(test_case).string()
 #                    normalized_text = (test_case @
 #                                       normalizer_lib.SEPARATE_PUNCTUATION
 #                                       ).string()
@@ -90,7 +104,7 @@ class TestNormalizer(unittest.TestCase):
                       ('" who , he asked , left ? "', ' who  he asked  left  '))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = norm.delete_freestanding_punctuation(test_case).string()
+                    normalized_text = NORM.delete_freestanding_punctuation(test_case).string()
 #                    normalized_text = (test_case @
 #                                       normalizer_lib.DELETE_FREESTANDING_PUNCTUATION
 #                                       ).string()
@@ -104,9 +118,10 @@ class TestNormalizer(unittest.TestCase):
                       ("Где мой dog?", "<UNK> <UNK> dog?"))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = norm.pass_only_valid_tokens(test_case)
+                    normalized_text = NORM.pass_only_valid_tokens(test_case)
 #                    normalized_text = normalizer_lib.pass_only_valid_tokens(test_case)
                     self.assertEqual(normalized_text, expected)
+
 
 if __name__ == '__main__':
     unittest.main()

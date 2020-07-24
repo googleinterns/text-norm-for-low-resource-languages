@@ -5,8 +5,7 @@ import importlib
 import unicodedata
 from typing import List
 from pynini import *
-import config.utils as utils
-import time
+from pynini.lib import byte, pynutil
 
 class NormalizerLib:
     """Loads language-specific information for the text normalizer."""
@@ -26,11 +25,11 @@ class NormalizerLib:
         except Exception:
             self.language_specific_preprocessing = None
 
-    SIGMA_STAR = utils.SIGMA_STAR
-    SPACE = acceptor(" ")
+    SIGMA_STAR = byte.BYTES.closure()
     UNDERSCORE = acceptor("_")
 
     def verbalizable(self):
+
         """Returns union of verbalizable tokens.
 
         Args: None
@@ -60,8 +59,8 @@ class NormalizerLib:
         # optionally followed by another colon and two numbers.
         # Typically e.g. 12:25, but also 12:25:04 for seconds.
         # Will allow non-standard times like 40:70:80 !
-        time = (closure(self.numerals, 1, 2) +
-                closure(":" + closure(self.numerals, 1, 2), 1, 2)).optimize()
+        times = (closure(self.numerals, 1, 2) +
+                 closure(":" + closure(self.numerals, 1, 2), 1, 2)).optimize()
 
         # For large numbers. Allows either 1-6 numerals, e.g. 150000;
         # 1-6 numerals followed by a decimal separator and up to 4 decimals,
@@ -77,8 +76,7 @@ class NormalizerLib:
                           closure(self.numerals, 1, 3) +
                           (union(",", ".") +
                            closure(self.numerals, 1, 4).ques))).optimize()
-
-        return union(token, email_address, web_address, time, fancy_numbers).optimize()
+        return union(token, email_address, web_address, times, fancy_numbers).optimize()
 
 
     # Remove all extra whitespace between words
@@ -88,9 +86,9 @@ class NormalizerLib:
     def remove_extra_whitespace(self, fst: Fst) -> Fst:
         "Removes extra whitespace."
         remove_extra_whitespace = cdrewrite(
-            transducer(self.SPACE, ""),
+            pynutil.delete(byte.SPACE),
             "",
-            self.SPACE,
+            byte.SPACE,
             self.SIGMA_STAR)
         return (fst @ remove_extra_whitespace).optimize()
 
@@ -101,7 +99,7 @@ class NormalizerLib:
     def language_specific_fixes(self, fst: Fst) -> Fst:
         "Applies language-specific formatting fixes."
         if self.language_specific_preprocessing:
-            return (fst @ self.language_specific_preprocessing).optimize
+            return (fst @ self.language_specific_preprocessing).optimize()
         return fst
 
 
@@ -129,7 +127,7 @@ class NormalizerLib:
                 returned.append(token)
             else:
                 returned.append("<UNK>")
-        return returned
+        return " ".join(returned)
 
 
     def pass_only_valid_sentences(self, string) -> List[str]:
@@ -148,8 +146,8 @@ class NormalizerLib:
         split_string = remove_extra_whitespace.split(" ")
         for token in split_string:
             if difference(acceptor(token), valid_token).num_states() != 0:
-                return ["<SENTENCE_REJECTED>"]
-        return split_string
+                return "<SENTENCE_REJECTED>"
+        return string
 
 
     # Detach punctuation from words
@@ -159,23 +157,17 @@ class NormalizerLib:
     def detach_punctuation(self, fst: Fst) -> Fst:
         "Detaches punctuation from words."
         non_grapheme_punct = difference(self.punctuation, self.graphemes)
-        insert_space = transducer("", self.SPACE)
-#        time_start = time.time()
         detach_leading_punctuation = cdrewrite(
-            insert_space,
-            union("[BOS]") + non_grapheme_punct.plus,
+            pynutil.insert(" "),
+            union("[BOS]", byte.SPACE) + non_grapheme_punct.plus,
             union(non_grapheme_punct, self.graphemes, self.numerals),
             self.SIGMA_STAR)
         detach_trailing_punctuation = cdrewrite(
-            insert_space,
+            pynutil.insert(" "),
             union(non_grapheme_punct, self.graphemes, self.numerals, "/"),
-            non_grapheme_punct.plus + "[EOS]",
+            self.punctuation.plus + union("[EOS]", byte.SPACE),
             self.SIGMA_STAR)
-
-
-        returned = (fst @ detach_leading_punctuation @ detach_trailing_punctuation).optimize()
-        #print("time to detach punctuation:", time.time()-time_start)
-        return returned
+        return (fst @ detach_leading_punctuation @ detach_trailing_punctuation).optimize()
 
 
     # Delete freestanding punctuation
@@ -185,9 +177,9 @@ class NormalizerLib:
     def delete_freestanding_punctuation(self, fst: Fst) -> Fst:
         "Deletes freestanding punctuation."
         delete_freestanding_punctuation = cdrewrite(
-            transducer(self.punctuation, ""),
-            union("[BOS]", self.SPACE),
-            union("[EOS]", self.SPACE),
+            pynutil.delete(self.punctuation),
+            union("[BOS]", byte.SPACE),
+            union("[EOS]", byte.SPACE),
             self.SIGMA_STAR)
         return (fst @ delete_freestanding_punctuation).optimize()
 
@@ -222,11 +214,7 @@ class NormalizerLib:
         """
         string = unicodedata.normalize("NFC", string.lower())
         filtered_string = self.pass_only_valid_tokens(string)
-        returned = []
-        for token in filtered_string:
-            normalized_token = self.apply_fst_rules(token).strip()
-            returned.append(normalized_token)
-        return " ".join(returned)
+        return self.apply_fst_rules(filtered_string).strip()
 
 
     def sentence_normalizer(self, string: str) -> str:
@@ -240,8 +228,4 @@ class NormalizerLib:
         """
         string = unicodedata.normalize("NFC", string.lower())
         filtered_string = self.pass_only_valid_sentences(string)
-        returned = []
-        for token in filtered_string:
-            normalized_token = self.apply_fst_rules(token).strip()
-            returned.append(normalized_token)
-        return " ".join(returned)
+        return self.apply_fst_rules(filtered_string).strip()

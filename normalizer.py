@@ -59,14 +59,13 @@ def main(argv):
         try:
             input_text: List[str] = preprocess.process_data(infile, FLAGS.data_source)
         except Exception:
-            print("No data file from '{}' for '{}'".format(data_source, FLAGS.language))
+            print(f"No data file from '{data_source}' for '{FLAGS.language}'.")
             return
         outfile: str = ("./output/"+
                         FLAGS.language+"_"+
                         data_source+"_"+
                         FLAGS.pass_valid+"_"+
                         "normalized.tsv")
-
         total_sentences: int = 0
         changed_sentences: int = 0
 
@@ -91,8 +90,7 @@ def main(argv):
                            normalized_text+"\n")
                 output_file.write(newline)
             i += 1
-        print("Changed {} out of {} sentences!".format(
-            changed_sentences, total_sentences))
+        print(f"Changed {changed_sentences} out of {total_sentences} sentences!")
 
 
 if __name__ == '__main__':

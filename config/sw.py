@@ -1,15 +1,16 @@
 "Swahili config with language-specific information."
 
 from pynini import *
+from pynini.lib import byte
 from config import utils
 
-GRAPHEMES = union(utils.DEFAULT_LATIN, "'", "-")
+GRAPHEMES = union(byte.LOWER, "'", "-")
 
 INITIAL_PUNCTUATION = utils.DEFAULT_INITIAL_PUNCTUATION
 
 FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
-NUMERALS = utils.WESTERN_ARABIC_NUMERALS
+NUMERALS = byte.DIGIT
 
 UD = ""
 UM = ""
