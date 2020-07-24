@@ -5,6 +5,7 @@ import unicodedata
 from dataclasses import dataclass
 from typing import List
 from pynini import *
+from pynini.lib import byte, pynutil
 import config.zu as zu
 
 LANGUAGE = zu
@@ -16,11 +17,8 @@ FINAL_PUNCTUATION = LANGUAGE.FINAL_PUNCTUATION
 OTHER_PUNCTUATION = union(r"\[", r"\]")
 PUNCTUATION = union(INITIAL_PUNCTUATION, FINAL_PUNCTUATION, OTHER_PUNCTUATION)
 NUMERALS = LANGUAGE.NUMERALS
-SPACE = acceptor(" ")
 UNDERSCORE = acceptor("_")
-
-SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
-                   ).optimize().closure()
+SIGMA_STAR = byte.BYTES.closure()
 
 
 @dataclass
@@ -79,9 +77,9 @@ class Verbalizable:
 # e.g. "hi      there" -> "hi there"
 
 REMOVE_EXTRA_WHITESPACE = cdrewrite(
-    transducer(SPACE, ""),
+    pynutil.delete(byte.SPACE),
     "",
-    SPACE,
+    byte.SPACE,
     SIGMA_STAR)
 
 
@@ -89,8 +87,8 @@ REMOVE_EXTRA_WHITESPACE = cdrewrite(
 
 try:
     LANGUAGE_SPECIFIC_NORM = LANGUAGE.LANGUAGE_SPECIFIC_PREPROCESSING
-except:
-    LANGUAGE_SPECIFIC_NORM = cdrewrite(transducer("", ""),
+except Exception:
+    LANGUAGE_SPECIFIC_NORM = cdrewrite(cross("", ""),
                                        "",
                                        "",
                                        SIGMA_STAR)
@@ -144,31 +142,27 @@ def pass_only_valid_sentences(string: str) -> str:
 
 NON_GRAPHEME_PUNCT = difference(PUNCTUATION, GRAPHEMES)
 
-INSERT_SPACE = transducer("", SPACE)
-
 SEPARATE_PUNCTUATION = (
     cdrewrite(
-        INSERT_SPACE,
-        union("[BOS]", SPACE) + union(NON_GRAPHEME_PUNCT),
+        pynutil.insert(" "),
+        union("[BOS]", byte.SPACE) + union(NON_GRAPHEME_PUNCT),
         (union(PUNCTUATION, Verbalizable.verbalizable()) +
-         union("[EOS]", SPACE, Verbalizable.verbalizable())),
+         union("[EOS]", byte.SPACE, Verbalizable.verbalizable())),
         SIGMA_STAR) @
     cdrewrite(
-        INSERT_SPACE,
+        pynutil.insert(" "),
         union(Verbalizable.verbalizable(), PUNCTUATION),
-        PUNCTUATION + union("[EOS]", SPACE, PUNCTUATION),
+        PUNCTUATION + union("[EOS]", byte.SPACE, PUNCTUATION),
         SIGMA_STAR))
 
 
 # Delete freestanding punctuation
 # e.g. "hi there ?" -> "hi there
 
-DELETE_PUNCTUATION = transducer(PUNCTUATION, "")
-
 DELETE_FREESTANDING_PUNCTUATION = cdrewrite(
-    DELETE_PUNCTUATION,
-    union("[BOS]", SPACE),
-    union("[EOS]", SPACE),
+    pynutil.delete(PUNCTUATION),
+    union("[BOS]", byte.SPACE),
+    union("[EOS]", byte.SPACE),
     SIGMA_STAR)
 
 

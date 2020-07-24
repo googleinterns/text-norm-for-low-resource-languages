@@ -1,9 +1,10 @@
 "Igbo config with language-specific information."
 
 from pynini import *
+from pynini.lib import byte
 from config import utils
 
-GRAPHEMES = union(utils.DEFAULT_LATIN, "'", "-",
+GRAPHEMES = union(byte.LOWER, "'", "-",
                   "à", "â", "æ", "ç", "è", "é", "ê", "ë",
                   "ì", "î", "ï", "ò", "ô", "ù", "û", "ü",
                   "ị", "ň", "ñ", "ṅ", "ọ", "ụ")
@@ -12,7 +13,7 @@ INITIAL_PUNCTUATION = utils.DEFAULT_INITIAL_PUNCTUATION
 
 FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
-NUMERALS = utils.WESTERN_ARABIC_NUMERALS
+NUMERALS = byte.DIGIT
 
 UD = ""
 UM = ""

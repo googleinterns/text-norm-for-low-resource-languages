@@ -3,21 +3,12 @@
 
 from pynini import *
 
-DEFAULT_LATIN = union("a", "b", "c", "d", "e", "f", "g", "h", "i",
-                      "j", "k", "l", "m", "n", "o", "p", "q", "r",
-                      "s", "t", "u", "v", "w", "x", "y", "z")
-
 DEFAULT_INITIAL_PUNCTUATION = union("\"", "'")
 DEFAULT_FINAL_PUNCTUATION = union("!", "\"", ",", ".", ":", ";", "?")
 GEEZ_FINAL_PUNCTUATION = union("፠", "፡", "።", "፣", "፤",
                                "፥", "፦", "፧", "፨")
-
-WESTERN_ARABIC_NUMERALS = union("0", "1", "3", "4", "5", "6", "7", "8", "9")
 GEEZ_NUMERALS = union("፩", "፪", "፫", "፬", "፭",
                       "፮", "፯", "፰", "፱", "፲",
                       "፳", "፴", "፵", "፶", "፷",
                       "፸", "፹", "፺", "፻",
                       "፲፻", "፻፻", "፲፻፻")
-
-SIGMA_STAR = union(*("[{}]".format(i) for i in range(1, 256))
-                   ).optimize().closure()
