@@ -3,8 +3,8 @@
 
 from pynini import *
 
-DEFAULT_INITIAL_PUNCTUATION = union("\"", "'")
-DEFAULT_FINAL_PUNCTUATION = union("!", "\"", ",", ".", ":", ";", "?")
+DEFAULT_INITIAL_PUNCTUATION = union("\"", "'", "(")
+DEFAULT_FINAL_PUNCTUATION = union("!", "\"", ",", ".", ":", ";", "?", ")")
 GEEZ_FINAL_PUNCTUATION = union("፠", "፡", "።", "፣", "፤",
                                "፥", "፦", "፧", "፨")
 GEEZ_NUMERALS = union("፩", "፪", "፫", "፬", "፭",
