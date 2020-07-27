@@ -60,20 +60,49 @@ class TestNormalizer(unittest.TestCase):
                 with self.subTest(test_case=test_case):
                     normalized_text = rewrite.one_top_rewrite(
                         test_case,
-                        NORM.remove_extra_whitespace())
+                        NORM.remove_extra_whitespace)
                     self.assertEqual(normalized_text, expected)
 
 
-    def test_separate_punctuation(self):
-        'Test separating punctuation from tokens.'
+    def test_detach_leading_punctuation(self):
+        'Test separating leading punctuation from tokens.'
+        for test in [(("hello, friend",
+                       "hello, friend"),
+                      ("the end.",
+                       "the end."),
+                      ('"what',
+                       '" what'),
+                      ('"who, he asked, left?"',
+                       '" who, he asked, left?"'),
+                      ("don't separate apostrophes",
+                       "don't separate apostrophes"),
+                      ("initial 'apostrophe",
+                       "initial 'apostrophe"),
+                      ("final' apostrophe",
+                       "final' apostrophe"),
+                      ("keep ice-cream together",
+                       "keep ice-cream together"),
+                      ("50,000", "50,000"),
+                      ("google.com", "google.com"),
+                      ("12:25", "12:25"))]:
+            for test_case, expected in test:
+                with self.subTest(test_case=test_case):
+                    normalized_text = rewrite.one_top_rewrite(
+                        test_case,
+                        NORM.detach_leading_punctuation)
+                    self.assertEqual(normalized_text, expected)
+
+
+    def test_detach_trailing_punctuation(self):
+        'Test separating trailing punctuation from tokens.'
         for test in [(("hello, friend",
                        "hello , friend"),
                       ("the end.",
                        "the end ."),
                       ('"what',
-                       '" what'),
+                       '"what'),
                       ('"who, he asked, left?"',
-                       '" who , he asked , left ? "'),
+                       '"who , he asked , left ? "'),
                       ("don't separate apostrophes",
                        "don't separate apostrophes"),
                       ("initial 'apostrophe",
@@ -89,7 +118,7 @@ class TestNormalizer(unittest.TestCase):
                 with self.subTest(test_case=test_case):
                     normalized_text = rewrite.one_top_rewrite(
                         test_case,
-                        NORM.detach_punctuation())
+                        NORM.detach_trailing_punctuation)
                     self.assertEqual(normalized_text, expected)
 
 
@@ -103,7 +132,7 @@ class TestNormalizer(unittest.TestCase):
                 with self.subTest(test_case=test_case):
                     normalized_text = rewrite.one_top_rewrite(
                         test_case,
-                        NORM.delete_freestanding_punctuation())
+                        NORM.delete_freestanding_punctuation)
                     self.assertEqual(normalized_text, expected)
 
 
