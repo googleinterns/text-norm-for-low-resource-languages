@@ -33,7 +33,7 @@ class NormalizerLib:
         self.remove_extra_whitespace = cdrewrite(
             pynutil.delete(byte.SPACE),
             "",
-            byte.SPACE,
+            union(byte.SPACE, "[EOS]"),
             self.sigma_star)
         self.detach_leading_punctuation = cdrewrite(
             pynutil.insert(" "),
@@ -201,8 +201,7 @@ class NormalizerLib:
         Returns:
             The normalized line from the corpus.
         """
-        return self.apply_fst_rules(self.preprocess_string(string, "token")
-                                    ).strip()
+        return self.apply_fst_rules(self.preprocess_string(string, "token"))
 
 
     def sentence_normalizer(self, string: str) -> str:
@@ -214,5 +213,4 @@ class NormalizerLib:
         Returns:
             The normalized line from the corpus.
         """
-        return self.apply_fst_rules(self.preprocess_string(string, "sentence")
-                                    ).strip()
+        return self.apply_fst_rules(self.preprocess_string(string, "sentence"))

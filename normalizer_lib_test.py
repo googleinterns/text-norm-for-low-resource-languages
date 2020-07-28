@@ -53,9 +53,9 @@ class TestNormalizer(unittest.TestCase):
     def test_remove_extra_whitespace(self):
         'Test removing extra whitespace.'
         for test in [(("hi       there", "hi there"),
-                      ("my friend    ", "my friend "),
+                      ("my friend    ", "my friend"),
                       ("   the sun", " the sun"),
-                      ("   all   the   spaces   ", " all the spaces "))]:
+                      ("   all   the   spaces   ", " all the spaces"))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
                     normalized_text = rewrite.one_top_rewrite(
