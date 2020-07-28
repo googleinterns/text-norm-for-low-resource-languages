@@ -7,7 +7,7 @@ from pynini.lib import rewrite
 import normalizer_lib
 import preprocess
 
-NORM = normalizer_lib.NormalizerLib("zu")
+norm = normalizer_lib.NormalizerLib("zu")
 
 class TestNormalizer(unittest.TestCase):
     """Tests for evaluating text normalizer."""
@@ -17,7 +17,7 @@ class TestNormalizer(unittest.TestCase):
         'Test loading a file and normalizing it.'
         infile = "testdata/test_zu_lcc_input.tsv"
         input_text: List[str] = preprocess.process_data(infile, "lcc")
-        normalized_text = NORM.token_normalizer(input_text[0])
+        normalized_text = norm.token_normalizer(input_text[0])
         expected = ("iningizimu afrika iyizwe elisezansi ezwenikazi "
                     "lase-afrika yaziwa ngokusemthethweni ngokuthi "
                     "iriphabhuliki yaseningizimu afrika")
@@ -33,7 +33,7 @@ class TestNormalizer(unittest.TestCase):
             with self.subTest(sentence=sentence):
                 test_case = sentence.strip().split("\t")[1]
                 expected = sentence.strip().split("\t")[2]
-                test_fst = NORM.token_normalizer(test_case)
+                test_fst = norm.token_normalizer(test_case)
                 self.assertEqual(test_fst, expected)
 
 
@@ -46,7 +46,7 @@ class TestNormalizer(unittest.TestCase):
             with self.subTest(sentence=sentence):
                 test_case = sentence.strip().split("\t")[1]
                 expected = sentence.strip().split("\t")[2]
-                test_fst = NORM.sentence_normalizer(test_case)
+                test_fst = norm.sentence_normalizer(test_case)
                 self.assertEqual(test_fst, expected)
 
 
@@ -60,7 +60,7 @@ class TestNormalizer(unittest.TestCase):
                 with self.subTest(test_case=test_case):
                     normalized_text = rewrite.one_top_rewrite(
                         test_case,
-                        NORM.remove_extra_whitespace)
+                        norm.remove_extra_whitespace)
                     self.assertEqual(normalized_text, expected)
 
 
@@ -89,7 +89,7 @@ class TestNormalizer(unittest.TestCase):
                 with self.subTest(test_case=test_case):
                     normalized_text = rewrite.one_top_rewrite(
                         test_case,
-                        NORM.detach_leading_punctuation)
+                        norm.detach_leading_punctuation)
                     self.assertEqual(normalized_text, expected)
 
 
@@ -118,7 +118,7 @@ class TestNormalizer(unittest.TestCase):
                 with self.subTest(test_case=test_case):
                     normalized_text = rewrite.one_top_rewrite(
                         test_case,
-                        NORM.detach_trailing_punctuation)
+                        norm.detach_trailing_punctuation)
                     self.assertEqual(normalized_text, expected)
 
 
@@ -132,7 +132,7 @@ class TestNormalizer(unittest.TestCase):
                 with self.subTest(test_case=test_case):
                     normalized_text = rewrite.one_top_rewrite(
                         test_case,
-                        NORM.delete_freestanding_punctuation)
+                        norm.delete_freestanding_punctuation)
                     self.assertEqual(normalized_text, expected)
 
 
@@ -143,7 +143,7 @@ class TestNormalizer(unittest.TestCase):
                       ("Где мой dog?", "<UNK> <UNK> dog?"))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = NORM.pass_only_valid_tokens(test_case)
+                    normalized_text = norm.pass_only_valid_tokens(test_case)
                     self.assertEqual(normalized_text, expected)
 
 
