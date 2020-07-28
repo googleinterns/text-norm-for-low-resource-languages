@@ -57,7 +57,7 @@ class NormalizerLib:
             self.sigma_star)
 
 
-    def verbalizable(self):
+    def verbalizable(self) -> Fst:
         """Returns union of verbalizable tokens.
 
         Args: None
