@@ -3,8 +3,11 @@
 
 import unittest
 from typing import List
+from pynini.lib import rewrite
 import normalizer_lib
 import preprocess
+
+norm = normalizer_lib.NormalizerLib("zu")
 
 class TestNormalizer(unittest.TestCase):
     """Tests for evaluating text normalizer."""
@@ -12,10 +15,9 @@ class TestNormalizer(unittest.TestCase):
 
     def test_end_to_end_with_file(self):
         'Test loading a file and normalizing it.'
-        #language = importlib.import_module("config.zu")
         infile = "testdata/test_zu_lcc_input.tsv"
         input_text: List[str] = preprocess.process_data(infile, "lcc")
-        normalized_text = normalizer_lib.token_normalizer(input_text[0])
+        normalized_text = norm.token_normalizer(input_text[0])
         expected = ("iningizimu afrika iyizwe elisezansi ezwenikazi "
                     "lase-afrika yaziwa ngokusemthethweni ngokuthi "
                     "iriphabhuliki yaseningizimu afrika")
@@ -31,7 +33,7 @@ class TestNormalizer(unittest.TestCase):
             with self.subTest(sentence=sentence):
                 test_case = sentence.strip().split("\t")[1]
                 expected = sentence.strip().split("\t")[2]
-                test_fst = normalizer_lib.token_normalizer(test_case)
+                test_fst = norm.token_normalizer(test_case)
                 self.assertEqual(test_fst, expected)
 
 
@@ -44,34 +46,63 @@ class TestNormalizer(unittest.TestCase):
             with self.subTest(sentence=sentence):
                 test_case = sentence.strip().split("\t")[1]
                 expected = sentence.strip().split("\t")[2]
-                test_fst = normalizer_lib.sentence_normalizer(test_case)
+                test_fst = norm.sentence_normalizer(test_case)
                 self.assertEqual(test_fst, expected)
 
 
     def test_remove_extra_whitespace(self):
         'Test removing extra whitespace.'
         for test in [(("hi       there", "hi there"),
-                      ("my friend    ", "my friend "),
+                      ("my friend    ", "my friend"),
                       ("   the sun", " the sun"),
-                      ("   all   the   spaces   ", " all the spaces "))]:
+                      ("   all   the   spaces   ", " all the spaces"))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = (test_case @
-                                       normalizer_lib.REMOVE_EXTRA_WHITESPACE
-                                       ).string()
+                    normalized_text = rewrite.one_top_rewrite(
+                        test_case,
+                        norm.remove_extra_whitespace)
                     self.assertEqual(normalized_text, expected)
 
 
-    def test_separate_punctuation(self):
-        'Test separating punctuation from tokens.'
+    def test_detach_leading_punctuation(self):
+        'Test separating leading punctuation from tokens.'
+        for test in [(("hello, friend",
+                       "hello, friend"),
+                      ("the end.",
+                       "the end."),
+                      ('"what',
+                       '" what'),
+                      ('"who, he asked, left?"',
+                       '" who, he asked, left?"'),
+                      ("don't separate apostrophes",
+                       "don't separate apostrophes"),
+                      ("initial 'apostrophe",
+                       "initial 'apostrophe"),
+                      ("final' apostrophe",
+                       "final' apostrophe"),
+                      ("keep ice-cream together",
+                       "keep ice-cream together"),
+                      ("50,000", "50,000"),
+                      ("google.com", "google.com"),
+                      ("12:25", "12:25"))]:
+            for test_case, expected in test:
+                with self.subTest(test_case=test_case):
+                    normalized_text = rewrite.one_top_rewrite(
+                        test_case,
+                        norm.detach_leading_punctuation)
+                    self.assertEqual(normalized_text, expected)
+
+
+    def test_detach_trailing_punctuation(self):
+        'Test separating trailing punctuation from tokens.'
         for test in [(("hello, friend",
                        "hello , friend"),
                       ("the end.",
                        "the end ."),
                       ('"what',
-                       '" what'),
+                       '"what'),
                       ('"who, he asked, left?"',
-                       '" who , he asked , left ? "'),
+                       '"who , he asked , left ? "'),
                       ("don't separate apostrophes",
                        "don't separate apostrophes"),
                       ("initial 'apostrophe",
@@ -79,12 +110,15 @@ class TestNormalizer(unittest.TestCase):
                       ("final' apostrophe",
                        "final ' apostrophe"),
                       ("keep ice-cream together",
-                       "keep ice-cream together"))]:
+                       "keep ice-cream together"),
+                      ("50,000", "50,000"),
+                      ("google.com", "google.com"),
+                      ("12:25", "12:25"))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = (test_case @
-                                       normalizer_lib.SEPARATE_PUNCTUATION
-                                       ).string()
+                    normalized_text = rewrite.one_top_rewrite(
+                        test_case,
+                        norm.detach_trailing_punctuation)
                     self.assertEqual(normalized_text, expected)
 
 
@@ -96,9 +130,9 @@ class TestNormalizer(unittest.TestCase):
                       ('" who , he asked , left ? "', ' who  he asked  left  '))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = (test_case @
-                                       normalizer_lib.DELETE_FREESTANDING_PUNCTUATION
-                                       ).string()
+                    normalized_text = rewrite.one_top_rewrite(
+                        test_case,
+                        norm.delete_freestanding_punctuation)
                     self.assertEqual(normalized_text, expected)
 
 
@@ -109,7 +143,7 @@ class TestNormalizer(unittest.TestCase):
                       ("Где мой dog?", "<UNK> <UNK> dog?"))]:
             for test_case, expected in test:
                 with self.subTest(test_case=test_case):
-                    normalized_text = normalizer_lib.pass_only_valid_tokens(test_case)
+                    normalized_text = norm.pass_only_valid_tokens(test_case)
                     self.assertEqual(normalized_text, expected)
 
 
