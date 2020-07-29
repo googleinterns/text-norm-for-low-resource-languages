@@ -5,6 +5,7 @@ Either normalizes the text from a flag, or loads an external file of
 sentences to normalize. If it uses the external file, it will write
 the sentences that were changed to a new file.
 """
+import os
 import importlib
 from typing import List
 from tqdm import tqdm
@@ -64,17 +65,22 @@ def main(argv):
             print(f"No data file from '{data_source}' for '{FLAGS.language}'.")
             return
 
+        experiment_dir: str = "./output/" + FLAGS.experiment
+        if not os.path.exists(experiment_dir):
+            os.makedirs(experiment_dir)
         condition: str = ("language=" + FLAGS.language + "_" +
                           "datasource=" + data_source + "_" +
-                          "passvalid=" + FLAGS.pass_valid + "_" +
-                          "experiment=" + FLAGS.experiment)
+                          "passvalid=" + FLAGS.pass_valid)
         outfile_human_readable: str = ("./output/" +
+                                       FLAGS.experiment + "/" +
                                        condition + "_" +
                                        "humanreadable.tsv")
         outfile_unnormalized: str = ("./output/" +
+                                     FLAGS.experiment + "/" +
                                      condition + "_" +
                                      "unnormalized.p")
         outfile_normalized: str = ("./output/" +
+                                   FLAGS.experiment + "/" +
                                    condition + "_" +
                                    "normalized.p")
 
