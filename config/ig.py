@@ -15,9 +15,8 @@ FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
 NUMERALS = byte.DIGIT
 
-UD = "" # none
+UD = ""
 UM = ""
-AC = "language_data/ig/ac/ig-words.txt"
-OSCAR = "" # none
-OSCAR_DEDUP = "" # none
+AC = ""
+OSCAR = ""
 LCC = ""

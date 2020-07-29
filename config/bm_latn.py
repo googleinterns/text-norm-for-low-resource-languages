@@ -15,9 +15,8 @@ FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
 NUMERALS = byte.DIGIT
 
-UD = "language_data/bm_latn/UD_Bambara-CRB/bm_crb-ud-test.conllu"
+UD = ""
 UM = ""
-AC = "language_data/bm_latn/ac/bm-words.txt"
-OSCAR = "" # none
-OSCAR_DEDUP = "" # none
+AC = ""
+OSCAR = ""
 LCC = ""
