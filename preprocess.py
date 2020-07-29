@@ -70,11 +70,9 @@ def process_ud_data(ud_file: str) -> List[str]:
         if "# text =" in line:
             text: str = line.split(" text = ")[1]
             sentence: str = substitute_brackets(text)
-            print(sentence)
             ud_sentences.append(sentence)
         else:
             continue
-    print(ud_sentences)
     return ud_sentences
 
 
