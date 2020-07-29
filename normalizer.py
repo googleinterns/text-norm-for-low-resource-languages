@@ -8,12 +8,12 @@ the sentences that were changed to a new file.
 import os
 import importlib
 from typing import List
+import pickle
 from tqdm import tqdm
 from absl import app
 from absl import flags
 import normalizer_lib
 import preprocess
-import pickle
 
 FLAGS = flags.FLAGS
 
