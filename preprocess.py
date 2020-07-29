@@ -193,7 +193,7 @@ def substitute_brackets(string: str) -> str:
     Args:
         string: A line from the corpus (one or more sentences).
 
-    Returns: The same line with square brackets escaped by slashes.
+    Returns: The same line with square brackets replaced by parentheses.
     """
     sub_left_bracket = re.sub(r"\[", "(", string.strip())
     sub_right_bracket = re.sub(r"\]", ")", sub_left_bracket)
