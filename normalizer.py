@@ -12,6 +12,7 @@ from absl import app
 from absl import flags
 import normalizer_lib
 import preprocess
+import pickle
 
 FLAGS = flags.FLAGS
 
@@ -19,6 +20,7 @@ flags.DEFINE_string('string_to_normalize', None, 'the string to normalize')
 flags.DEFINE_string('language', None, 'the language to normalize')
 flags.DEFINE_string('data_source', None, 'data source to preprocess')
 flags.DEFINE_string('pass_valid', "token", 'pass only valid tokens or sentences')
+flags.DEFINE_string('experiment', None, 'the normalization experiment to run')
 
 def main(argv):
     """Normalizes text by all steps in the text normalizer.
@@ -61,36 +63,48 @@ def main(argv):
         except Exception:
             print(f"No data file from '{data_source}' for '{FLAGS.language}'.")
             return
-        outfile: str = ("./output/"+
-                        FLAGS.language+"_"+
-                        data_source+"_"+
-                        FLAGS.pass_valid+"_"+
-                        "normalized.tsv")
-        total_sentences: int = 0
-        changed_sentences: int = 0
 
-        output_file = open(outfile, "w")
-        output_file.write("SENTENCE_ID\tSENTENCE_TEXT\tNORMALIZED_TEXT\n")
+        condition: str = ("language=" + FLAGS.language + "_" +
+                          "datasource=" + data_source + "_" +
+                          "passvalid=" + FLAGS.pass_valid + "_" +
+                          "experiment=" + FLAGS.experiment)
+        outfile_human_readable: str = ("./output/" +
+                                       condition + "_" +
+                                       "humanreadable.tsv")
+        outfile_unnormalized: str = ("./output/" +
+                                     condition + "_" +
+                                     "unnormalized.p")
+        outfile_normalized: str = ("./output/" +
+                                   condition + "_" +
+                                   "normalized.p")
+
+        unnormalized_data_for_lm = []
+        normalized_data_for_lm = []
+
+        human_readable_output = open(outfile_human_readable, "w")
+        human_readable_output.write("SENTENCE_ID\tUNNORMALIZED_TEXT\tNORMALIZED_TEXT\n")
 
         i = 0
         for line in tqdm(input_text):
-            total_sentences += 1
             sentence_id: str = str(i)
-            sentence_text: str = line
+            sentence_text: str = line.strip()
             if FLAGS.pass_valid == "token":
                 normalized_text: str = norm.token_normalizer(
                     sentence_text)
             elif FLAGS.pass_valid == "sentence":
                 normalized_text: str = norm.sentence_normalizer(
                     sentence_text)
-            if normalized_text != sentence_text.strip().lower():
-                changed_sentences += 1
-                newline = (sentence_id+"\t"+
-                           sentence_text.strip().lower()+"\t"+
-                           normalized_text+"\n")
-                output_file.write(newline)
+            newline = (sentence_id + "\t" +
+                       sentence_text + "\t" +
+                       normalized_text + "\n")
+            human_readable_output.write(newline)
+            unnormalized_data_for_lm.append(sentence_text.split(" "))
+            normalized_data_for_lm.append(normalized_text.split(" "))
             i += 1
-        print(f"Changed {changed_sentences} out of {total_sentences} sentences!")
+            # files pickled here after each line so there's data in case the
+            # process ends before normalizing the entire data file
+            pickle.dump(unnormalized_data_for_lm, open(outfile_unnormalized, "wb"))
+            pickle.dump(normalized_data_for_lm, open(outfile_normalized, "wb"))
 
 
 if __name__ == '__main__':
