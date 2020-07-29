@@ -18,8 +18,9 @@ FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
 NUMERALS = byte.DIGIT
 
-UD = ""
+UD = "language_data/wo/UD_Wolof-WTB/wo_wtb-ud-train.conllu"
 UM = ""
-AC = ""
-OSCAR = ""
+AC = "language_data/wo/ac/wo-words.txt"
+OSCAR = "" # none
+OSCAR_DEDUP = "" # none
 LCC = ""

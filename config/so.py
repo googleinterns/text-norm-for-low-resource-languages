@@ -12,8 +12,10 @@ FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
 NUMERALS = byte.DIGIT
 
-UD = ""
+UD = "" # none
 UM = ""
-AC = ""
-OSCAR = ""
-LCC = ""
+AC = "language_data/so/ac/so-words.txt"
+OSCAR = "language_data/so/oscar/so.txt"
+OSCAR_DEDUP = "language_data/so/oscar/so_dedup.txt"
+LCC = "language_data/so/lcc/som_newscrawl_2011_100K/som_newscrawl_2011_100K-sentences.txt"
+#LCC = "language_data/so/lcc/som_wikipedia_2016_10K/som_wikipedia_2016_10K-sentences.txt"

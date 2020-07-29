@@ -53,8 +53,9 @@ FINAL_PUNCTUATION = union(utils.DEFAULT_FINAL_PUNCTUATION,
 NUMERALS = union(byte.DIGIT,
                  utils.GEEZ_NUMERALS)
 
-UD = ""
+UD = "language_data/am/UD_Amharic-ATT/am_att-ud-test.conllu"
 UM = ""
-AC = ""
-OSCAR = ""
-LCC = ""
+AC = "language_data/am/ac/am-words.txt"
+OSCAR = "language_data/am/oscar/am.txt"
+OSCAR_DEDUP = "language_data/am/oscar/am_dedup.txt"
+LCC = "language_data/am/lcc/amh_wikipedia_2016_30K/amh_wikipedia_2016_30K-sentences.txt"

@@ -24,7 +24,8 @@ LANGUAGE_SPECIFIC_PREPROCESSING = MG_VELAR_NASAL
 
 UD = ""
 UM = ""
-AC = "language_data/mg/mg_ac/mg-words.txt"
-OSCAR = ""
-LCC = "language_data/mg/mlg_wikipedia_2014_30K/mlg_wikipedia_2014_30K-sentences.txt"
-#LCC = "language_data/mg/mlg_wikipedia_2014_30K/mlg_web_2012_30K-sentences.txt"
+AC = "language_data/mg/ac/mg-words.txt"
+OSCAR = "language_data/mg/oscar/mg.txt"
+OSCAR_DEDUP = "language_data/mg/oscar/mg_dedup.txt"
+#LCC = "language_data/mg/lcc/mlg_wikipedia_2014_30K/mlg_wikipedia_2014_30K-sentences.txt"
+LCC = "language_data/mg/lcc/mlg_web_2012_30K/mlg_web_2012_30K-sentences.txt"

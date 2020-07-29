@@ -13,8 +13,9 @@ FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
 NUMERALS = byte.DIGIT
 
-UD = ""
+UD = "" # none
 UM = ""
-AC = ""
-OSCAR = ""
+AC = "language_data/ha/ac/ha-words.txt"
+OSCAR = "" # none
+OSCAR_DEDUP = "" # none
 LCC = ""
