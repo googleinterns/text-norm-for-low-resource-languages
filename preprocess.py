@@ -67,12 +67,14 @@ def process_ud_data(ud_file: str) -> List[str]:
         ud_lines = infile.readlines()
     ud_sentences: List[str] = []
     for line in ud_lines:
-        if "# text" in line:
+        if "# text =" in line:
             text: str = line.split(" text = ")[1]
             sentence: str = substitute_brackets(text)
+            print(sentence)
             ud_sentences.append(sentence)
         else:
             continue
+    print(ud_sentences)
     return ud_sentences
 
 
@@ -196,8 +198,8 @@ def substitute_brackets(string: str) -> str:
 
     Returns: The same line with square brackets escaped by slashes.
     """
-    sub_left_bracket = re.sub(r"\[", "\\[", string.strip())
-    sub_right_bracket = re.sub(r"\]", "\\]", sub_left_bracket)
+    sub_left_bracket = re.sub(r"\[", "(", string.strip())
+    sub_right_bracket = re.sub(r"\]", ")", sub_left_bracket)
     return sub_right_bracket
 
 
