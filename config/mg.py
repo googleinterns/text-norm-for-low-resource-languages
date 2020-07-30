@@ -4,7 +4,7 @@ from pynini import *
 from pynini.lib import byte
 from config import utils
 
-GRAPHEMES = union(byte.LOWER, "'", "-",
+GRAPHEMES = union(byte.LOWER, "'", "-", "@",
                   "à", "â", "è", "é", "ê", "ë",
                   "ì", "ò", "ô", "ù", "n̈", "ñ")
 
@@ -20,7 +20,14 @@ MG_VELAR_NASAL = cdrewrite(
     "",
     byte.BYTES.closure())
 
-LANGUAGE_SPECIFIC_PREPROCESSING = MG_VELAR_NASAL
+MG_ABBREVIATION = cdrewrite(
+    cross("@", "amin'ny"),
+    union("[BOS]", byte.SPACE),
+    union("[EOS]", byte.SPACE),
+    byte.BYTES.closure())
+
+#LANGUAGE_SPECIFIC_PREPROCESSING = MG_VELAR_NASAL
+LANGUAGE_SPECIFIC_PREPROCESSING = MG_ABBREVIATION
 
 UD = ""
 UM = ""
