@@ -1,6 +1,7 @@
 # Lint as: python3
 """Trains an nltk language model."""
 
+import random
 import pickle
 from typing import List, Tuple
 from nltk.lm.preprocessing import padded_everygram_pipeline
@@ -12,7 +13,7 @@ FLAGS = flags.FLAGS
 
 flags.DEFINE_string('string_to_normalize', None, 'the string to normalize')
 flags.DEFINE_string('language', None, 'the language to normalize')
-flags.DEFINE_string('data_source', None, 'data source to preprocess')
+flags.DEFINE_spaceseplist('data_source', None, 'data source to preprocess')
 flags.DEFINE_string('pass_valid', "token", 'pass only valid tokens or sentences')
 flags.DEFINE_string('experiment', None, 'the normalization experiment to run')
 
@@ -20,7 +21,7 @@ flags.DEFINE_string('experiment', None, 'the normalization experiment to run')
 def main(argv):
     """Trains an nltk language model.
 
-    Loads in a file of normalized text, partitions it into a train partition
+    Loads in files of normalized text, partitions them into a train partition
     (3/4 of data) and a test partition (last 1/4 of data). Uses Laplace
     smoothing for unseen ngrams.
     """
@@ -38,6 +39,13 @@ def main(argv):
     language_model.fit(train_ngrams, vocab)
 
     avg_perp, count = compute_avg_perplexity(test_ngrams, language_model)
+    print("\n----------------------------\n"
+          "Language Model Parameters:\n"
+          f"\tLanguage={FLAGS.language}\n"
+          f"\tData Sources={FLAGS.data_source}\n"
+          f"\tPass Valid={FLAGS.pass_valid}\n"
+          f"\tExperiment={FLAGS.experiment}\n"
+          "----------------------------\n")
     print(f"Average perplexity across {count} ngrams:\t{avg_perp}")
 
 
@@ -46,24 +54,32 @@ def load_normalized_data(language: str,
                          pass_valid: str,
                          experiment: str
                          ) -> List[List[str]]:
-    """Loads a file of normalized data.
+    """Loads one or more files of normalized data.
 
     Args:
         language: The language of the data.
-        data_source: The source of the data.
+        data_source: A list of sources of data to load in.
         pass_valid: Whether the whole sentence or just tokens was filtered.
         experiment: The name of the specific experiment being run.
 
     Returns:
         normalized_data: The normalized data as a list of lists of strings.
     """
-    condition: str = ("language=" + language + "_" +
-                      "datasource=" + data_source + "_" +
-                      "passvalid=" + pass_valid)
-    normalized_data = pickle.load(open("output/" +
-                                       experiment + "/" +
-                                       condition +
-                                       "_normalized.p", "rb"))
+    normalized_data = []
+    for source in data_source:
+        condition: str = ("language=" + language + "_" +
+                          "datasource=" + source + "_" +
+                          "passvalid=" + pass_valid)
+        filename = "output/" + experiment + "/" + condition + "_normalized.p"
+        try:
+            pickle.load(open(filename, "rb"))
+            normalized_data = (normalized_data +
+                               pickle.load(open(filename, "rb")))
+        except Exception:
+            print(f"No normalized data for LANGUAGE={language} "
+                  f"from SOURCE={source} for EXPERIMENT={experiment}.")
+    random.seed(42)
+    random.shuffle(normalized_data)
     return normalized_data
 
 
