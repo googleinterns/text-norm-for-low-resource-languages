@@ -14,6 +14,14 @@ FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
 NUMERALS = byte.DIGIT
 
+EMBIGGEN_CONTRACTIONS = cdrewrite(
+    union(cross("'k", "ek"), cross("'t", "het")),
+    union("[BOS]", byte.SPACE),
+    union("[EOS]", byte.SPACE),
+    byte.BYTES.closure())
+
+LANGUAGE_SPECIFIC_PREPROCESSING = EMBIGGEN_CONTRACTIONS
+
 UD = "language_data/af/UD_Afrikaans-AfriBooms/af_afribooms-ud-train.conllu"
 UM = ""
 AC = ""
