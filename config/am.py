@@ -53,6 +53,68 @@ FINAL_PUNCTUATION = union(utils.DEFAULT_FINAL_PUNCTUATION,
 NUMERALS = union(byte.DIGIT,
                  utils.GEEZ_NUMERALS)
 
+REDUCE_H = union(cross("ሐ", "ሀ"),
+                 cross("ሑ", "ሁ"),
+                 cross("ሒ", "ሂ"),
+                 cross("ሓ", "ሂ"),
+                 cross("ሔ", "ሄ"),
+                 cross("ሕ", "ህ"),
+                 cross("ሖ", "ሆ"),
+                 #cross("ሗ", "")
+
+                 cross("ኀ", "ሀ"),
+                 cross("ኁ", "ሁ"),
+                 cross("ኂ", "ሂ"),
+                 cross("ኃ", "ሂ"),
+                 cross("ኄ", "ሄ"),
+                 cross("ኅ", "ህ"),
+                 cross("ኆ", "ሆ"),
+                 #cross("ኈ", ""),
+                 #cross("ኊ", ""),
+                 #cross("ኋ", ""),
+                 #cross("ኌ", ""),
+                 #cross("ኍ", ""),
+
+                 cross("ኸ", "ሀ"),
+                 cross("ኹ", "ሁ"),
+                 cross("ኺ", "ሂ"),
+                 cross("ኻ", "ሂ"),
+                 cross("ኼ", "ሄ"),
+                 cross("ኽ", "ህ"),
+                 cross("ኾ", "ሆ")
+                 #cross("ዀ", ""),
+                 #cross("ዂ", ""),
+                 #cross("ዃ", ""),
+                 #cross("ዄ", ""),
+                 #cross("ዅ", "")
+                 )
+
+
+REDUCE_S = union(cross("ጸ", "ፀ"),
+                 cross("ጹ", "ፁ"),
+                 cross("ጺ", "ፂ"),
+                 cross("ጻ", "ፃ"),
+                 cross("ጼ", "ፄ"),
+                 cross("ጽ", "ፅ"),
+                 cross("ጾ", "ፆ"))
+                 #cross("ጿ", "")
+
+REDUCE_A = union(cross("ዐ", "አ"),
+                 cross("ዑ", "አ"),
+                 cross("ዒ", "ኢ"),
+                 cross("ዓ", "ኣ"),
+                 cross("ዔ", "ኤ"),
+                 cross("ዕ", "እ"),
+                 cross("ዖ", "ኦ"))
+
+REDUCE_OVERDIFFERENTIATION = cdrewrite(
+    union(REDUCE_H, REDUCE_S, REDUCE_A),
+    "",
+    "",
+    byte.BYTES.closure())
+
+LANGUAGE_SPECIFIC_PREPROCESSING = REDUCE_OVERDIFFERENTIATION
+
 UD = ""
 UM = ""
 AC = ""
