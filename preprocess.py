@@ -3,7 +3,6 @@
 
 import re
 from typing import List
-from absl import app
 
 
 def process_data(data_file: str, data_source: str) -> List[str]:
@@ -21,13 +20,13 @@ def process_data(data_file: str, data_source: str) -> List[str]:
     """
     if data_source == "ud":
         return process_ud_data(data_file)
-    elif data_source == "um":
+    if data_source == "um":
         return process_um_data(data_file)
-    elif data_source == "ac":
+    if data_source == "ac":
         return process_ancrubadan_data(data_file)
-    elif data_source == "oscar":
+    if data_source == "oscar":
         return process_oscar_data(data_file)
-    elif data_source == "lcc":
+    if data_source == "lcc":
         return process_lcc_data(data_file)
     print("Pick a data source!")
     raise Exception
@@ -67,7 +66,7 @@ def process_ud_data(ud_file: str) -> List[str]:
         ud_lines = infile.readlines()
     ud_sentences: List[str] = []
     for line in ud_lines:
-        if "# text" in line:
+        if "# text =" in line:
             text: str = line.split(" text = ")[1]
             sentence: str = substitute_brackets(text)
             ud_sentences.append(sentence)
@@ -194,16 +193,8 @@ def substitute_brackets(string: str) -> str:
     Args:
         string: A line from the corpus (one or more sentences).
 
-    Returns: The same line with square brackets escaped by slashes.
+    Returns: The same line with square brackets replaced by parentheses.
     """
-    sub_left_bracket = re.sub(r"\[", "\\[", string.strip())
-    sub_right_bracket = re.sub(r"\]", "\\]", sub_left_bracket)
+    sub_left_bracket = re.sub(r"\[", "(", string.strip())
+    sub_right_bracket = re.sub(r"\]", ")", sub_left_bracket)
     return sub_right_bracket
-
-
-def main(argv):
-    if len(argv) > 1:
-        raise app.UsageError('Too many command-line arguments.')
-
-if __name__ == '__main__':
-    app.run(main)
