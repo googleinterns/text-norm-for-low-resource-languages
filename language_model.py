@@ -70,9 +70,9 @@ def load_normalized_data(language: str,
         condition: str = ("language=" + language + "_" +
                           "datasource=" + source + "_" +
                           "passvalid=" + pass_valid)
-        filename = "output/" + experiment + "/" + condition + "_normalized.p"
+        filename: str = ("output/" + experiment + "/" +
+                         condition + "_normalized.p")
         try:
-            pickle.load(open(filename, "rb"))
             normalized_data = (normalized_data +
                                pickle.load(open(filename, "rb")))
         except Exception:
