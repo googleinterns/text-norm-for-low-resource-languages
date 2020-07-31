@@ -53,6 +53,75 @@ FINAL_PUNCTUATION = union(utils.DEFAULT_FINAL_PUNCTUATION,
 NUMERALS = union(byte.DIGIT,
                  utils.GEEZ_NUMERALS)
 
+# Amharic "over-differentiates" H graphemes, emphatic S graphemes, and glottal
+# stop graphemes, which were all inherited from Ge'ez. Surveys suggest that
+# Amharic speakers prefer one form over the others. These rules convert the
+# dispreferred series graphemes to the one preferred series, when available.
+# The surveys about grapheme preference come from the paper here:
+# https://www.researchgate.net/profile/Fekede_Menuta/publication/312093656_OVER-DIFFERENTIATION_3_Over-differentiation_in_Amharic_Orthography_and_Attitude_towards_Reform/links/586f5d8408ae329d6215fb85/OVER-DIFFERENTIATION-3-Over-differentiation-in-Amharic-Orthography-and-Attitude-towards-Reform.pdf
+REDUCE_H = string_map((("ሐ", "ሀ"),
+                       ("ሑ", "ሁ"),
+                       ("ሒ", "ሂ"),
+                       ("ሓ", "ሂ"),
+                       ("ሔ", "ሄ"),
+                       ("ሕ", "ህ"),
+                       ("ሖ", "ሆ"),
+                       #("ሗ", "")
+
+                       ("ኀ", "ሀ"),
+                       ("ኁ", "ሁ"),
+                       ("ኂ", "ሂ"),
+                       ("ኃ", "ሂ"),
+                       ("ኄ", "ሄ"),
+                       ("ኅ", "ህ"),
+                       ("ኆ", "ሆ"),
+                       #("ኈ", ""),
+                       #("ኊ", ""),
+                       #("ኋ", ""),
+                       #("ኌ", ""),
+                       #("ኍ", ""),
+
+                       ("ኸ", "ሀ"),
+                       ("ኹ", "ሁ"),
+                       ("ኺ", "ሂ"),
+                       ("ኻ", "ሂ"),
+                       ("ኼ", "ሄ"),
+                       ("ኽ", "ህ"),
+                       ("ኾ", "ሆ")
+                       #("ዀ", ""),
+                       #("ዂ", ""),
+                       #("ዃ", ""),
+                       #("ዄ", ""),
+                       #("ዅ", "")
+                       ))
+
+REDUCE_S = string_map((("ጸ", "ፀ"),
+                       ("ጹ", "ፁ"),
+                       ("ጺ", "ፂ"),
+                       ("ጻ", "ፃ"),
+                       ("ጼ", "ፄ"),
+                       ("ጽ", "ፅ"),
+                       ("ጾ", "ፆ")
+                       #("ጿ", "")
+                       ))
+
+REDUCE_A = string_map((("ዐ", "አ"),
+                       ("ዑ", "አ"),
+                       ("ዒ", "ኢ"),
+                       ("ዓ", "ኣ"),
+                       ("ዔ", "ኤ"),
+                       ("ዕ", "እ"),
+                       ("ዖ", "ኦ")
+                       ))
+
+REDUCE_OVERDIFFERENTIATION = cdrewrite(
+    union(REDUCE_H, REDUCE_S, REDUCE_A),
+    "",
+    "",
+    byte.BYTES.closure())
+
+LANGUAGE_SPECIFIC_PREPROCESSING = REDUCE_OVERDIFFERENTIATION
+
 UD = ""
 UM = ""
 AC = ""

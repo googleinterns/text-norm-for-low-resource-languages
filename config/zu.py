@@ -14,6 +14,9 @@ NUMERALS = byte.DIGIT
 
 VOWELS = union("a", "e", "i", "o", "u")
 
+# Some noun classifiers are repeated here, but this table reflects all of the
+# different Zulu noun classes. It just so happens that some noun classes use
+# homographic noun classifiers.
 NOUN_CLASSIFIERS = union("umu", "um", "u",
                          "aba", "ab", "abe", "o",
                          "umu", "um", "u",
@@ -29,6 +32,11 @@ NOUN_CLASSIFIERS = union("umu", "um", "u",
                          "uku", "uk",
                          "uku", "uk").optimize().closure()
 
+# Normally, Zulu noun classifiers attach directly to the noun (e.g. isiZulu).
+# Before nouns beginning with a vowel, which are all loanwords, a hyphen is
+# sometimes inserted (e.g. i-Afrika). However, the use of a hyphen is
+# inconsistent. This rule removes all hyphens between noun classifiers and words
+# beginning with a vowel.
 REMOVE_HYPHEN_AFTER_NOUN_CLASSIFIER = cdrewrite(
     pynutil.delete("-"),
     union("[BOS]", byte.SPACE) + NOUN_CLASSIFIERS,

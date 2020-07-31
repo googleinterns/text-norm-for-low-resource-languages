@@ -182,6 +182,8 @@ class NormalizerLib:
             The preprocessed string to pass to the FST rules.
         """
         lowercase_string = string.lower()
+#        strip_accents = self.strip_accents(lowercase_string)
+#        unicode_normalize = unicodedata.normalize("NFC", strip_accents)
         unicode_normalize = unicodedata.normalize("NFC", lowercase_string)
         if normalizer == "sentence":
             filter_string = self.pass_only_valid_sentences(
@@ -190,6 +192,19 @@ class NormalizerLib:
             filter_string = self.pass_only_valid_tokens(
                 unicode_normalize)
         return filter_string
+
+    @staticmethod
+    def strip_accents(string: str) -> str:
+        """Strips accents off a string.
+
+        Args:
+            string: The string to remove accents from.
+
+        Returns:
+            The string with accents removed from characters.
+        """
+        return "".join(char for char in unicodedata.normalize("NFD", string)
+                       if unicodedata.category(char) != "Mn")
 
 
     def token_normalizer(self, string: str) -> str:
