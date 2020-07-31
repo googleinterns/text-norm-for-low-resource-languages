@@ -57,6 +57,8 @@ NUMERALS = union(byte.DIGIT,
 # stop graphemes, which were all inherited from Ge'ez. Surveys suggest that
 # Amharic speakers prefer one form over the others. These rules convert the
 # dispreferred series graphemes to the one preferred series, when available.
+# The surveys about grapheme preference come from the paper here:
+# https://www.researchgate.net/profile/Fekede_Menuta/publication/312093656_OVER-DIFFERENTIATION_3_Over-differentiation_in_Amharic_Orthography_and_Attitude_towards_Reform/links/586f5d8408ae329d6215fb85/OVER-DIFFERENTIATION-3-Over-differentiation-in-Amharic-Orthography-and-Attitude-towards-Reform.pdf
 REDUCE_H = string_map((("ሐ", "ሀ"),
                        ("ሑ", "ሁ"),
                        ("ሒ", "ሂ"),
