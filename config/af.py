@@ -14,8 +14,12 @@ FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
 NUMERALS = byte.DIGIT
 
+
+# Afrikaans <ek> and <het> are often contracted to <'k> and <'t>.
+# This rule expands the contractions to their full forms.
 EMBIGGEN_CONTRACTIONS = cdrewrite(
-    union(cross("'k", "ek"), cross("'t", "het")),
+    string_map((("'k", "ek"),
+                ("'t", "het"))),
     union("[BOS]", byte.SPACE),
     union("[EOS]", byte.SPACE),
     byte.BYTES.closure())

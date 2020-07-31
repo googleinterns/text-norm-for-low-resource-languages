@@ -15,14 +15,25 @@ FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
 NUMERALS = byte.DIGIT
 
+# Converts from the Ọnwụ alphabet to the New Standard Alphabet.
+# The New Standard Alphabet is more recent than the Ọnwụ,
+# but not frequently used.
 TO_NEW_STANDARD_ALPHABET = cdrewrite(
-    union(cross("ọ", "ö"), cross("ụ", "ü"), cross("ṅ", "ñ")),
+    string_map((
+        ("ọ", "ö"),
+        ("ụ", "ü"),
+        ("ṅ", "ñ"))),
     "",
     "",
     byte.BYTES.closure())
 
+# Converts from the New Standard Alphabet to the Ọnwụ alphabet.
+# The Ọnwụ alphabet is slightly older, but more commonly used.
 FROM_NEW_STANDARD_ALPHABET = cdrewrite(
-    union(cross("ö", "ọ"), cross("ü", "ụ"), cross("ñ", "ṅ")),
+    string_map((
+        ("ö", "ọ"),
+        ("ü", "ụ"),
+        ("ñ", "ṅ"))),
     "",
     "",
     byte.BYTES.closure())

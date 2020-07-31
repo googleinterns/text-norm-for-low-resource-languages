@@ -53,59 +53,64 @@ FINAL_PUNCTUATION = union(utils.DEFAULT_FINAL_PUNCTUATION,
 NUMERALS = union(byte.DIGIT,
                  utils.GEEZ_NUMERALS)
 
-REDUCE_H = union(cross("ሐ", "ሀ"),
-                 cross("ሑ", "ሁ"),
-                 cross("ሒ", "ሂ"),
-                 cross("ሓ", "ሂ"),
-                 cross("ሔ", "ሄ"),
-                 cross("ሕ", "ህ"),
-                 cross("ሖ", "ሆ"),
-                 #cross("ሗ", "")
+# Amharic "over-differentiates" H graphemes, emphatic S graphemes, and glottal
+# stop graphemes, which were all inherited from Ge'ez. Surveys suggest that
+# Amharic speakers prefer one form over the others. These rules convert the
+# dispreferred series graphemes to the one preferred series, when available.
+REDUCE_H = string_map((("ሐ", "ሀ"),
+                       ("ሑ", "ሁ"),
+                       ("ሒ", "ሂ"),
+                       ("ሓ", "ሂ"),
+                       ("ሔ", "ሄ"),
+                       ("ሕ", "ህ"),
+                       ("ሖ", "ሆ"),
+                       #("ሗ", "")
 
-                 cross("ኀ", "ሀ"),
-                 cross("ኁ", "ሁ"),
-                 cross("ኂ", "ሂ"),
-                 cross("ኃ", "ሂ"),
-                 cross("ኄ", "ሄ"),
-                 cross("ኅ", "ህ"),
-                 cross("ኆ", "ሆ"),
-                 #cross("ኈ", ""),
-                 #cross("ኊ", ""),
-                 #cross("ኋ", ""),
-                 #cross("ኌ", ""),
-                 #cross("ኍ", ""),
+                       ("ኀ", "ሀ"),
+                       ("ኁ", "ሁ"),
+                       ("ኂ", "ሂ"),
+                       ("ኃ", "ሂ"),
+                       ("ኄ", "ሄ"),
+                       ("ኅ", "ህ"),
+                       ("ኆ", "ሆ"),
+                       #("ኈ", ""),
+                       #("ኊ", ""),
+                       #("ኋ", ""),
+                       #("ኌ", ""),
+                       #("ኍ", ""),
 
-                 cross("ኸ", "ሀ"),
-                 cross("ኹ", "ሁ"),
-                 cross("ኺ", "ሂ"),
-                 cross("ኻ", "ሂ"),
-                 cross("ኼ", "ሄ"),
-                 cross("ኽ", "ህ"),
-                 cross("ኾ", "ሆ")
-                 #cross("ዀ", ""),
-                 #cross("ዂ", ""),
-                 #cross("ዃ", ""),
-                 #cross("ዄ", ""),
-                 #cross("ዅ", "")
-                 )
+                       ("ኸ", "ሀ"),
+                       ("ኹ", "ሁ"),
+                       ("ኺ", "ሂ"),
+                       ("ኻ", "ሂ"),
+                       ("ኼ", "ሄ"),
+                       ("ኽ", "ህ"),
+                       ("ኾ", "ሆ")
+                       #("ዀ", ""),
+                       #("ዂ", ""),
+                       #("ዃ", ""),
+                       #("ዄ", ""),
+                       #("ዅ", "")
+                       ))
 
+REDUCE_S = string_map((("ጸ", "ፀ"),
+                       ("ጹ", "ፁ"),
+                       ("ጺ", "ፂ"),
+                       ("ጻ", "ፃ"),
+                       ("ጼ", "ፄ"),
+                       ("ጽ", "ፅ"),
+                       ("ጾ", "ፆ")
+                       #("ጿ", "")
+                       ))
 
-REDUCE_S = union(cross("ጸ", "ፀ"),
-                 cross("ጹ", "ፁ"),
-                 cross("ጺ", "ፂ"),
-                 cross("ጻ", "ፃ"),
-                 cross("ጼ", "ፄ"),
-                 cross("ጽ", "ፅ"),
-                 cross("ጾ", "ፆ"))
-                 #cross("ጿ", "")
-
-REDUCE_A = union(cross("ዐ", "አ"),
-                 cross("ዑ", "አ"),
-                 cross("ዒ", "ኢ"),
-                 cross("ዓ", "ኣ"),
-                 cross("ዔ", "ኤ"),
-                 cross("ዕ", "እ"),
-                 cross("ዖ", "ኦ"))
+REDUCE_A = string_map((("ዐ", "አ"),
+                       ("ዑ", "አ"),
+                       ("ዒ", "ኢ"),
+                       ("ዓ", "ኣ"),
+                       ("ዔ", "ኤ"),
+                       ("ዕ", "እ"),
+                       ("ዖ", "ኦ")
+                       ))
 
 REDUCE_OVERDIFFERENTIATION = cdrewrite(
     union(REDUCE_H, REDUCE_S, REDUCE_A),
