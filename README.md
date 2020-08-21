@@ -4,7 +4,9 @@ This repository contains code and data related to the Google open source interns
 
 ## Project Description
 
-With approximately 7,000 languages in the world, especially with lower resource languages, the trade-offs in terms of rejecting training data vs. cleaning it up (or using less clean training data) are different.  We would like to find out what kind of data typically gets lost during normalization, and if there are any repeating patterns within language families or scripts that can better inform normalization decisions.  The intern will be free to formulate their own approach to these questions and to formulate and pursue other linguistic questions to text normalization and corpus linguistics.  The intern will download some public data sets and will experiment with different linguistic choices for normalization, some of which can come from previous Google papers in this space, and others will be up to the intern’s creativity.  The intern will then train some LMs and other NLP models using open-source libraries with various normalization configs, and will measure the quality of these models, and write up an analysis of what normalization method is best.
+Training data for machine learning models can come from many different sources, which can be of dubious quality. For resource-rich languages like English, there is a lot of data available, so we can afford to throw out the dubious data. For low-resource languages where there is much less data available, we can’t necessarily afford to throw out the dubious data, lest we end up with a training set too small to train a model.
+
+The objective of this project was to study the effects of text normalization and data set quality for a set of low-resource languages of Africa. This involved building a text normalizer using Pynini, a Python library for finite state transducers, and training a language model using the Natural Language Toolkit (NLTK), an open-source Python library for NLP.
 
 ## Running the Pipeline
 
