@@ -10,13 +10,13 @@ With approximately 7,000 languages in the world, especially with lower resource 
 
 ### Language Data
 
-The language-specific config files in `config/` include the paths to the langauge data files in `language_data/`. The repo does NOT include the data, however. You will need to download it yourself and make sure it is in the right place. The data we used comes from [Universal Dependencies](https://universaldependencies.org/#language-u), the [Leipzig Corpora Collection](https://wortschatz.uni-leipzig.de/en/download), [OSCAR](https://oscar-corpus.com/), and [An Crúbadán](http://crubadan.org/).
+The language-specific config files in `config/` include the paths to the language data files in `language_data/`. The repo does NOT include the data, however. You will need to download it yourself and make sure it is in the right place. The data we used comes from [Universal Dependencies](https://universaldependencies.org/#language-u), the [Leipzig Corpora Collection](https://wortschatz.uni-leipzig.de/en/download), [OSCAR](https://oscar-corpus.com/), and [An Crúbadán](http://crubadan.org/).
 
 ### Running the Normalizer
 
 The text normalizer can normalize individual strings or load in a data file and normalize the whole file. The normalizer uses (up to) 5 flags
-- `language`:  two-letter code for the language, e.g. `af`, `mg`; exception is Bambara `bm_latn`
-- `data_source`:  code for the data source, e.g. `ud`, `lcc`, `ac`, `oscar`; not needed if you provide a value for `string_to_normalize`
+- `language`:  two-letter flag for the language, e.g. `af`, `mg`; exception is Bambara `bm_latn`
+- `data_source`:  flag for the data source, e.g. `ud`, `lcc`, `ac`, `oscar`; not needed if you provide a value for `string_to_normalize`
 - `pass_valid`:  whether to filter out individual tokens or sentences; value is `token` or `sentence`
 - `experiment`:  name of experimental directory to create and output results to
 - `string_to_normalize`:  a specific string to normalize; if you include this, will not preprocess or load any data files (`data_source` flat becomes unnecessary)
