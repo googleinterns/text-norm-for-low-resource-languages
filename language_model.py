@@ -8,6 +8,7 @@ from nltk.lm.preprocessing import padded_everygram_pipeline
 from nltk.lm import Laplace
 from absl import app
 from absl import flags
+from tqdm import tqdm
 
 FLAGS = flags.FLAGS
 
@@ -78,9 +79,17 @@ def load_normalized_data(language: str,
         except Exception:
             print(f"No normalized data for LANGUAGE={language} "
                   f"from SOURCE={source} for EXPERIMENT={experiment}.")
+    returned = []
+    for line in normalized_data:
+        if line[0] != "<SENTENCE_REJECTED>":
+            returned.append(line)
     random.seed(42)
-    random.shuffle(normalized_data)
-    return normalized_data
+    random.shuffle(returned)
+    rejected = len(normalized_data) - len(returned)
+    print(f"Loaded {len(normalized_data)} sentences!")
+    print(f"Kept {len(returned)} sentences!")
+    print(f"Rejected {rejected} sentences ({100*(rejected/len(normalized_data))} %)!")
+    return returned
 
 
 def partition_data(data: List[List[str]]
@@ -115,8 +124,8 @@ def compute_avg_perplexity(test_ngrams, language_model) -> Tuple[float, int]:
     """
     count = 0
     total_perp = 0
-    print("Computing perplexity of ngrams...")
-    for sent in test_ngrams:
+    print(f"Computing perplexity of ngrams...")
+    for sent in tqdm(test_ngrams):
         for ngram in sent:
             perp = language_model.perplexity([ngram])
             count += 1

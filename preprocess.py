@@ -123,7 +123,7 @@ def process_ancrubadan_data(ac_file: str) -> List[str]:
     ac_lines = read_file_as_lines(ac_file)
     ac_words: List[str] = []
     for line in ac_lines:
-        text: str = line.split(" ")[0]
+        text: str = " ".join(line.split(" ")[:2])
         word: str = substitute_brackets(text)
         ac_words.append(word)
     return ac_words
@@ -145,9 +145,12 @@ def process_oscar_data(oscar_file: str) -> List[str]:
     """
     oscar_lines = read_file_as_lines(oscar_file)
     oscar_strings: List[str] = []
+#    for line in oscar_lines[:10000]: # limit to 10,000 lines for big data sets
     for line in oscar_lines:
-        sentence: str = substitute_brackets(line)
-        oscar_strings.append(sentence)
+        split_line = re.split(r"\. |።", line)
+        for text in split_line:
+            sentence: str = substitute_brackets(text)
+            oscar_strings.append(sentence)
     return oscar_strings
 
 
