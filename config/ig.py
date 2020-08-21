@@ -38,10 +38,12 @@ FROM_NEW_STANDARD_ALPHABET = cdrewrite(
     "",
     byte.BYTES.closure())
 
+#LANGUAGE_SPECIFIC_PREPROCESSING = TO_NEW_STANDARD_ALPHABET
 LANGUAGE_SPECIFIC_PREPROCESSING = FROM_NEW_STANDARD_ALPHABET
 
-UD = ""
+UD = "" # none
 UM = ""
-AC = ""
-OSCAR = ""
+AC = "language_data/ig/ac/ig-wordbigrams.txt"
+OSCAR = "" # none
+OSCAR_DEDUP = "" # none
 LCC = ""
