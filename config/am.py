@@ -122,6 +122,8 @@ REDUCE_OVERDIFFERENTIATION = cdrewrite(
 
 LANGUAGE_SPECIFIC_PREPROCESSING = REDUCE_OVERDIFFERENTIATION
 
+# These files are not in the repo. You will need to change these paths to match
+# where you place the data files.
 UD = "language_data/am/UD_Amharic-ATT/am_att-ud-test.conllu"
 UM = ""
 AC = "language_data/am/ac/am-wordbigrams.txt"

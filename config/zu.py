@@ -45,6 +45,8 @@ REMOVE_HYPHEN_AFTER_NOUN_CLASSIFIER = cdrewrite(
 
 LANGUAGE_SPECIFIC_PREPROCESSING = REMOVE_HYPHEN_AFTER_NOUN_CLASSIFIER
 
+# These files are not in the repo. You will need to change these paths to match
+# where you place the data files.
 UD = "" # none
 UM = "language_data/zu/zu_um.txt"
 AC = "language_data/zu/ac/zu-wordbigrams.txt"

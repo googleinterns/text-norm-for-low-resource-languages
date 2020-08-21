@@ -41,6 +41,8 @@ FROM_NEW_STANDARD_ALPHABET = cdrewrite(
 #LANGUAGE_SPECIFIC_PREPROCESSING = TO_NEW_STANDARD_ALPHABET
 LANGUAGE_SPECIFIC_PREPROCESSING = FROM_NEW_STANDARD_ALPHABET
 
+# These files are not in the repo. You will need to change these paths to match
+# where you place the data files.
 UD = "" # none
 UM = ""
 AC = "language_data/ig/ac/ig-wordbigrams.txt"

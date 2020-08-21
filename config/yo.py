@@ -22,6 +22,8 @@ FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
 NUMERALS = byte.DIGIT
 
+# These files are not in the repo. You will need to change these paths to match
+# where you place the data files.
 UD = "language_data/yo/UD_Yoruba-YTB/yo_ytb-ud-test.conllu"
 UM = ""
 AC = "language_data/yo/ac/yo-wordbigrams.txt"

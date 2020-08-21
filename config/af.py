@@ -25,6 +25,8 @@ EMBIGGEN_CONTRACTIONS = cdrewrite(
 
 LANGUAGE_SPECIFIC_PREPROCESSING = EMBIGGEN_CONTRACTIONS
 
+# These files are not in the repo. You will need to change these paths to match
+# where you place the data files.
 UD = "language_data/af/UD_Afrikaans-AfriBooms/af_afribooms-ud-train.conllu"
 UM = ""
 AC = "language_data/af/ac/af-wordbigrams.txt"

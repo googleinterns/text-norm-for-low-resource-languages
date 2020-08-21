@@ -32,6 +32,8 @@ HOOK_TO_APOSTROPHE_Y = cdrewrite(
 LANGUAGE_SPECIFIC_PREPROCESSING = APOSTROPHE_TO_HOOK_Y
 #LANGUAGE_SPECIFIC_PREPROCESSING = HOOK_TO_APOSTROPHE_Y
 
+# These files are not in the repo. You will need to change these paths to match
+# where you place the data files.
 UD = "" # none
 UM = ""
 AC = "language_data/ha/ac/ha-wordbigrams.txt"

@@ -12,6 +12,8 @@ FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
 NUMERALS = byte.DIGIT
 
+# These files are not in the repo. You will need to change these paths to match
+# where you place the data files.
 UD = "" # none
 UM = ""
 AC = "language_data/so/ac/so-words.txt"

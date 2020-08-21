@@ -33,6 +33,8 @@ MG_ABBREVIATION = cdrewrite(
 
 LANGUAGE_SPECIFIC_PREPROCESSING = (MG_VELAR_NASAL @ MG_ABBREVIATION).optimize()
 
+# These files are not in the repo. You will need to change these paths to match
+# where you place the data files.
 UD = ""
 UM = ""
 AC = "language_data/mg/ac/mg-wordbigrams.txt"

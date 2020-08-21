@@ -18,6 +18,8 @@ FINAL_PUNCTUATION = utils.DEFAULT_FINAL_PUNCTUATION
 
 NUMERALS = byte.DIGIT
 
+# These files are not in the repo. You will need to change these paths to match
+# where you place the data files.
 UD = "language_data/wo/UD_Wolof-WTB/wo_wtb-ud-train.conllu"
 UM = ""
 AC = "language_data/wo/ac/wo-wordbigrams.txt"
