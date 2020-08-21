@@ -31,7 +31,7 @@ class TestPreprocess(unittest.TestCase):
         'Test loading in an ac data file.'
         infile = "testdata/test_mg_ac_input.txt"
         input_text: List[str] = preprocess.process_data(infile, "ac")
-        expected = "amin'ny"
+        expected = "amin'ny habakabaka"
         self.assertEqual(input_text[0], expected)
 
 
