@@ -45,8 +45,15 @@ REMOVE_HYPHEN_AFTER_NOUN_CLASSIFIER = cdrewrite(
 
 LANGUAGE_SPECIFIC_PREPROCESSING = REMOVE_HYPHEN_AFTER_NOUN_CLASSIFIER
 
-UD = ""
-UM = ""
-AC = ""
-OSCAR = ""
-LCC = ""
+# These files are not in the repo. You will need to change these paths to match
+# where you place the data files.
+UD = "" # none
+UM = "language_data/zu/zu_um.txt"
+AC = "language_data/zu/ac/zu-wordbigrams.txt"
+OSCAR = "" # none
+OSCAR_DEDUP = "" # none
+#LCC = "language_data/zu/lcc/zul_mixed_2014_100K/zul_mixed_2014_100K-sentences.txt"
+LCC = "language_data/zu/lcc/zul_mixed_2014_30K/zul_mixed_2014_30K-sentences.txt"
+#LCC = "language_data/zu/lcc/zul_news_2013_30K/zul_news_2013_30K-sentences.txt"
+#LCC = "language_data/zu/lcc/zul_web_2013_100K/zul_web_2013_100K-sentences.txt"
+#LCC = "language_data/zu/lcc/zul-za_web_2018_30K/zul-za_web_2018_30K-sentences.txt"

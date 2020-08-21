@@ -55,6 +55,29 @@ class NormalizerLib:
             union("[BOS]", byte.SPACE),
             union("[EOS]", byte.SPACE),
             self.sigma_star)
+        self.normalize_single_quotation_marks = cdrewrite(
+            string_map((("ʼ", "'"), # modifier letter apostrophe
+                        ("ʽ", "'"), # inverted comma
+                        ("’", "'"), # right single quote
+                        ("‘", "'"), # left single quote
+                        ("`", "'"), # grave accent
+                        ("´", "'"), # acute accent
+                        )),
+            "",
+            "",
+            self.sigma_star)
+        self.normalize_double_quotation_marks = cdrewrite(
+            string_map((("”", "\""),# right double quote
+                        ("“", "\""),# left double quote
+                        ("＂", "\""),# full width quote
+                        ("‟", "\"") # double high reversed quote
+                        )),
+            "",
+            "",
+            self.sigma_star)
+        self.universal_rules = (self.normalize_single_quotation_marks @
+                                self.normalize_double_quotation_marks
+                                ).optimize()
 
 
     def verbalizable(self) -> Fst:
@@ -104,7 +127,21 @@ class NormalizerLib:
                           closure(self.numerals, 1, 3) +
                           (union(",", ".") +
                            closure(self.numerals, 1, 4).ques))).optimize()
-        return union(token, email_address, web_address, times, fancy_numbers).optimize()
+
+        valid_sentence = (((token |
+                            email_address |
+                            web_address |
+                            times |
+                            fancy_numbers) +
+                           byte.SPACE).star +
+                          (token |
+                           email_address |
+                           web_address |
+                           times |
+                           fancy_numbers) +
+                          byte.SPACE.star +
+                          self.final_punctuation.star).optimize()
+        return valid_sentence.optimize()
 
 
     def split_into_tokens(self, string) -> List[str]:
@@ -130,14 +167,14 @@ class NormalizerLib:
             The line, where invalid tokens have been replaced with <UNK>.
         """
         returned: List[str] = []
+
         for token in self.split_into_tokens(string):
-            if difference(acceptor(token), self.verbalizable()
-                          ).num_states() == 0:
+            diff = difference(acceptor(token), self.verbalizable())
+            if diff.num_states() == 0:
                 returned.append(token)
             else:
                 returned.append("<UNK>")
         return " ".join(returned)
-
 
     def pass_only_valid_sentences(self, string) -> List[str]:
         """Replaces invalid sentences.
@@ -148,9 +185,8 @@ class NormalizerLib:
         Returns:
             The line or the line replaced with <SENTENCE_REJECTED>.
         """
-        for token in self.split_into_tokens(string):
-            if difference(acceptor(token), self.verbalizable()).num_states() != 0:
-                return "<SENTENCE_REJECTED>"
+        if difference(acceptor(string), self.verbalizable()).num_states() != 0:
+            return "<SENTENCE_REJECTED>"
         return string
 
 
@@ -185,12 +221,13 @@ class NormalizerLib:
 #        strip_accents = self.strip_accents(lowercase_string)
 #        unicode_normalize = unicodedata.normalize("NFC", strip_accents)
         unicode_normalize = unicodedata.normalize("NFC", lowercase_string)
+        universal_rules = (unicode_normalize @ self.universal_rules).optimize().string()
         if normalizer == "sentence":
             filter_string = self.pass_only_valid_sentences(
-                unicode_normalize)
+                universal_rules)
         else:
             filter_string = self.pass_only_valid_tokens(
-                unicode_normalize)
+                universal_rules)
         return filter_string
 
     @staticmethod

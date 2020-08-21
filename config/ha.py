@@ -15,11 +15,11 @@ NUMERALS = byte.DIGIT
 
 # Hausa in Niger uses y with right hook. This rule converts modifier letter
 # apostrophe y (used in Nigeria) to the Niger standard.
-#APOSTROPHE_TO_HOOK_Y = cdrewrite(
-#    cross("ʼy", "ƴ"),
-#    "",
-#    "",
-#    byte.BYTES.closure())
+APOSTROPHE_TO_HOOK_Y = cdrewrite(
+    cross("'y", "ƴ"),
+    "",
+    "",
+    byte.BYTES.closure())
 
 # Hausa in Nigeria uses modifier letter apostrophe y. This rule converts y with
 # right hook (used in Niger) to the Nigeria standard.
@@ -29,11 +29,14 @@ HOOK_TO_APOSTROPHE_Y = cdrewrite(
     "",
     byte.BYTES.closure())
 
-#LANGUAGE_SPECIFIC_PREPROCESSING = APOSTROPHE_TO_HOOK_Y
-LANGUAGE_SPECIFIC_PREPROCESSING = HOOK_TO_APOSTROPHE_Y
+LANGUAGE_SPECIFIC_PREPROCESSING = APOSTROPHE_TO_HOOK_Y
+#LANGUAGE_SPECIFIC_PREPROCESSING = HOOK_TO_APOSTROPHE_Y
 
-UD = ""
+# These files are not in the repo. You will need to change these paths to match
+# where you place the data files.
+UD = "" # none
 UM = ""
-AC = ""
-OSCAR = ""
+AC = "language_data/ha/ac/ha-wordbigrams.txt"
+OSCAR = "" # none
+OSCAR_DEDUP = "" # none
 LCC = ""
