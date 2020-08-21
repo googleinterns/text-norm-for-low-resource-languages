@@ -55,14 +55,19 @@ class NormalizerLib:
             union("[BOS]", byte.SPACE),
             union("[EOS]", byte.SPACE),
             self.sigma_star)
-        self.universal_rules = cdrewrite(
+        self.normalize_single_quotation_marks = cdrewrite(
             string_map((("ʼ", "'"), # modifier letter apostrophe
                         ("ʽ", "'"), # inverted comma
                         ("’", "'"), # right single quote
                         ("‘", "'"), # left single quote
                         ("`", "'"), # grave accent
                         ("´", "'"), # acute accent
-                        ("”", "\""),# right double quote
+                        )),
+            "",
+            "",
+            self.sigma_star)
+        self.normalize_double_quotation_marks = cdrewrite(
+            string_map((("”", "\""),# right double quote
                         ("“", "\""),# left double quote
                         ("＂", "\""),# full width quote
                         ("‟", "\"") # double high reversed quote
@@ -70,6 +75,9 @@ class NormalizerLib:
             "",
             "",
             self.sigma_star)
+        self.universal_rules = (self.normalize_single_quotation_marks @
+                                self.normalize_double_quotation_marks
+                                ).optimize()
 
 
     def verbalizable(self) -> Fst:
