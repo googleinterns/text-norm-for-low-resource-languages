@@ -1,6 +1,6 @@
 # Text Normalization for Low Resource Languages
 
-This repository contains code and data related to the Google open source internship project Text Normalization for Low Resource Languages.
+This repository contains code related to the Google open source internship project Text Normalization for Low Resource Languages.
 
 ## Project Description
 
